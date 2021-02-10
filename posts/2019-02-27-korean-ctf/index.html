@@ -214,50 +214,50 @@ It&rsquo;s not really hard (because of .net) but I found it interresting</p>
 </ul>
 <h2 id="part-1--post-analyse">Part 1 : Post analyse</h2>
 <p>The first thing to do is identify what is this PE</p>
-<p><img src="/post_images/korean_ctf/Screenshot_2.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_2.png" alt=""></p>
 <p>It’s look like a .Net assembly (like in the title)</p>
 <p>Before reverse anything, I like to see what the tool look like</p>
-<p><img src="/post_images/korean_ctf/Screenshot_3.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_3.png" alt=""></p>
 <p>The typical .Net assembly icon confirm us that it is .Net</p>
-<p><img src="/post_images/korean_ctf/Screenshot_4.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_4.png" alt=""></p>
 <p>Ok so a classic check, a textbox and a message box of answer</p>
 <p>So, let&rsquo;s get started</p>
 <p>It’s .Net so I will use dnSpy to decompile it</p>
-<p><img src="/post_images/korean_ctf/Screenshot_5.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_5.png" alt=""></p>
 <p>Nothing special, the Module entrypoint is empty, the Main entrypoint is normal and just launch the <code>Form1</code> class</p>
 <p>So let’s jump in the <code>Form1</code> class</p>
-<p><img src="/post_images/korean_ctf/Screenshot_6.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_6.png" alt=""></p>
 <p>In imports, we can see something interesting, the <code>System.Reflection</code> library is used to manage assembly in general, so we will have to deal with assembly manipulation.</p>
 <p>To begin, I will check for the constructor</p>
-<p><img src="/post_images/korean_ctf/Screenshot_7.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_7.png" alt=""></p>
 <p>Something is done here 🙂</p>
 <p>The <code>&quot;MetMett&quot;</code> function fail to be analyzed by dnSpy, so I assume that is encrypted</p>
 <p>By analyzing the constructor, we can see that the raw IL instructions bytes of the <code>&quot;MetMett&quot;</code> function is stored in the <code>bb</code> variable</p>
 <p>And we see a modification applied to this buffer, we can presume that the modifications decrypt this buffer, we will see latter</p>
-<p><img src="/post_images/korean_ctf/Screenshot_8.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_8.png" alt=""></p>
 <p>The <code>InitializeComponent</code> and <code>Form1_Load</code> functions doing nothing special so I will jump directly to the check button function</p>
 <p>So when we press the check button, the textbox input is passed in the <code>&quot;MetMetMet&quot;</code> function, the message box answer doesn’t appear to be here so the <code>&quot;MetMetMet&quot;</code> function do all of the check</p>
-<p><img src="/post_images/korean_ctf/Screenshot_9.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_9.png" alt=""></p>
 <p>So the <code>&quot;MetMetMet&quot;</code> function is a little bit too tight, so I will analyse it step by step</p>
-<p><img src="/post_images/korean_ctf/Screenshot_10.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_10.png" alt=""></p>
 <p>First thing we see is the input password converted to base64 and stored as bytes</p>
-<p><img src="/post_images/korean_ctf/Screenshot_12.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_12.png" alt=""></p>
 <p>After the function create a Dynamic Assembly in memory, create a class called <code>RevKrT1</code> and define a function called <code>&quot;MetMet&quot;</code> in it</p>
-<p><img src="/post_images/korean_ctf/Screenshot_13.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_13.png" alt=""></p>
 <p>The function creates a second module in memory, create a class called <code>RevKrT2</code> and define a function called <code>&quot;MetM&quot;</code> in it</p>
 <p>The method <code>&quot;MetM&quot;</code> is writed with the <code>bb</code> variable seen above, so we was right 🙂</p>
 <p>The <code>&quot;MetMett&quot;</code> function stored the encrypted method, it is decrypted at start and stored in bb variable, and after, it is writen in memory as the <code>&quot;MetM&quot;</code> function</p>
-<p><img src="/post_images/korean_ctf/Screenshot_14.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_14.png" alt=""></p>
 <p>After that this function is Invoked from the second module (<code>RevKrT2</code>) and use the input base64 bytes in arguments.</p>
-<p><img src="/post_images/korean_ctf/Screenshot_15.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_15.png" alt=""></p>
 <p>And here we are 🙂</p>
 <p>After the call of the decrypted function, we have the answer of the validation.
 This means that the previous called function is the check for the password</p>
-<p><img src="/post_images/korean_ctf/Screenshot_16.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_16.png" alt=""></p>
 <p>The crafted <code>&quot;MetMet&quot;</code> function in the first module (<code>RevKrT1</code>) generate manually the IL instructions of the message box</p>
-<p><img src="/post_images/korean_ctf/Screenshot_17.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_17.png" alt=""></p>
 <p>And finally the message box function is called from the (<code>RevKrT1</code>) module</p>
-<p><img src="/post_images/korean_ctf/Screenshot_18.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_18.png" alt=""></p>
 <p>So what we know from here :</p>
 <p>We learn that the <code>&quot;MetMetMet&quot;</code> function craft two dynamic modules, one which check the password (<code>MetM</code>)</p>
 <p>And one with the messagebox of validation (<code>MetMet</code>)</p>
@@ -266,18 +266,18 @@ This means that the previous called function is the check for the password</p>
 <p>I’m going to put two breakpoints
 One after the modules creations and <code>&quot;MetM&quot;</code> method definition
 And one after the definition of the messageBox, to see if we are right</p>
-<p><img src="/post_images/korean_ctf/Screenshot_19.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_19.png" alt=""></p>
 <p>When the first breakpoint hit, we see the modules in memory</p>
-<p><img src="/post_images/korean_ctf/Screenshot_20.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_20.png" alt=""></p>
 <p>I will continue to the second breakpoint to see how the code look like
 I directly jump in the modules from memory</p>
-<p><img src="/post_images/korean_ctf/Screenshot_21.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_21.png" alt=""></p>
 <p>We see the code 🙂</p>
 <p>From that we have just to reverse the check function</p>
-<p><img src="/post_images/korean_ctf/Screenshot_22.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_22.png" alt=""></p>
 <p>The password in base64 should be 12 characters, and like we said before, if the array[0] is set to 1, the password is wrong</p>
 <p>The check is not difficult, just xor and cmp, so easy to make a reverse script</p>
-<p><img src="/post_images/korean_ctf/Screenshot_23.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/korean_ctf/Screenshot_23.png" alt=""></p>
 <h2 id="conclusion-">Conclusion :</h2>
 <p>It was not difficult but it used uncommon obfuscation techniques (create modules and store decrypted functions in this module) this change of traditional Control Flaw Obfuscation. I found it really fun and it’s why I made a writeup about it.</p>
 <h1 id="r0da">~r0da</h1>

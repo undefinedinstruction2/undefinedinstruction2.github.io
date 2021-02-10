@@ -199,7 +199,7 @@ Ceci peut être fait en deux étapes :
     <div class="content" itemprop="articleBody">
       <p>Aujourd&rsquo;hui j&rsquo;ai voulu faire un petit thread sur le hooking.</p>
 <p>Le hooking de fonction est le fait de rediriger l’exécution d&rsquo;une fonction d&rsquo;un exécutable vers du code qui n&rsquo;est pas le sien.</p>
-<p><img src="/post_images/hooking/Screenshot_24.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_24.png" alt=""></p>
 <p>Ceci peut être fait en deux étapes :</p>
 <ul>
 <li>L&rsquo;injection de notre code dans le process (en runtime)</li>
@@ -216,55 +216,55 @@ Ceci peut être fait en deux étapes :
 <p>Cette fonction est donc appelée avec un argument qui est le chemin (path) de notre librairie a load.</p>
 <p>Nous devons donc dans un premier temps, allouer et écrire le path de notre DLL dans le process cible pour créer l&rsquo;argument de la fonction LoadLibraryA que nous allons appeler dans celui-ci.</p>
 <p>Puis, nous allons créer un thread a l&rsquo;adresse de la fonction LoadLibraryA dans le process cible avec l&rsquo;adresse de notre path en argument pour exécuter LoadLibraryA avec notre argument.</p>
-<p><img src="/post_images/hooking/Screenshot_4.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_4.png" alt=""></p>
 <p>Ce qui va donner l’exécution de la fonction <code>LoadLibraryA(&quot;C:\\pasBien.dll&quot;)</code> par le process cible</p>
-<p><img src="/post_images/hooking/Screenshot_5.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_5.png" alt=""></p>
 <p>Cette fonction va ensuite load le DLL dans son process et va exécuter l&rsquo;entrypoint du DLL</p>
-<p><img src="/post_images/hooking/Screenshot_6.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_6.png" alt=""></p>
 <p>Nous allons d’abord prendre l&rsquo;adresse de la fonction <code>LoadLibraryA</code> dans la library <code>kernel32.dll</code> (vu que chaque exécutable qui load <code>kernel32.dll</code>, load le même fichier, et que c&rsquo;est une librairie Windows, l&rsquo;imageBase est la même peut importe l’exécutable)</p>
-<p><img src="/post_images/hooking/Screenshot_35.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_35.png" alt=""></p>
 <p>Ensuite nous devons obtenir le HANDLE du process où nous allons faire l&rsquo;injection, dans mon exemple je vais récupérer le process id a partir du titre de la fenêtre.</p>
-<p><img src="/post_images/hooking/Screenshot_36.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_36.png" alt=""></p>
 <p>Dès que nous avons le HANDLE du process et l&rsquo;adresse de la fonction LoadLibraryA, nous pouvons donc appeler le load de la librairie, mais avant nous devons définir son argument qui est le chemin de notre DLL. Nous allons donc allouer de l&rsquo;espace au process de la taille du chemin.</p>
-<p><img src="/post_images/hooking/Screenshot_9.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_9.png" alt=""></p>
 <p>Une fois l&rsquo;espace alloué, nous pouvons écrire le path a cet endroit</p>
-<p><img src="/post_images/hooking/Screenshot_2.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_2.png" alt=""></p>
 <p>Et maintenant, nous allons call la fonction <code>LoadLibraryA</code> pour loader notre DLL, il suffit de créer un thread a l&rsquo;adresse de <code>LoadLibraryA</code> et de donner l&rsquo;adresse de notre path en argument.</p>
-<p><img src="/post_images/hooking/Screenshot_3.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_3.png" alt=""></p>
 <p>Voici un DLL de test, le DLL a un entrypoint qui s&rsquo;exécute en fonction du load de celui-ci, par exemple ici, si un process load notre DLL, le message &ldquo;Injected&rdquo; apparaîtra.</p>
-<p><img src="/post_images/hooking/Screenshot_7.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_7.png" alt=""></p>
 <p>Voilà le résultat</p>
-<p><img src="/post_images/hooking/Screenshot_8.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_8.png" alt=""></p>
 <p>Il existe beaucoup de techniques d&rsquo;injection de DLL plus discrètes, un exemple avec l&rsquo;hijack d&rsquo;un thread de l&rsquo;application cible pour faire exécuter un shellcode, qui va loader le DLL mappé manuellement dans le process.</p>
 <p>Example : <a href="https://github.com/D4stiny/ThreadJect">https://github.com/D4stiny/ThreadJect</a></p>
 <h2 id="la-redirection-des-fonctions">La redirection des fonctions</h2>
 <p>Maintenant que notre DLL est dans le process cible nous allons écrire une instruction assembleur qui va faire un jump de la fonction que l&rsquo;on veut hook vers notre fonction contenue dans le DLL</p>
-<p><img src="/post_images/hooking/Screenshot_10.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_10.png" alt=""></p>
 <p>A chaque fois que le process va exécuter la fonction, c&rsquo;est notre fonction qui va donc être exécutée</p>
-<p><img src="/post_images/hooking/Screenshot_11.png" alt=""></p>
-<p><img src="/post_images/hooking/Screenshot_26.png" alt=""></p>
-<p><img src="/post_images/hooking/Screenshot_27.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_11.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_26.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_27.png" alt=""></p>
 <p>Note : si les instructions après le jmp ont changé, c&rsquo;est parce que nous avons écrit une instruction de 5 bytes (le jmp) sur les instructions de la fonction. Vu que les deux premières instructions étaient push et mov (3 bytes en tout), elles ont été réécrites par notre jump. Et vu que pour continuer à écrire notre jmp il faut encore deux bytes. L&rsquo;instruction d’après (sub qui fait 6 bytes) va être réécrite aussi, mais que sur 2 bytes. Donc cela va créer une instruction invalide.</p>
 <p>On va donc commencer par créer un nouveau thread depuis le DLL</p>
-<p><img src="/post_images/hooking/Screenshot_28.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_28.png" alt=""></p>
 <p>En premier nous avons a calculer l&rsquo;adresse relative de notre fonction par rapport à la fonction que l&rsquo;on va hook</p>
-<p><img src="/post_images/hooking/Screenshot_15.png" alt=""></p>
-<p><img src="/post_images/hooking/Screenshot_16.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_15.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_16.png" alt=""></p>
 <p>Dans le code (hook étant notre fonction et functionAddress la fonction cible) :</p>
-<p><img src="/post_images/hooking/Screenshot_14.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_14.png" alt=""></p>
 <p>Nous changeons encore une fois les attributs de la plage mémoire sur laquelle nous allons écrire le jump. Et nous les conservons pour pouvoir les restaurer plus tard.</p>
-<p><img src="/post_images/hooking/Screenshot_17.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_17.png" alt=""></p>
 <p>Puis nous écrivons notre instruction jmp vers notre fonction (5 bytes) a l&rsquo;adresse de la fonction à hook. L&rsquo;instruction <code>JMP rel32</code> est représentée comme ceci, 1 byte qui indique l’instruction avec le format 0xE9 = <code>JMP rel32</code>, et les 4 autres bytes vont être l&rsquo;adresse relative (sur 32 bits) de notre fonction.</p>
-<p><img src="/post_images/hooking/Screenshot_18.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_18.png" alt=""></p>
 <p>Enfin nous restaurons l&rsquo;ancien attribut de place mémoire</p>
-<p><img src="/post_images/hooking/Screenshot_19.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_19.png" alt=""></p>
 <p>Maintenant que la fonction qui va setup notre hook est terminée, nous pouvons écrire notre fonction qui va remplacer celle de l’exécutable.</p>
-<p><img src="/post_images/hooking/Screenshot_21.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_21.png" alt=""></p>
 <p>Et nous n&rsquo;avons plus qu&rsquo;a trouver l&rsquo;adresse de la fonction à hook avec du reverse engineering</p>
-<p><img src="/post_images/hooking/Screenshot_22.png" alt=""></p>
-<p><img src="/post_images/hooking/Screenshot_23.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_22.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_23.png" alt=""></p>
 <p>Après quoi :</p>
-<p><img src="/post_images/hooking/Screenshot_24.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/hooking/Screenshot_24.png" alt=""></p>
 <p>:)</p>
 <p>NOTE : je n&rsquo;ai pas pris compte des problemes liés au stack après le jump, vu que chaque fonction peut avoir une convention d&rsquo;appel différente (du moins en x86), il faut en tenir compte dans votre hook.</p>
 <p>Nous avons fait un hook manuel, mais évidement des implémentations beaucoup plus propres existent, notamment detour, easyHook, polyHook, MinHook pour les api, etc..</p>
