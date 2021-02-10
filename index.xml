@@ -20,18 +20,6 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
     </item>
     
     <item>
-      <title>20% Simples principles to not be cracked</title>
-      <link>https://whereisr0da.github.io/blog/posts/2021-02-08-simple-prat/</link>
-      <pubDate>Thu, 28 Jan 2021 17:14:00 +0000</pubDate>
-      
-      <guid>https://whereisr0da.github.io/blog/posts/2021-02-08-simple-prat/</guid>
-      <description>Hi
-So it&amp;rsquo;s been a while I&amp;rsquo;m doing re, and specialy cracking stuff. Sometime I found some complet mess about security in those softwares,
-Here is a list of ,
-If is commercial  Don&amp;rsquo;t leave debug strings in final product Don&amp;rsquo;t leave clear strings in executable, cipher them Don&amp;rsquo;t use explicit names like (licence_check) Don&amp;rsquo;t use explicit strings like &amp;ldquo;Thanks for purchase&amp;rdquo;, do a non-explicit activation Don&amp;rsquo;t leave PDB file in final product Don&amp;rsquo;t give a Debug version of the program to the public Don&amp;rsquo;t do a trial version of the software Give the complet version of the software (about features) only after buying Disable internal log on release or Stop to log everything about the licence check process  If you have a key check or license check  Don&amp;rsquo;t do a single function that check the key Don&amp;rsquo;t do a function that return 0 or 1 if the licence is good or not Don&amp;rsquo;t do an offline key check in the software, a &amp;ldquo;keygenable&amp;rdquo; one Always do an online activation Store all keys on a server, like unique keys that you crafted to prevent keygen Store informations about the computer that activated the licence, and compare them when during licence check (HWID) Do callbacks instead of direct data transmitions Do a lot of diferents functions with a lot of calls  If you have to store / transmit important data  Encrypt everything, files, datas, communications.</description>
-    </item>
-    
-    <item>
       <title>Quick look around VMP - Part 2 : Code Mutation</title>
       <link>https://whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/</link>
       <pubDate>Tue, 26 Jan 2021 17:14:00 +0000</pubDate>
