@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /js/
+Disallow: /lib/
+Disallow: /post_images/
+Disallow: /images/
+Disallow: /css/
+Disallow: /_styl/

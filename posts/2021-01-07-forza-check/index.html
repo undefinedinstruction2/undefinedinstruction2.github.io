@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Bypassing 12 years old Xbox 360 Game Security | r0da&#39;s Blog</title>
+  <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering and cracking.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Bypassing 12 years old Xbox 360 Game Security" />
+<meta property="og:description" content="Hi
+Today I will show you how I&rsquo;ve bypassed Forza 3 savegame encryption.
+Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&rsquo;ve tried my favorite game on it. But there is a problem, Forza 3 cipher its savegames, and as Xenia is in dev, Forza 3 crash when you try to load a savegame. As I did worked a lot on Forza when I was young, I tried to look around the issue and I successfully bypass the savegame encryption." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="whereisr0da.github.io/blog/posts/2021-01-07-forza-check/" />
+<meta property="article:published_time" content="2021-02-03T10:14:00+00:00" />
+<meta property="article:modified_time" content="2021-02-03T10:14:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Bypassing 12 years old Xbox 360 Game Security"/>
+<meta name="twitter:description" content="Hi
+Today I will show you how I&rsquo;ve bypassed Forza 3 savegame encryption.
+Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&rsquo;ve tried my favorite game on it. But there is a problem, Forza 3 cipher its savegames, and as Xenia is in dev, Forza 3 crash when you try to load a savegame. As I did worked a lot on Forza when I was young, I tried to look around the issue and I successfully bypass the savegame encryption."/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="whereisr0da.github.io/blog/css/style-dark.css">
+  <link rel="stylesheet" href="whereisr0da.github.io/blog/css/syntax.css" >
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="whereisr0da.github.io/blog/images/favicon.ico" />
+
+  
+  
+  
+  
+</head>
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="whereisr0da.github.io/blog/">Home</a></li>
+         
+        <li><a href="whereisr0da.github.io/blog/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" whereisr0da.github.io/blog/posts/2021-02-08-simple-prat/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&text=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&title=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&is_video=false&description=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security&body=Check out this article: whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&title=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&title=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&title=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&title=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&name=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security&description=Hi%0aToday%20I%20will%20show%20you%20how%20I%26rsquo%3bve%20bypassed%20Forza%203%20savegame%20encryption.%0aLong%20story%20short%2c%20an%20Xbox%20360%20emulator%2c%20Xenia%2c%20is%20currently%20in%20dev%20on%20PC%2c%20and%20I%26rsquo%3bve%20tried%20my%20favorite%20game%20on%20it.%20But%20there%20is%20a%20problem%2c%20Forza%203%20cipher%20its%20savegames%2c%20and%20as%20Xenia%20is%20in%20dev%2c%20Forza%203%20crash%20when%20you%20try%20to%20load%20a%20savegame.%20As%20I%20did%20worked%20a%20lot%20on%20Forza%20when%20I%20was%20young%2c%20I%20tried%20to%20look%20around%20the%20issue%20and%20I%20successfully%20bypass%20the%20savegame%20encryption.">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&t=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#lets-reverse">Let&rsquo;s reverse</a></li>
+    <li><a href="#first-try">First try</a></li>
+    <li><a href="#the-possible-issue-of-xenia">The possible issue of Xenia</a></li>
+    <li><a href="#lets-patch">Let&rsquo;s patch</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#references-and-greatz">References and Greatz</a></li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        Bypassing 12 years old Xbox 360 Game Security
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2021-02-03 10:14:00 &#43;0000 UTC" itemprop="datePublished">2021-02-03</time>
+          
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <p>Hi</p>
+<p>Today I will show you how I&rsquo;ve bypassed Forza 3 savegame encryption.</p>
+<p>Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&rsquo;ve tried my favorite game on it. But there is a problem, Forza 3 cipher its savegames, and as Xenia is in dev, Forza 3 crash when you try to load a savegame. As I did worked a lot on Forza when I was young, I tried to look around the issue and I successfully bypass the savegame encryption.</p>
+<p>Back in old good days, with savegame modding with tools such as Xbox360Tool, published on X360Haven forum, RIP. I remember that Forza always used crypto (AES) for there games since Forza 2, so I thouth it could be related to that.</p>
+<p>To start somewhere, I&rsquo;ve ripped my game disk with my RGH console, and uploaded it to my PC. This is the issue when you try to load a savegame made from Xenia or my retail xbox kernel.</p>
+<p><img src="/post_images/forza/46.gif" alt=""></p>
+<p>NOTE : My knowledge of xboxkrnl and PPC is null, and I don&rsquo;t like the syntax of it, but I will try to fix the issue anyway.</p>
+<h2 id="lets-reverse">Let&rsquo;s reverse</h2>
+<p>Like I said, the only thing I know about Forza savegame is that they are ciphered, and Forza love AES. So I started with this in mind because searching in such big executable could took a long time.</p>
+<p>So there are 2 possible choises, Forza implemented AES by head in the executable, or they used the crypto Xbox Kernel API (xboxkrnl). First thing first, let&rsquo;s take a look at the savegame its self (crafted with Xenia).</p>
+<p><img src="/post_images/forza/Screenshot_191.png" alt=""></p>
+<p>The file that contain the main information about your gameplay is in <code>ForzaProfile</code>. When we look at it, we can see a header and an ciphered buffer, due to its entropy.</p>
+<p><img src="/post_images/forza/Screenshot_192.png" alt=""></p>
+<p>Now let&rsquo;s take a look at the executable, let&rsquo;s find out if there is some informations about savegame or AES. Nothing interesting for thoses two.</p>
+<p><img src="/post_images/forza/Screenshot_1934.png" alt=""></p>
+<p>The vtables you can see on the screenshot is not linked to the code btw. Note that this vtable <code>.?AVCForzaProfileManager@Forza2@@</code> has as main namespace <code>Forza2</code>. So this confirm that Forza use this system since Forza 2, and possibly didn&rsquo;t change since (in fact, it&rsquo;s the same for Forza 2,3,4 and Horizon 1 and 2)</p>
+<p>I did a pattern scan, to see if there is some crypto, hashing data pattern, but this lead to nothing. So I looked around imports, and I found this :</p>
+<p><img src="/post_images/forza/Screenshot_193.png" alt=""></p>
+<p>Forza seems to use crypto xboxkrnl api, and I felt very lucky when I saw that there is only two call to this function.</p>
+<p><img src="/post_images/forza/Screenshot_1912.png" alt=""></p>
+<p>Here are those function :</p>
+<p><img src="/post_images/forza/Screenshot_1923.png" alt=""></p>
+<p>So I reversed those two, some informations were found because of findings found later</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span> <span class="nf">sub_825F18E0</span><span class="p">(</span><span class="n">u0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">BYTE</span><span class="o">*</span> <span class="n">HMAC_SHA1_KEY_XOR_XUID</span><span class="p">,</span> <span class="n">BYTE</span><span class="o">*</span> <span class="n">AES_KEY_XOR_XUID</span><span class="p">){</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>    <span class="c1">// obscure the decryption key runtime
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span> <span class="n">XeKeysObscureKey</span><span class="p">(</span><span class="o">&amp;</span><span class="n">HMAC_SHA1_KEY_XOR_XUID</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">HASH_KEY_OBS</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">){</span>
+        <span class="c1">// ...
+</span><span class="c1"></span>    <span class="p">}</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>    <span class="n">DWORD</span> <span class="n">IV</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="p">...</span>
+    <span class="n">DWORD</span> <span class="n">iDataSizeCiphered</span> <span class="o">=</span> <span class="p">...</span>
+    <span class="c1">// cipher profile size
+</span><span class="c1"></span>    <span class="n">iDataSizeCiphered</span> <span class="o">^=</span> <span class="n">IV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">^</span> <span class="p">(</span><span class="n">IV</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0xFFFFFFF0</span><span class="p">);</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>    <span class="n">BYTE</span><span class="o">*</span> <span class="n">HEADER_FILE_HASH</span><span class="p">;</span>
+    <span class="n">BYTE</span><span class="o">*</span> <span class="n">MAPPED_FILE_HASH</span> <span class="o">=</span> <span class="p">...</span>
+    <span class="c1">// get HMAC SHA1 of crypted buffer
+</span><span class="c1"></span>    <span class="c1">// ciphered with KEY_OBFUSCATION_KEY unique to each console
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span> <span class="n">XeKeysHmacShaUsingKey</span><span class="p">(</span><span class="o">&amp;</span><span class="n">HASH_KEY_OBS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">MAPPED_FILE_HASH</span><span class="p">,</span> <span class="mh">0x14</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">){</span>
+        <span class="c1">// compare the ciphered buffer hash
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="o">&amp;</span><span class="n">HEADER_FILE_HASH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">MAPPED_FILE_HASH</span><span class="p">)</span> <span class="p">){</span>
+            <span class="c1">// decipher the crypted buffer
+</span><span class="c1"></span>            <span class="k">if</span> <span class="p">(</span> <span class="n">XeKeysAesCbcUsingKey</span><span class="p">(...,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">){</span>
+                <span class="c1">// ...
+</span><span class="c1"></span>                <span class="c1">// load the savegame
+</span><span class="c1"></span>                <span class="c1">// ...
+</span><span class="c1"></span>                <span class="n">VALID_FILE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">// ...
+</span><span class="c1"></span>    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">sub_825F1CF0</span><span class="p">(){</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>    <span class="n">DWORD</span> <span class="n">iProfileSize</span> <span class="o">=</span> <span class="n">forzaProfile</span><span class="o">-&gt;</span><span class="n">EndOffset</span> <span class="o">-</span> <span class="n">forzaProfile</span><span class="o">-&gt;</span><span class="n">StartOffset</span><span class="p">;</span>
+    <span class="c1">// cipher profile size
+</span><span class="c1"></span>    <span class="n">iProfileSize</span> <span class="o">^=</span> <span class="n">IV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">^</span> <span class="p">(</span><span class="n">IV</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0xFFFFFFF0</span><span class="p">);</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>    <span class="c1">// cipher the profile buffer
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span> <span class="n">XeKeysAesCbcUsingKey</span><span class="p">(...,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">){</span>
+        <span class="c1">// ...
+</span><span class="c1"></span>        <span class="c1">// craft its HMAC SHA1 hash
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span> <span class="n">XeKeysHmacShaUsingKey</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">){</span>
+            <span class="c1">// ...
+</span><span class="c1"></span>        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>XeKeysObscureKey and XeKeysAesCbcUsingKey based on <a href="https://github.com/xenia-project/xenia/blob/2d9326e02db5d31f1143758b49d1cdf372278dbe/src/xenia/kernel/xboxkrnl/xboxkrnl_crypt.cc">this documentation</a>. The function sub_825F18E0 seems to decrypt something using a key and an IV, and right before that, the function do a hash check of this crypted data (the hash is ciphered too). The function sub_825F1CF0 seems to do the same thing (without the strcmp), but in the reversed order.</p>
+<p>So I will assume that sub_825F18E0 is used in a decryption routine for the savegame. First because of my reverse, the code seems to be checking hash of ciphered content and only after, deciphering it. And also because of this code :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="c1">// ...
+</span><span class="c1"></span><span class="n">sub_825F18E0</span><span class="p">();</span>
+<span class="c1">// ...
+</span><span class="c1"></span><span class="n">sub_822680A0</span><span class="p">(</span><span class="n">TMP_0</span><span class="p">,</span> <span class="s">&#34;GAME:</span><span class="se">\\</span><span class="s">Media</span><span class="se">\\</span><span class="s">ProfileSchema</span><span class="se">\\</span><span class="s">ForzaProfile.sch&#34;</span><span class="p">);</span>
+</code></pre></div><p>A .sch schema file is used after the file load</p>
+<p><img src="/post_images/forza/Screenshot_19133.png" alt=""></p>
+<p>This schema define how to parse the ForzaProfile file, so this code convised me that it&rsquo;s the decryption routine when the game is loading a savegame.</p>
+<p>And the last reason, the most obvious, is that the last argument of XeKeysAesCbcUsingKey is <code>encrypt</code>. Like each low level implementation of AESCBC, this mean decrypt if 0, and encrypt if 1.</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">dword_result_t</span> <span class="nf">XeKeysAesCbcUsingKey</span><span class="p">(...,</span> <span class="n">dword_t</span> <span class="n">encrypt</span><span class="p">);</span>
+<span class="c1">// encrypt
+</span><span class="c1"></span><span class="n">sub_825F1CF0</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="k">if</span> <span class="p">(</span> <span class="n">XeKeysAesCbcUsingKey</span><span class="p">(...,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">)</span>
+<span class="c1">// decrypt
+</span><span class="c1"></span><span class="n">sub_825F18E0</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="k">if</span> <span class="p">(</span> <span class="n">XeKeysAesCbcUsingKey</span><span class="p">(...,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">)</span> 
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">sub_825F18E0</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">SAVE_DECRYPTION</span>
+<span class="n">sub_825F1CF0</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">SAVE_ENCRYPTION</span>
+</code></pre></div><p>So after a little bit of exploration, here is the code executed right before the SAVE_DECRYPTION routine.</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">BYTE</span> <span class="n">AES_KEY_XOR_XUID</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">16</span><span class="p">;</span>
+<span class="k">do</span>
+<span class="p">{</span>
+    <span class="c1">// XUID is double
+</span><span class="c1"></span>    <span class="n">AES_KEY_XOR_XUID</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">AES_DECRYPTION_KEY</span><span class="p">[</span><span class="n">i</span> <span class="o">&amp;</span> <span class="mi">15</span><span class="p">]</span> <span class="o">^</span> <span class="n">XUID</span><span class="p">[(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">7</span><span class="p">];</span>
+    <span class="o">++</span><span class="n">i</span><span class="p">;</span> <span class="o">--</span><span class="n">n</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">while</span> <span class="p">(</span> <span class="n">n</span> <span class="p">);</span>
+
+<span class="n">BYTE</span> <span class="n">HMAC_SHA1_KEY_XOR_XUID</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">16</span><span class="p">;</span>
+<span class="k">do</span>
+<span class="p">{</span>
+    <span class="c1">// XUID is double
+</span><span class="c1"></span>    <span class="n">HMAC_SHA1_KEY_XOR_XUID</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">HMAC_SHA1_DECRYPTION_KEY</span><span class="p">[</span><span class="n">i</span> <span class="o">&amp;</span> <span class="mi">15</span><span class="p">]</span> <span class="o">^</span> <span class="n">XUID</span><span class="p">[</span><span class="n">i</span> <span class="o">&amp;</span> <span class="mi">7</span><span class="p">];</span>
+    <span class="o">++</span><span class="n">i</span><span class="p">;</span> <span class="o">--</span><span class="n">n</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">while</span> <span class="p">(</span> <span class="n">n</span> <span class="p">);</span>
+
+<span class="n">VALID_FILE</span> <span class="o">=</span> <span class="n">SAVE_DECRYPTION</span><span class="p">(...,</span> <span class="n">HMAC_SHA1_KEY_XOR_XUID</span><span class="p">,</span> <span class="n">AES_KEY_XOR_XUID</span><span class="p">);</span>
+</code></pre></div><p>As you can see, the hash key and the AES key are xorred with XUID (Xbox User ID). This mean that the savegame will be decrypted only by its user. And can&rsquo;t be shared without using the same Profile. Because if someone try to decipher the Profile, the key will be different due to XUID, and the Profile will still be ciphered.</p>
+<p>First I didn&rsquo;t recognize what was xorred with the HMAC_SHA1_DECRYPTION_KEY and AES_DECRYPTION_KEY, then I look around what people said about Forza savegames in the past. I figured out that this was the XUID. So thanx to all thoses peoples who did a great job in xbox scene.</p>
+<p>As you can guess, this routine is also used before the call of SAVE_ENCRYPTION routine.</p>
+<p>This are the keys buffer :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="c1">// byte_820094A0
+</span><span class="c1"></span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">HMAC_SHA1_DECRYPTION_KEY</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="mh">0x8F</span><span class="p">,</span> <span class="mh">0xF6</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0xFC</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x64</span><span class="p">,</span> <span class="mh">0x6A</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span> <span class="mh">0x68</span><span class="p">,</span> <span class="mh">0x8D</span><span class="p">,</span> <span class="mh">0xEE</span><span class="p">,</span> <span class="mh">0xE8</span><span class="p">,</span>
+	<span class="mh">0x9E</span><span class="p">,</span> <span class="mh">0x24</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span> <span class="mh">0x58</span>
+<span class="p">};</span>
+
+<span class="c1">// byte_82009490
+</span><span class="c1"></span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">AES_DECRYPTION_KEY</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="mh">0x27</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x37</span><span class="p">,</span> <span class="mh">0x9D</span><span class="p">,</span> <span class="mh">0x34</span><span class="p">,</span> <span class="mh">0x8C</span><span class="p">,</span> <span class="mh">0x47</span><span class="p">,</span> <span class="mh">0xAE</span><span class="p">,</span> <span class="mh">0x09</span><span class="p">,</span> <span class="mh">0x5A</span><span class="p">,</span> <span class="mh">0xA3</span><span class="p">,</span> <span class="mh">0xC4</span><span class="p">,</span>
+	<span class="mh">0x71</span><span class="p">,</span> <span class="mh">0xB1</span><span class="p">,</span> <span class="mh">0x2E</span><span class="p">,</span> <span class="mh">0xD4</span>
+<span class="p">};</span>
+</code></pre></div><p>So, from now, we can do some datamining of the savegame, and define this struct (thx sh042067 and hetelek for there reverse)</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="c1">// NOTE : All digits are in big endian
+</span><span class="c1"></span><span class="k">struct</span> <span class="n">ForzaProfile_t</span> <span class="p">{</span>
+    <span class="n">u8</span>  <span class="n">szHeader</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+    <span class="n">u32</span> <span class="n">iFileSize</span><span class="p">;</span>
+    <span class="n">u8</span>  <span class="n">szHash</span><span class="p">[</span><span class="mi">20</span><span class="p">];</span>
+    <span class="n">u8</span>  <span class="n">szIV</span><span class="p">[</span><span class="mi">20</span><span class="p">];</span>
+    <span class="n">u8</span>  <span class="n">szCryptedDataBuffer</span><span class="p">[</span><span class="mh">0x4FD8</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="n">ForzaProfile_t</span> <span class="n">profile</span> <span class="err">@</span> <span class="mh">0x0</span><span class="p">;</span>
+</code></pre></div><p>Now, we can try to decrypt a real Forza 3 savegame with a real xbox kernel to see if the reverse is accurate.</p>
+<p>Here, the save from a real kernel on the left, and Xenia one on the right :</p>
+<p><img src="/post_images/forza/Screenshot_640.png" alt=""></p>
+<p>It&rsquo;s clear that the header of the real savegame contain a proper hash and IV, compared to the Xenia one.</p>
+<p>Honorable mention to the ciphering, we can&rsquo;t distinguish the header from ciphered data.</p>
+<h2 id="first-try">First try</h2>
+<p>To make sure my reverse is right, I&rsquo;ve tried to decipher the real savegame to see if I&rsquo;m correct.</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">TODO</span>
+</code></pre></div><p>Using my XUID <code>E0000183AE******</code>, I&rsquo;ve xorred the AES key and deciphered the savegame content, and :</p>
+<p><img src="/post_images/forza/Screenshot_641.png" alt=""></p>
+<p>It worked :)</p>
+<p>Now we know that my algorithm is correct, we can try to figure out what&rsquo;s wrong with Xenia.</p>
+<p>Let&rsquo;s decipher the savegame made under Xenia, using this <code>B13EBABEBABEBABE</code> as XUID, the one used by Xenia (<a href="https://github.com/xenia-project/xenia/blob/6cb8f0aab4a647ebab9ab98c051d40cb3c2fbc90/src/xenia/kernel/xam/user_profile.cc#L27">code</a>)</p>
+<p><img src="/post_images/forza/Screenshot_642.png" alt=""></p>
+<p>Failed, so the issue is about parameters (hash and IV).</p>
+<p>If we take a closer look to the data, specialy the IV, we can see that it contain the crypted buffer size <code>0x15B1</code></p>
+<p><img src="/post_images/forza/Screenshot_643.png" alt=""></p>
+<p>But remember, it should be ciphered by this line :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">iProfileSize</span> <span class="o">^=</span> <span class="n">IV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">^</span> <span class="p">(</span><span class="n">IV</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0xFFFFFFF0</span><span class="p">);</span>
+</code></pre></div><p>So there is definitly something wrong above the AES encryption.</p>
+<h2 id="the-possible-issue-of-xenia">The possible issue of Xenia</h2>
+<p>Now that we know aproximativly how Forza loads savegame, could we find the issue ?</p>
+<p>During my documentation, I found this about XeKeysObscureKey : <a href="https://github.com/xenia-project/xenia/pull/1747">https://github.com/xenia-project/xenia/pull/1747</a></p>
+<p>It seems that the issue is that Xenia don&rsquo;t implement XeKeysHmacShaUsingKey.</p>
+<p><img src="/post_images/forza/Screenshot_1916.png" alt=""></p>
+<p>As the XeKeysHmacShaUsingKey and XeKeysAesCbcUsingKey functions uses obscuration keys in addition of all other thing mentioned above. The call to XeKeysObscureKey followed by XeKeysHmacShaUsingKey should produce kind of keychain kernel land or something like that. The keyvault contain could be used to crypto as XeKeysAesCbcUsingKey does, so without the call of XeKeysHmacShaUsingKey, everything should produce a bad file.</p>
+<p>I didn&rsquo;t reversed the entire code, so I can&rsquo;t say it&rsquo;s the only thing that produce the bug. But I&rsquo;m sure that the ciphering is the main reason why Forza can&rsquo;t load the savegame.</p>
+<p>I&rsquo;ve also found this issue : <a href="https://github.com/xenia-project/xenia/pull/1440">https://github.com/xenia-project/xenia/pull/1440</a></p>
+<p>Apparently, keys used to obscure data while calling XeKeysObscureKey and XeKeysAesCbcUsingKey are null</p>
+<p><img src="/post_images/forza/Screenshot_644.png" alt=""></p>
+<p>This should not affect the &ldquo;crypto&rdquo; behavior as the key is null, but it&rsquo;s still something that produce a different behavior of a real xboxkrnl regarding savegame.</p>
+<h2 id="lets-patch">Let&rsquo;s patch</h2>
+<p>How to fix it, first choise, we remove the crypto from savegame loading and saving routine. Second choise, we implement XeKeysHmacShaUsingKey in xenia, but there is maybe another bug somewhere else.</p>
+<p>So, as it&rsquo;s trickier, I&rsquo;ve tried the first choise !</p>
+<p>My first aproach was to patch the call to save decryption and encryption routine, but I realised that those &ldquo;load&rdquo; the savegame right after. So the patch should be in those functions.</p>
+<p>My second approach was this one :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span> <span class="nf">SAVE_DECRYPTION</span><span class="p">(</span><span class="n">u0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">BYTE</span><span class="o">*</span> <span class="n">HMAC_SHA1_KEY_XOR_XUID</span><span class="p">,</span> <span class="n">BYTE</span><span class="o">*</span> <span class="n">AES_KEY_XOR_XUID</span><span class="p">){</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span> <span class="n">XeKeysHmacShaUsingKey</span><span class="p">(</span><span class="o">&amp;</span><span class="n">HASH_KEY_OBS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">MAPPED_FILE_HASH</span><span class="p">,</span> <span class="mh">0x14</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">){</span>
+
+        <span class="c1">// don&#39;t care about its result
+</span><span class="c1"></span>        <span class="n">strcmp</span><span class="p">(</span><span class="o">&amp;</span><span class="n">HEADER_FILE_HASH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">MAPPED_FILE_HASH</span><span class="p">);</span>
+
+        <span class="c1">// remove the ciphering
+</span><span class="c1"></span>        <span class="c1">// XeKeysAesCbcUsingKey(..., 0)
+</span><span class="c1"></span>
+        <span class="c1">// load the savegame
+</span><span class="c1"></span>
+        <span class="n">VALID_FILE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// ...
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">SAVE_ENCRYPTION</span><span class="p">(){</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>
+    <span class="c1">// remove the ciphering
+</span><span class="c1"></span>    <span class="c1">// XeKeysAesCbcUsingKey(..., 1)
+</span><span class="c1"></span>
+    <span class="c1">// useless since we don&#39;t check it anymore
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span> <span class="n">XeKeysHmacShaUsingKey</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">){</span>
+        <span class="c1">// ...
+</span><span class="c1"></span>    <span class="p">}</span>
+    <span class="c1">// ...
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>And then, while I was looking for a way to patch my xex (Xbox Executable), I&rsquo;ve found this :</p>
+<p><a href="https://github.com/mojobojo/PublicXboxStuff/blob/master/PPC/ForzaHax.S">https://github.com/mojobojo/PublicXboxStuff/blob/master/PPC/ForzaHax.S</a></p>
+<p>A guy named mojobojo already did that for Forza 4, the exact same way as my plan. So&hellip; I will do the same thing since there is not 100 methods to do it.</p>
+<p>First we need to patch the strcmp comparison to zero in BREAK_FAIL block. We could just nop the cmpwi (compare word immediate), and nop the bne (branch not equl), so the comparison is not done, and the code continue directly in AES decryption routine.</p>
+<p><img src="/post_images/forza/Screenshot_646.png" alt=""></p>
+<p>Then, we can nop the AES decryption, the bl XeKeysAesCbcUsingKey (branch), the cmpwi of the XeKeysAesCbcUsingKey result and the blt loc_825F1EB0 (branch if less than)</p>
+<p><img src="/post_images/forza/Screenshot_645.png" alt=""></p>
+<p>And the same in AES encryption routine&hellip;</p>
+<p><img src="/post_images/forza/Screenshot_647.png" alt=""></p>
+<p>Using xextool I&rsquo;ve decompressed and decrypted the main executable, and using xepatcher, I&rsquo;ve the following patch to it</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># nop file encryption
+</span><span class="cp"></span><span class="p">.</span><span class="kt">long</span> <span class="mh">0x825F1E08</span> 
+<span class="p">.</span><span class="kt">long</span> <span class="p">(</span> <span class="mf">1f</span> <span class="o">-</span> <span class="mf">0f</span> <span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+<span class="mi">0</span><span class="o">:</span>
+    <span class="n">nop</span> <span class="err">#</span> <span class="n">bl</span>        <span class="n">XeKeysAesCbcUsingKey</span>
+    <span class="n">nop</span> <span class="err">#</span> <span class="n">cmpwi</span>     <span class="n">r3</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">nop</span> <span class="err">#</span> <span class="n">blt</span>       <span class="n">loc_825F1EB0</span>
+<span class="mi">1</span><span class="o">:</span>
+
+<span class="cp"># nop hash strcmp
+</span><span class="cp"></span><span class="p">.</span><span class="kt">long</span> <span class="mh">0x825F1B00</span>
+<span class="p">.</span><span class="kt">long</span> <span class="p">(</span> <span class="mf">1f</span> <span class="o">-</span> <span class="mf">0f</span> <span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+<span class="mi">0</span><span class="o">:</span>
+    <span class="n">nop</span> <span class="err">#</span> <span class="n">cmpwi</span>     <span class="n">r9</span><span class="p">,</span> <span class="mi">0</span>  
+    <span class="n">nop</span> <span class="err">#</span> <span class="n">bne</span>       <span class="n">loc_825F1B94</span>
+<span class="mi">1</span><span class="o">:</span>
+
+<span class="cp"># nop file decryption
+</span><span class="cp"></span><span class="p">.</span><span class="kt">long</span> <span class="mh">0x825F1B44</span>
+<span class="p">.</span><span class="kt">long</span> <span class="p">(</span> <span class="mf">1f</span> <span class="o">-</span> <span class="mf">0f</span> <span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+<span class="mi">0</span><span class="o">:</span>
+    <span class="n">nop</span> <span class="err">#</span> <span class="n">bl</span>        <span class="n">XeKeysAesCbcUsingKey</span>
+    <span class="n">nop</span> <span class="err">#</span> <span class="n">cmpwi</span>     <span class="n">r3</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">nop</span> <span class="err">#</span> <span class="n">blt</span>       <span class="n">loc_825F1B94</span>
+<span class="mi">1</span><span class="o">:</span>
+
+<span class="p">.</span><span class="kt">long</span> <span class="mh">0xFFFFFFFF</span>
+</code></pre></div><p>And voila :)</p>
+<p><img src="/post_images/forza/45.gif" alt=""></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Done, now I can save, load and play my game :0 And change my money ingame as well :p</p>
+<p>Ciphering savegame data with XUID is cleaver, Forza was well made regarding its gameplay, and I&rsquo;m happy to see that its security was good too.</p>
+<p>It was very fun and I&rsquo;ve learned a lot of things (Thanks to BinaryNinja pseudo code btw)</p>
+<h1 id="r0da">~r0da</h1>
+<h2 id="references-and-greatz">References and Greatz</h2>
+<ul>
+<li>Xenia Project</li>
+<li>XDK 2008</li>
+<li>cs.sin.ru crackers</li>
+<li>X360Haven</li>
+<li>sh042067 and hetelek work</li>
+<li>mojobojo 2011 work</li>
+</ul>
+
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="whereisr0da.github.io/blog/">Home</a></li>
+         
+          <li><a href="whereisr0da.github.io/blog/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#lets-reverse">Let&rsquo;s reverse</a></li>
+    <li><a href="#first-try">First try</a></li>
+    <li><a href="#the-possible-issue-of-xenia">The possible issue of Xenia</a></li>
+    <li><a href="#lets-patch">Let&rsquo;s patch</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#references-and-greatz">References and Greatz</a></li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&text=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&title=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&is_video=false&description=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security&body=Check out this article: whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&title=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&title=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&title=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&title=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&name=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security&description=Hi%0aToday%20I%20will%20show%20you%20how%20I%26rsquo%3bve%20bypassed%20Forza%203%20savegame%20encryption.%0aLong%20story%20short%2c%20an%20Xbox%20360%20emulator%2c%20Xenia%2c%20is%20currently%20in%20dev%20on%20PC%2c%20and%20I%26rsquo%3bve%20tried%20my%20favorite%20game%20on%20it.%20But%20there%20is%20a%20problem%2c%20Forza%203%20cipher%20its%20savegames%2c%20and%20as%20Xenia%20is%20in%20dev%2c%20Forza%203%20crash%20when%20you%20try%20to%20load%20a%20savegame.%20As%20I%20did%20worked%20a%20lot%20on%20Forza%20when%20I%20was%20young%2c%20I%20tried%20to%20look%20around%20the%20issue%20and%20I%20successfully%20bypass%20the%20savegame%20encryption.">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=whereisr0da.github.io%2fblog%2fposts%2f2021-01-07-forza-check%2f&t=Bypassing%2012%20years%20old%20Xbox%20360%20Game%20Security">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2021  r0da 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="whereisr0da.github.io/blog/">Home</a></li>
+         
+        <li><a href="whereisr0da.github.io/blog/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=/whereisr0da.github.io/blog/lib/font-awesome/css/all.min.css>
+<script src=/whereisr0da.github.io/blog/lib/jquery/jquery.min.js></script>
+<script src=/whereisr0da.github.io/blog/js/main.js></script>
+
+
+
+</html>

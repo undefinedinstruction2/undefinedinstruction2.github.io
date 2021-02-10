@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Quick analysis about Jar2exe protection 3 | r0da&#39;s Blog</title>
+  <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering and cracking.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Quick analysis about Jar2exe protection 3" />
+<meta property="og:description" content="Hi
+Today I will show how I unpacked Jar2Exe protection 3.
+I made a tool called Exe2Jar that unpack Jar2Exe protection 1 and 2. It was a school project so I didn&rsquo;t look that much to the protection 3, and someone shown me an issue about the output of my program regarding protection 3. So I decided to rework on it, and implement the protection 3 support.
+Exe2Jar : https://github.com/whereisr0da/exe2jar" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="whereisr0da.github.io/blog/posts/2020-02-01-jar2exe/" />
+<meta property="article:published_time" content="2020-02-01T17:14:00+00:00" />
+<meta property="article:modified_time" content="2020-02-01T17:14:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Quick analysis about Jar2exe protection 3"/>
+<meta name="twitter:description" content="Hi
+Today I will show how I unpacked Jar2Exe protection 3.
+I made a tool called Exe2Jar that unpack Jar2Exe protection 1 and 2. It was a school project so I didn&rsquo;t look that much to the protection 3, and someone shown me an issue about the output of my program regarding protection 3. So I decided to rework on it, and implement the protection 3 support.
+Exe2Jar : https://github.com/whereisr0da/exe2jar"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="whereisr0da.github.io/blog/css/style-dark.css">
+  <link rel="stylesheet" href="whereisr0da.github.io/blog/css/syntax.css" >
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="whereisr0da.github.io/blog/images/favicon.ico" />
+
+  
+  
+  
+  
+</head>
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="whereisr0da.github.io/blog/">Home</a></li>
+         
+        <li><a href="whereisr0da.github.io/blog/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" whereisr0da.github.io/blog/posts/2019-07-08-serana/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="whereisr0da.github.io/blog/posts/2020-06-30-vac-useless/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&text=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&title=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&is_video=false&description=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Quick%20analysis%20about%20Jar2exe%20protection%203&body=Check out this article: whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&title=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&title=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&title=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&title=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&name=Quick%20analysis%20about%20Jar2exe%20protection%203&description=Hi%0aToday%20I%20will%20show%20how%20I%20unpacked%20Jar2Exe%20protection%203.%0aI%20made%20a%20tool%20called%20Exe2Jar%20that%20unpack%20Jar2Exe%20protection%201%20and%202.%20It%20was%20a%20school%20project%20so%20I%20didn%26rsquo%3bt%20look%20that%20much%20to%20the%20protection%203%2c%20and%20someone%20shown%20me%20an%20issue%20about%20the%20output%20of%20my%20program%20regarding%20protection%203.%20So%20I%20decided%20to%20rework%20on%20it%2c%20and%20implement%20the%20protection%203%20support.%0aExe2Jar%20%3a%20https%3a%2f%2fgithub.com%2fwhereisr0da%2fexe2jar">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&t=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents"></nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        Quick analysis about Jar2exe protection 3
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2020-02-01 17:14:00 &#43;0000 UTC" itemprop="datePublished">2020-02-01</time>
+          
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <p>Hi</p>
+<p>Today I will show how I unpacked Jar2Exe protection 3.</p>
+<p>I made a tool called Exe2Jar that unpack Jar2Exe protection 1 and 2. It was a school project so I didn&rsquo;t look that much to the protection 3, and someone shown me an issue about the output of my program regarding protection 3. So I decided to rework on it, and implement the protection 3 support.</p>
+<p>Exe2Jar : <a href="https://github.com/whereisr0da/exe2jar">https://github.com/whereisr0da/exe2jar</a></p>
+<p><img src="/post_images/jar2exe/Screenshot_104.png" alt=""></p>
+<p>So if you&rsquo;re not familiar with Jar2Exe, know that the JAR File are stored in the Exectuable&rsquo;s Resources since protection 2.</p>
+<p>Just to prove my point, here is the original JAR File size on the left and the file size of the Encrypted RCDATA resource on the right.</p>
+<p><img src="/post_images/jar2exe/Screenshot_70.png" alt=""></p>
+<p>We have to see how the executable handle resource.</p>
+<p>So resources are used with functions like FindResourcesA etc&hellip; And as we can see, those functions are imported in the executable.</p>
+<p><img src="/post_images/jar2exe/Screenshot_71.png" alt=""></p>
+<p>We just have to follow them to see where there are used. In particular the FindResourcesA that return a ResInfo handle of a given resource id. And here, we found one call that used the same id as our Encrypted JAR File resource.</p>
+<p><img src="/post_images/jar2exe/Screenshot_72.png" alt=""></p>
+<p>This ResInfo handle is used here with the LockResource funtion that lock the resource for others thread and return the encrypted content pointer in memory. This pointer is stored in a register that will be used only one time, so we can think that the decryption process is made around here.</p>
+<p><img src="/post_images/jar2exe/Screenshot_73.png" alt=""></p>
+<p>I will switch to pseudo code to show you a more trivial representation of the code.</p>
+<p>I renamed some resource related objects and we can notice that the function also store the size of the Encrypted JAR File.</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="n">HMODULE</span> <span class="o">=</span> <span class="n">GetModuleHandleA</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="n">HRESINFO_RCDATA</span> <span class="o">=</span> <span class="n">FindResourceA</span><span class="p">(</span><span class="n">HMODULE</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xA</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">HRESINFO_RCDATA</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">SIZE_OR_RCDATA</span> <span class="o">=</span> <span class="n">SizeofResource</span><span class="p">(</span><span class="n">HMODULE</span><span class="p">,</span> <span class="n">HRESINFO_RCDATA</span><span class="p">);</span>
+<span class="n">HANDLE_RCDATA</span> <span class="o">=</span> <span class="n">LoadResource</span><span class="p">(</span><span class="n">HMODULE</span><span class="p">,</span> <span class="n">HRESINFO_RCDATA</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">HANDLE_RCDATA</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PTR_RCDATA</span> <span class="o">=</span> <span class="n">LockResource</span><span class="p">(</span><span class="n">HANDLE_RCDATA</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">PTR_RCDATA</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>So like mentioned earlier, the pointer to raw crypted data is only used by one function, and the size of that data is also used by this one. So it&rsquo;s an interesting one for us :)</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">sub_4045A0</span><span class="p">(</span><span class="n">SIZE_OR_RCDATA</span><span class="p">);</span>
+<span class="c1">// ...
+</span><span class="c1"></span><span class="n">strcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">STRING_0</span><span class="p">,</span> <span class="s">&#34;r1g2s3r4i5h6s7_8e9u0&#34;</span><span class="p">);</span>
+<span class="c1">// ...
+</span><span class="c1"></span><span class="n">sub_4110C0</span><span class="p">(</span><span class="n">PTR_RCDATA</span><span class="p">,</span> <span class="n">VAR_1</span><span class="p">,</span> <span class="n">SIZE_OR_RCDATA</span><span class="p">);</span>
+</code></pre></div><p>And its definitly look like something looping on a buffer to decrypt it. We can notice that the function iterates on a pointer in an argument that is increased at each round of the loop, loop that iterates for each byte of the encrypted data.</p>
+<p>NOTE : I&rsquo;m bad at crypto, so I&rsquo;m probably wrong about my re&hellip;</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">sub_4110C0</span><span class="p">(</span><span class="n">DWORD</span> <span class="o">*</span><span class="n">this</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">PTR_RCDATA</span><span class="p">,</span> <span class="n">BYTE</span> <span class="o">*</span><span class="n">OUTPUT_BUFFER</span><span class="p">,</span> <span class="kt">int</span> <span class="n">SIZE_OR_RCDATA</span><span class="p">){</span>
+
+    <span class="n">RESULT</span> <span class="o">=</span> <span class="n">SIZE_OR_RCDATA</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span> <span class="n">SIZE_OR_RCDATA</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">do</span>
+        <span class="p">{</span>
+            <span class="c1">// some crypto loop calling sub_411390, possible init ...
+</span><span class="c1"></span>
+            <span class="c1">// get the ciphered content
+</span><span class="c1"></span>            <span class="n">CRYPTED_BYTE</span> <span class="o">=</span> <span class="o">*</span><span class="n">PTR_RCDATA</span><span class="p">;</span>
+
+            <span class="c1">// some crypto loop again ...
+</span><span class="c1"></span>
+            <span class="c1">// the decryption routine
+</span><span class="c1"></span>            <span class="n">TMP_0</span> <span class="o">=</span> <span class="n">CRYPTED_BYTE</span> <span class="o">-</span> <span class="n">UNKNOWN_0</span><span class="p">;</span>
+            <span class="n">DECRYPTED_BYTE</span> <span class="o">=</span> <span class="n">this</span><span class="o">-&gt;</span><span class="n">OFFSET_568</span> <span class="o">^</span> <span class="n">this</span><span class="o">-&gt;</span><span class="n">OFFSET_577</span><span class="p">;</span>
+            <span class="n">DECRYPTED_BYTE</span> <span class="o">^=</span> <span class="n">TMP_0</span><span class="p">;</span>
+
+            <span class="c1">// update the ciphered content, with decrypted byte
+</span><span class="c1"></span>            <span class="o">*</span><span class="n">OUTPUT_BUFFER</span> <span class="o">=</span> <span class="n">DECRYPTED_BYTE</span><span class="p">;</span>
+
+            <span class="c1">// probably something linked to crypto algo
+</span><span class="c1"></span>            <span class="n">this</span><span class="o">-&gt;</span><span class="n">OFFSET_241</span> <span class="o">=</span> <span class="n">DECRYPTED_BYTE</span> <span class="o">^</span> <span class="n">this</span><span class="o">-&gt;</span><span class="n">OFFSET_241</span><span class="p">;</span>
+
+            <span class="n">RESULT</span> <span class="o">=</span> <span class="n">SIZE_OR_RCDATA</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">FINISH</span> <span class="o">=</span> <span class="n">SIZE_OR_RCDATA</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
+
+            <span class="o">++</span><span class="n">PTR_RCDATA</span><span class="p">;</span>
+            <span class="o">++</span><span class="n">OUTPUT_BUFFER</span><span class="p">;</span>
+            <span class="o">--</span><span class="n">SIZE_OR_RCDATA</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">while</span> <span class="p">(</span> <span class="o">!</span><span class="n">FINISH</span> <span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">RESULT</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>So we are sure that this function decrypt our JAR File. And after its call, [esp+0x2AC+OUTPUT_BUFFER] will be filled with the decrypted content.</p>
+<p><img src="/post_images/jar2exe/Screenshot_78.png" alt=""></p>
+<p>So from this, we can rush to the JAR File in memory and unpack it. But I want to understand how this function work, So I will continue to reverse it.</p>
+<p>While I was watching the decryption code, I was thinking that it was too complex to be created by there people. They will not reinvent the wheel if the goal of this wrapper is to execute Java code.</p>
+<p>So they probably used a library to achieve this, I look up about the strings and searched &ldquo;Crypt&rdquo; because in general, libraries like this leak a lot of string and patterns in the code. And I was right.</p>
+<p><img src="/post_images/jar2exe/Screenshot_79.png" alt=""></p>
+<p><img src="/post_images/jar2exe/Screenshot_80.png" alt=""></p>
+<p>I search on google some strings and I found this old weard chinese source code</p>
+<p>Apparently, this code is comming from an old encryption tool from 2002</p>
+<p><img src="/post_images/jar2exe/Screenshot_81.png" alt=""></p>
+<p>Probably the main program, I don&rsquo;t understand why they used this old code in the jar2exe stub</p>
+<p><img src="/post_images/jar2exe/2013122421292f45426.jpg" alt=""></p>
+<p>I quickly linked a string to the executable from the source code, and the function around it looks like the same code</p>
+<p><img src="/post_images/jar2exe/Screenshot_190.png" alt=""></p>
+<p>So I renamed this function and looked around xrefs, I found a vtable and, surprise, the decryption function that we reverse earlier is in it !</p>
+<p><img src="/post_images/jar2exe/Screenshot_91.png" alt=""></p>
+<p>So after renaming some functions, we can clearly understand the decrypt function reversed earlier</p>
+<p><img src="/post_images/jar2exe/Screenshot_84.png" alt=""></p>
+<p>And if we come back to the place where the decryption function is called, we can see some calls to XOR256Stream&rsquo;s functions, and with a little bit of analysis, we can understand what is dealt with.</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="c1">// setup the CXOR256Stream object
+</span><span class="c1"></span><span class="n">CXOR256Stream</span><span class="o">*</span> <span class="n">xor256</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CXOR256Stream</span><span class="o">::</span><span class="n">CXOR256Stream</span><span class="p">();</span>
+<span class="c1">// get serial string from EOF
+</span><span class="c1"></span><span class="kt">char</span><span class="o">*</span> <span class="n">serialStr</span> <span class="o">=</span> <span class="n">GetSerial</span><span class="p">();</span>
+<span class="kt">char</span> <span class="n">keyStr</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;r1g2s3r4i5h6s7_8e9u0&#34;</span><span class="p">;</span>
+<span class="c1">// get the first 21 chars &#34;r1g2s3r4i5h6s7_8&#34;
+</span><span class="c1"></span><span class="kt">char</span><span class="o">*</span> <span class="n">keyStrFirst21</span> <span class="o">=</span> <span class="n">SubStr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">keyStr</span><span class="p">,</span> <span class="mi">21</span><span class="p">);</span>
+<span class="c1">// add the key to the serial
+</span><span class="c1"></span><span class="kt">char</span><span class="o">*</span> <span class="n">finalKey</span> <span class="o">=</span> <span class="n">AddToStr</span><span class="p">(</span><span class="n">serialStr</span><span class="p">,</span> <span class="n">keyStrFirst21</span><span class="p">);</span>
+<span class="c1">// init blocks in function of key
+</span><span class="c1"></span><span class="n">xor256</span><span class="o">-&gt;</span><span class="n">Initialize</span><span class="p">(</span><span class="n">finalKey</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">finalKey</span><span class="p">),</span> <span class="mi">4</span><span class="p">);</span>
+<span class="c1">// reset blocks
+</span><span class="c1"></span><span class="n">xor256</span><span class="o">-&gt;</span><span class="n">ResetChain</span><span class="p">();</span>
+<span class="c1">// decrypt the data in function of key blocks
+</span><span class="c1"></span><span class="n">xor256</span><span class="o">-&gt;</span><span class="n">Decrypt</span><span class="p">(</span><span class="n">PTR_RCDATA</span><span class="p">,</span> <span class="n">DECRYPTED_PTR</span><span class="p">,</span> <span class="n">SIZE_OF_RCDATA</span><span class="p">);</span>
+</code></pre></div><p>So as we can see, the XOR256Stream class is initialised with a key and a round number (4), so only thing we have to get to decrypt the JAR File is the key.</p>
+<p>The code above shows that it grabbe the &ldquo;serial key&rdquo; of the jar2exe customer stored after the PE EOF (but it&rsquo;s definitely looking like a timecode), and add it a string cut at the 21th char.</p>
+<p>From this we just have to get the serial key and use it to decrypt the JAR File and we are done about the unpack !</p>
+<p>I coded a little C++ program that does this stuff like the Jar2Exe stub</p>
+<p><img src="/post_images/jar2exe/Screenshot_92.png" alt=""></p>
+<p>And we have decrypted the JAR File !</p>
+<p>If you don&rsquo;t know it, JAR Files are ZIP Files that contain CLASS File that contain the Java bytecode.</p>
+<p>And about that we have only one problem, names in the JAR File are randomized, so we have to reconstruct the archive like a normal JAR File.</p>
+<p><img src="/post_images/jar2exe/Screenshot_95.png" alt=""></p>
+<p>So we have just to rename decrypted files to reconstruct the original archive.</p>
+<p>Example of JAR File :</p>
+<p><img src="/post_images/jar2exe/Screenshot_96.png" alt=""></p>
+<p>First the main file of JAR File that indicate the Entrypoint CLASS : MANIFEST.MF</p>
+<p>In my case it&rsquo;s the b5f78a55 file</p>
+<p><img src="/post_images/jar2exe/Screenshot_97.png" alt=""></p>
+<p>We can see that the Main-Class is &ldquo;testapp.TestApp&rdquo;</p>
+<p>So we know that there is a namespace/package called &ldquo;testapp&rdquo; and a class named &ldquo;TestApp&rdquo;.</p>
+<p>For each package, we will create a directory, and place each class in its own directory.</p>
+<p>And rename the b5f78a55 to MANIFEST.MF and put it in a META-INF directory</p>
+<p><img src="/post_images/jar2exe/Screenshot_98.png" alt=""></p>
+<p>We have only one file left, it&rsquo;s probably the CLASS File.</p>
+<p><img src="/post_images/jar2exe/Screenshot_99.png" alt=""></p>
+<p>Each class file content its path in the program (package + class name), so we just have to disassemble the Java class to get this one (you can use a decompiler but some don&rsquo;t want to load renamed classes).</p>
+<p><img src="/post_images/jar2exe/Screenshot_100.png" alt=""></p>
+<p>So now we have the file class name and path !</p>
+<p>We just have to apply it to the folder and recompress the archive and rename the zip to jar.</p>
+<p><img src="/post_images/jar2exe/Screenshot_101.png" alt=""></p>
+<p>And voila :0</p>
+<p><img src="/post_images/jar2exe/Screenshot_102.png" alt=""></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>It was not very hard, but I was lucky to find the crypto lib.</p>
+<p>I will implement the protection 3 support in my tool, but Java is not that friendly regarding crypto (not unsigned values etc&hellip;) so first I think I will leave the C++ program decrypt the stub. And after I will implement the crypto thing.</p>
+<p>And don&rsquo;t leave those library strings and paterns in your stub.</p>
+<h1 id="r0da">~r0da</h1>
+
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="whereisr0da.github.io/blog/">Home</a></li>
+         
+          <li><a href="whereisr0da.github.io/blog/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents"></nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&text=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&title=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&is_video=false&description=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Quick%20analysis%20about%20Jar2exe%20protection%203&body=Check out this article: whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&title=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&title=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&title=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&title=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&name=Quick%20analysis%20about%20Jar2exe%20protection%203&description=Hi%0aToday%20I%20will%20show%20how%20I%20unpacked%20Jar2Exe%20protection%203.%0aI%20made%20a%20tool%20called%20Exe2Jar%20that%20unpack%20Jar2Exe%20protection%201%20and%202.%20It%20was%20a%20school%20project%20so%20I%20didn%26rsquo%3bt%20look%20that%20much%20to%20the%20protection%203%2c%20and%20someone%20shown%20me%20an%20issue%20about%20the%20output%20of%20my%20program%20regarding%20protection%203.%20So%20I%20decided%20to%20rework%20on%20it%2c%20and%20implement%20the%20protection%203%20support.%0aExe2Jar%20%3a%20https%3a%2f%2fgithub.com%2fwhereisr0da%2fexe2jar">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=whereisr0da.github.io%2fblog%2fposts%2f2020-02-01-jar2exe%2f&t=Quick%20analysis%20about%20Jar2exe%20protection%203">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2021  r0da 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="whereisr0da.github.io/blog/">Home</a></li>
+         
+        <li><a href="whereisr0da.github.io/blog/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=/whereisr0da.github.io/blog/lib/font-awesome/css/all.min.css>
+<script src=/whereisr0da.github.io/blog/lib/jquery/jquery.min.js></script>
+<script src=/whereisr0da.github.io/blog/js/main.js></script>
+
+
+
+</html>
