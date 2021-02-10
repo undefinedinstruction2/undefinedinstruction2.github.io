@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on r0da&#39;s Blog</title>
-    <link>whereisr0da.github.io/blog/posts/</link>
+    <link>/posts/</link>
     <description>Recent content in Posts on r0da&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>r0da</copyright>
-    <lastBuildDate>Wed, 03 Feb 2021 10:14:00 +0000</lastBuildDate><atom:link href="whereisr0da.github.io/blog/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 03 Feb 2021 10:14:00 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Bypassing 12 years old Xbox 360 Game Security</title>
-      <link>whereisr0da.github.io/blog/posts/2021-01-07-forza-check/</link>
+      <link>/posts/2021-01-07-forza-check/</link>
       <pubDate>Wed, 03 Feb 2021 10:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2021-01-07-forza-check/</guid>
+      <guid>/posts/2021-01-07-forza-check/</guid>
       <description>Hi
 Today I will show you how I&amp;rsquo;ve bypassed Forza 3 savegame encryption.
 Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&amp;rsquo;ve tried my favorite game on it. But there is a problem, Forza 3 cipher its savegames, and as Xenia is in dev, Forza 3 crash when you try to load a savegame. As I did worked a lot on Forza when I was young, I tried to look around the issue and I successfully bypass the savegame encryption.</description>
@@ -21,10 +21,10 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
     
     <item>
       <title>20% Simples principles to not be cracked</title>
-      <link>whereisr0da.github.io/blog/posts/2021-02-08-simple-prat/</link>
+      <link>/posts/2021-02-08-simple-prat/</link>
       <pubDate>Thu, 28 Jan 2021 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2021-02-08-simple-prat/</guid>
+      <guid>/posts/2021-02-08-simple-prat/</guid>
       <description>Hi
 So it&amp;rsquo;s been a while I&amp;rsquo;m doing re, and specialy cracking stuff. Sometime I found some complet mess about security in those softwares,
 Here is a list of ,
@@ -33,10 +33,10 @@ If is commercial  Don&amp;rsquo;t leave debug strings in final product Don&amp;r
     
     <item>
       <title>Quick look around VMP - Part 2 : Code Mutation</title>
-      <link>whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/</link>
+      <link>/posts/2021-01-26-vmp-2/</link>
       <pubDate>Tue, 26 Jan 2021 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/</guid>
+      <guid>/posts/2021-01-26-vmp-2/</guid>
       <description>Hi
 Here is my short research about VMP mutation engine.
 VMProtect is a well known protection with a lot of features, its core one is its virtualization engine. It&amp;rsquo;s a very good and optimized one, even if elite crackz say that it&amp;rsquo;s not at the level of Themida. Cracking its virtualization engine is time consuming, so I&amp;rsquo;m not specialy focused on it right now. But there is another feature of VMP that is interesting for me, its code mutation engine.</description>
@@ -44,10 +44,10 @@ VMProtect is a well known protection with a lot of features, its core one is its
     
     <item>
       <title>Virtualization in commercial products</title>
-      <link>whereisr0da.github.io/blog/posts/2020-10-27-virtual-in-com/</link>
+      <link>/posts/2020-10-27-virtual-in-com/</link>
       <pubDate>Tue, 27 Oct 2020 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2020-10-27-virtual-in-com/</guid>
+      <guid>/posts/2020-10-27-virtual-in-com/</guid>
       <description>Hi all.
 Last april, I looked to a commercial software to see how it was protected. It was using Themida 3.0, a very very good virtualization with custom vms, optimized bitcode and stuff.. But after looking around it for one hour, I figured out that some very important parts of the code were not virtualized. In fact, the entier license system were clear x64 !
 Today I will try to talk about it without revealing the software for obvious reasons.</description>
@@ -55,10 +55,10 @@ Today I will try to talk about it without revealing the software for obvious rea
     
     <item>
       <title>How inject code intro PE executables</title>
-      <link>whereisr0da.github.io/blog/posts/2020-10-21-inject-code/</link>
+      <link>/posts/2020-10-21-inject-code/</link>
       <pubDate>Wed, 21 Oct 2020 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2020-10-21-inject-code/</guid>
+      <guid>/posts/2020-10-21-inject-code/</guid>
       <description>Hi, all.
 Last year, I thought it could be a great idea to combine all possible ways to modify code of an executable in a thread. And one year later this is it ! the post is out ! (thanks to caffeine)
 There is a lot of reason why modify / inject code in an assembled executable :
@@ -67,19 +67,19 @@ There is a lot of reason why modify / inject code in an assembled executable :
     
     <item>
       <title>Improvements of fuzzing techniques in Vuzzer</title>
-      <link>whereisr0da.github.io/blog/posts/2020-08-06-vuzzer/</link>
+      <link>/posts/2020-08-06-vuzzer/</link>
       <pubDate>Thu, 06 Aug 2020 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2020-08-06-vuzzer/</guid>
+      <guid>/posts/2020-08-06-vuzzer/</guid>
       <description>Not implemented yet, see it on my old blog : https://whereisr0da.blogspot.com/2020/08/improvements-of-fuzzing-techniques-in.html</description>
     </item>
     
     <item>
       <title>Why last VAC Anticheat update is useless</title>
-      <link>whereisr0da.github.io/blog/posts/2020-06-30-vac-useless/</link>
+      <link>/posts/2020-06-30-vac-useless/</link>
       <pubDate>Tue, 30 Jun 2020 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2020-06-30-vac-useless/</guid>
+      <guid>/posts/2020-06-30-vac-useless/</guid>
       <description>A couple of days ago, Valve released a new update for CSGO, that &amp;ldquo;improve&amp;rdquo; its already pointless anticheat. And I decided to make a thread about it because it&amp;rsquo;s stupidly funny.
 The article blur In this article, they detail :
 I will analyse this by paragraphs.
@@ -88,10 +88,10 @@ So let&amp;rsquo;s start with the second one, they will &amp;ldquo;restricts&amp
     
     <item>
       <title>Quick analysis about Jar2exe protection 3</title>
-      <link>whereisr0da.github.io/blog/posts/2020-02-01-jar2exe/</link>
+      <link>/posts/2020-02-01-jar2exe/</link>
       <pubDate>Sat, 01 Feb 2020 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2020-02-01-jar2exe/</guid>
+      <guid>/posts/2020-02-01-jar2exe/</guid>
       <description>Hi
 Today I will show how I unpacked Jar2Exe protection 3.
 I made a tool called Exe2Jar that unpack Jar2Exe protection 1 and 2. It was a school project so I didn&amp;rsquo;t look that much to the protection 3, and someone shown me an issue about the output of my program regarding protection 3. So I decided to rework on it, and implement the protection 3 support.
@@ -100,10 +100,10 @@ Exe2Jar : https://github.com/whereisr0da/exe2jar</description>
     
     <item>
       <title>Serana Library Project</title>
-      <link>whereisr0da.github.io/blog/posts/2019-07-08-serana/</link>
+      <link>/posts/2019-07-08-serana/</link>
       <pubDate>Mon, 08 Jul 2019 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2019-07-08-serana/</guid>
+      <guid>/posts/2019-07-08-serana/</guid>
       <description>Hi
 Today I will present my current project Serana.
 What is it ? Serana is a .NET library that can parse windows executables
@@ -114,10 +114,10 @@ These objects could be exported (raw file buffers) separately after modifying th
     
     <item>
       <title>Encrypt functions in Windows executables</title>
-      <link>whereisr0da.github.io/blog/posts/2019-06-29-encrypt-func/</link>
+      <link>/posts/2019-06-29-encrypt-func/</link>
       <pubDate>Sat, 29 Jun 2019 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2019-06-29-encrypt-func/</guid>
+      <guid>/posts/2019-06-29-encrypt-func/</guid>
       <description>This is a part of my tutorial on how to protect windows executables, so is a little bit disconnected from my others posts, but in wait of my big tutorial I publish this anyway.
 Something that you can apply with the others encryption tricks in PE files is the encryption of function, and decrypting at calling time.
 I found this trick with the Zer0Mem0ry post originaly made to bypass memory signatures checks by encrypt functions at runtime.</description>
@@ -125,10 +125,10 @@ I found this trick with the Zer0Mem0ry post originaly made to bypass memory sign
     
     <item>
       <title>Exe2Jar release</title>
-      <link>whereisr0da.github.io/blog/posts/2019-06-28-exe2jar/</link>
+      <link>/posts/2019-06-28-exe2jar/</link>
       <pubDate>Fri, 28 Jun 2019 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2019-06-28-exe2jar/</guid>
+      <guid>/posts/2019-06-28-exe2jar/</guid>
       <description>Today I will share a little tool called Exe2Jar
 This is an Jar2Exe executable unpacker
 Jar2exe is a wrapper cross platform for JAR files that allows the execution of JAR files through a windows, linux or mac executable while the JRE is installed.
@@ -138,19 +138,19 @@ I did it for school project with the goal to make a Java program using Object Pr
     
     <item>
       <title>Deceive the cross references analyse</title>
-      <link>whereisr0da.github.io/blog/posts/2019-06-25-xref/</link>
+      <link>/posts/2019-06-25-xref/</link>
       <pubDate>Tue, 25 Jun 2019 17:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2019-06-25-xref/</guid>
+      <guid>/posts/2019-06-25-xref/</guid>
       <description>One of the usefull thing in reverse engenering is xrefs (cross-references), with a complet analyse of all the PE, variables and function addresses can be linked to functions where they are called or used. This simplify drasticly the reverse engenering, but xrefs can be a problem in case of security check. If you have a big executable and you want to look at the license check system, a string like “Check License” or “Enter License” can be find easily and the xrefs associated to him will show you directly what you wanted to find.</description>
     </item>
     
     <item>
       <title>[FR] Le hooking de function</title>
-      <link>whereisr0da.github.io/blog/posts/2019-06-24-function-hooking/</link>
+      <link>/posts/2019-06-24-function-hooking/</link>
       <pubDate>Mon, 24 Jun 2019 15:14:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2019-06-24-function-hooking/</guid>
+      <guid>/posts/2019-06-24-function-hooking/</guid>
       <description>Aujourd&amp;rsquo;hui j&amp;rsquo;ai voulu faire un petit thread sur le hooking.
 Le hooking de fonction est le fait de rediriger l’exécution d&amp;rsquo;une fonction d&amp;rsquo;un exécutable vers du code qui n&amp;rsquo;est pas le sien.
 Ceci peut être fait en deux étapes :
@@ -159,10 +159,10 @@ Ceci peut être fait en deux étapes :
     
     <item>
       <title>KoreanCTF : CSHARP Write-Up</title>
-      <link>whereisr0da.github.io/blog/posts/2019-02-27-korean-ctf/</link>
+      <link>/posts/2019-02-27-korean-ctf/</link>
       <pubDate>Wed, 27 Feb 2019 17:41:00 +0000</pubDate>
       
-      <guid>whereisr0da.github.io/blog/posts/2019-02-27-korean-ctf/</guid>
+      <guid>/posts/2019-02-27-korean-ctf/</guid>
       <description>Hi people
 Starting a blogspot by reversing a .Net PE sound weird to me, but I need to start somewhere :p
 This a Write Up about a Korean CTF challenge, the one is named CSHARP It&amp;rsquo;s not really hard (because of .net) but I found it interresting
