@@ -201,23 +201,23 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
 <p>Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&rsquo;ve tried my favorite game on it. But there is a problem, Forza 3 cipher its savegames, and as Xenia is in dev, Forza 3 crash when you try to load a savegame. As I did worked a lot on Forza when I was young, I tried to look around the issue and I successfully bypass the savegame encryption.</p>
 <p>Back in old good days, with savegame modding with tools such as Xbox360Tool, published on X360Haven forum, RIP. I remember that Forza always used crypto (AES) for there games since Forza 2, so I thouth it could be related to that.</p>
 <p>To start somewhere, I&rsquo;ve ripped my game disk with my RGH console, and uploaded it to my PC. This is the issue when you try to load a savegame made from Xenia or my retail xbox kernel.</p>
-<p><img src="/post_images/forza/46.gif" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/46.gif" alt=""></p>
 <p>NOTE : My knowledge of xboxkrnl and PPC is null, and I don&rsquo;t like the syntax of it, but I will try to fix the issue anyway.</p>
 <h2 id="lets-reverse">Let&rsquo;s reverse</h2>
 <p>Like I said, the only thing I know about Forza savegame is that they are ciphered, and Forza love AES. So I started with this in mind because searching in such big executable could took a long time.</p>
 <p>So there are 2 possible choises, Forza implemented AES by head in the executable, or they used the crypto Xbox Kernel API (xboxkrnl). First thing first, let&rsquo;s take a look at the savegame its self (crafted with Xenia).</p>
-<p><img src="/post_images/forza/Screenshot_191.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_191.png" alt=""></p>
 <p>The file that contain the main information about your gameplay is in <code>ForzaProfile</code>. When we look at it, we can see a header and an ciphered buffer, due to its entropy.</p>
-<p><img src="/post_images/forza/Screenshot_192.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_192.png" alt=""></p>
 <p>Now let&rsquo;s take a look at the executable, let&rsquo;s find out if there is some informations about savegame or AES. Nothing interesting for thoses two.</p>
-<p><img src="/post_images/forza/Screenshot_1934.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_1934.png" alt=""></p>
 <p>The vtables you can see on the screenshot is not linked to the code btw. Note that this vtable <code>.?AVCForzaProfileManager@Forza2@@</code> has as main namespace <code>Forza2</code>. So this confirm that Forza use this system since Forza 2, and possibly didn&rsquo;t change since (in fact, it&rsquo;s the same for Forza 2,3,4 and Horizon 1 and 2)</p>
 <p>I did a pattern scan, to see if there is some crypto, hashing data pattern, but this lead to nothing. So I looked around imports, and I found this :</p>
-<p><img src="/post_images/forza/Screenshot_193.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_193.png" alt=""></p>
 <p>Forza seems to use crypto xboxkrnl api, and I felt very lucky when I saw that there is only two call to this function.</p>
-<p><img src="/post_images/forza/Screenshot_1912.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_1912.png" alt=""></p>
 <p>Here are those function :</p>
-<p><img src="/post_images/forza/Screenshot_1923.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_1923.png" alt=""></p>
 <p>So I reversed those two, some informations were found because of findings found later</p>
 <div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span> <span class="nf">sub_825F18E0</span><span class="p">(</span><span class="n">u0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">BYTE</span><span class="o">*</span> <span class="n">HMAC_SHA1_KEY_XOR_XUID</span><span class="p">,</span> <span class="n">BYTE</span><span class="o">*</span> <span class="n">AES_KEY_XOR_XUID</span><span class="p">){</span>
     <span class="c1">// ...
@@ -272,7 +272,7 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
 <span class="c1">// ...
 </span><span class="c1"></span><span class="n">sub_822680A0</span><span class="p">(</span><span class="n">TMP_0</span><span class="p">,</span> <span class="s">&#34;GAME:</span><span class="se">\\</span><span class="s">Media</span><span class="se">\\</span><span class="s">ProfileSchema</span><span class="se">\\</span><span class="s">ForzaProfile.sch&#34;</span><span class="p">);</span>
 </code></pre></div><p>A .sch schema file is used after the file load</p>
-<p><img src="/post_images/forza/Screenshot_19133.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_19133.png" alt=""></p>
 <p>This schema define how to parse the ForzaProfile file, so this code convised me that it&rsquo;s the decryption routine when the game is loading a savegame.</p>
 <p>And the last reason, the most obvious, is that the last argument of XeKeysAesCbcUsingKey is <code>encrypt</code>. Like each low level implementation of AESCBC, this mean decrypt if 0, and encrypt if 1.</p>
 <div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">dword_result_t</span> <span class="nf">XeKeysAesCbcUsingKey</span><span class="p">(...,</span> <span class="n">dword_t</span> <span class="n">encrypt</span><span class="p">);</span>
@@ -336,21 +336,21 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
 <span class="n">ForzaProfile_t</span> <span class="n">profile</span> <span class="err">@</span> <span class="mh">0x0</span><span class="p">;</span>
 </code></pre></div><p>Now, we can try to decrypt a real Forza 3 savegame with a real xbox kernel to see if the reverse is accurate.</p>
 <p>Here, the save from a real kernel on the left, and Xenia one on the right :</p>
-<p><img src="/post_images/forza/Screenshot_640.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_640.png" alt=""></p>
 <p>It&rsquo;s clear that the header of the real savegame contain a proper hash and IV, compared to the Xenia one.</p>
 <p>Honorable mention to the ciphering, we can&rsquo;t distinguish the header from ciphered data.</p>
 <h2 id="first-try">First try</h2>
 <p>To make sure my reverse is right, I&rsquo;ve tried to decipher the real savegame to see if I&rsquo;m correct.</p>
 <div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">TODO</span>
 </code></pre></div><p>Using my XUID <code>E0000183AE******</code>, I&rsquo;ve xorred the AES key and deciphered the savegame content, and :</p>
-<p><img src="/post_images/forza/Screenshot_641.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_641.png" alt=""></p>
 <p>It worked :)</p>
 <p>Now we know that my algorithm is correct, we can try to figure out what&rsquo;s wrong with Xenia.</p>
 <p>Let&rsquo;s decipher the savegame made under Xenia, using this <code>B13EBABEBABEBABE</code> as XUID, the one used by Xenia (<a href="https://github.com/xenia-project/xenia/blob/6cb8f0aab4a647ebab9ab98c051d40cb3c2fbc90/src/xenia/kernel/xam/user_profile.cc#L27">code</a>)</p>
-<p><img src="/post_images/forza/Screenshot_642.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_642.png" alt=""></p>
 <p>Failed, so the issue is about parameters (hash and IV).</p>
 <p>If we take a closer look to the data, specialy the IV, we can see that it contain the crypted buffer size <code>0x15B1</code></p>
-<p><img src="/post_images/forza/Screenshot_643.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_643.png" alt=""></p>
 <p>But remember, it should be ciphered by this line :</p>
 <div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">iProfileSize</span> <span class="o">^=</span> <span class="n">IV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">^</span> <span class="n">IV</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">^</span> <span class="p">(</span><span class="n">IV</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0xFFFFFFF0</span><span class="p">);</span>
 </code></pre></div><p>So there is definitly something wrong above the AES encryption.</p>
@@ -358,12 +358,12 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
 <p>Now that we know aproximativly how Forza loads savegame, could we find the issue ?</p>
 <p>During my documentation, I found this about XeKeysObscureKey : <a href="https://github.com/xenia-project/xenia/pull/1747">https://github.com/xenia-project/xenia/pull/1747</a></p>
 <p>It seems that the issue is that Xenia don&rsquo;t implement XeKeysHmacShaUsingKey.</p>
-<p><img src="/post_images/forza/Screenshot_1916.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_1916.png" alt=""></p>
 <p>As the XeKeysHmacShaUsingKey and XeKeysAesCbcUsingKey functions uses obscuration keys in addition of all other thing mentioned above. The call to XeKeysObscureKey followed by XeKeysHmacShaUsingKey should produce kind of keychain kernel land or something like that. The keyvault contain could be used to crypto as XeKeysAesCbcUsingKey does, so without the call of XeKeysHmacShaUsingKey, everything should produce a bad file.</p>
 <p>I didn&rsquo;t reversed the entire code, so I can&rsquo;t say it&rsquo;s the only thing that produce the bug. But I&rsquo;m sure that the ciphering is the main reason why Forza can&rsquo;t load the savegame.</p>
 <p>I&rsquo;ve also found this issue : <a href="https://github.com/xenia-project/xenia/pull/1440">https://github.com/xenia-project/xenia/pull/1440</a></p>
 <p>Apparently, keys used to obscure data while calling XeKeysObscureKey and XeKeysAesCbcUsingKey are null</p>
-<p><img src="/post_images/forza/Screenshot_644.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_644.png" alt=""></p>
 <p>This should not affect the &ldquo;crypto&rdquo; behavior as the key is null, but it&rsquo;s still something that produce a different behavior of a real xboxkrnl regarding savegame.</p>
 <h2 id="lets-patch">Let&rsquo;s patch</h2>
 <p>How to fix it, first choise, we remove the crypto from savegame loading and saving routine. Second choise, we implement XeKeysHmacShaUsingKey in xenia, but there is maybe another bug somewhere else.</p>
@@ -403,11 +403,11 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
 <p><a href="https://github.com/mojobojo/PublicXboxStuff/blob/master/PPC/ForzaHax.S">https://github.com/mojobojo/PublicXboxStuff/blob/master/PPC/ForzaHax.S</a></p>
 <p>A guy named mojobojo already did that for Forza 4, the exact same way as my plan. So&hellip; I will do the same thing since there is not 100 methods to do it.</p>
 <p>First we need to patch the strcmp comparison to zero in BREAK_FAIL block. We could just nop the cmpwi (compare word immediate), and nop the bne (branch not equl), so the comparison is not done, and the code continue directly in AES decryption routine.</p>
-<p><img src="/post_images/forza/Screenshot_646.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_646.png" alt=""></p>
 <p>Then, we can nop the AES decryption, the bl XeKeysAesCbcUsingKey (branch), the cmpwi of the XeKeysAesCbcUsingKey result and the blt loc_825F1EB0 (branch if less than)</p>
-<p><img src="/post_images/forza/Screenshot_645.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_645.png" alt=""></p>
 <p>And the same in AES encryption routine&hellip;</p>
-<p><img src="/post_images/forza/Screenshot_647.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/Screenshot_647.png" alt=""></p>
 <p>Using xextool I&rsquo;ve decompressed and decrypted the main executable, and using xepatcher, I&rsquo;ve the following patch to it</p>
 <div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># nop file encryption
 </span><span class="cp"></span><span class="p">.</span><span class="kt">long</span> <span class="mh">0x825F1E08</span> 
@@ -437,7 +437,7 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
 
 <span class="p">.</span><span class="kt">long</span> <span class="mh">0xFFFFFFFF</span>
 </code></pre></div><p>And voila :)</p>
-<p><img src="/post_images/forza/45.gif" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/forza/45.gif" alt=""></p>
 <h2 id="conclusion">Conclusion</h2>
 <p>Done, now I can save, load and play my game :0 And change my money ingame as well :p</p>
 <p>Ciphering savegame data with XUID is cleaver, Forza was well made regarding its gameplay, and I&rsquo;m happy to see that its security was good too.</p>

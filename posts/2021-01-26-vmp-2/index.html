@@ -211,41 +211,41 @@ VMProtect is a well known protection with a lot of features, its core one is its
 <h2 id="introduction">Introduction</h2>
 <p>First of all, know that you need to <code>mark</code> functions all functions that you want to mutate, in the code (call to <code>VMProtectBeginMutation</code>), or from the VMP software (marking manualy from addresses or using PDB files). So to do a quick link to my <code>Virtualization in commercial products</code> post, if you just apply the protection without marking any functions (like some software do), VMP is useless.</p>
 <p>To learn more about the code mutation, I made a template function and I mutated it 20 times.</p>
-<p><img src="/post_images/vmp_1/MUTATION.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/MUTATION.png" alt=""></p>
 <p>Each mutated function in the code section is jumping to a VMP section that contain the next code to execute. Because modifing (insertion) the original code section made by the compiler is not doable without destroying the entire code structure. So VMP store all mutated functions in a new section to avoid size problems (see: TODO:Insert Code in PE).</p>
 <p>VMP mutation is a combination of a lot of tricks, code mutation, junkcode, control flow and block unalignment.</p>
 <h2 id="junkcode-and-mutation">Junkcode and mutation</h2>
 <p>When I start looking into it, I was really surprised to see that VMP is not focused on mutating original instructions. Original instructions are only mutated 1/2 (based on what I&rsquo;ve saw, could be wrong about it).</p>
 <p>However, it&rsquo;s not a bad thing at all, VMP is known for its research about optimizion. And if they do real code mutation 1/2, there must be a reason.</p>
 <p>Anyway, the main thing that change when you compare mutated functions is the junkcode insertion.</p>
-<p><img src="/post_images/vmp_1/MUTATION_SEEM.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/MUTATION_SEEM.png" alt=""></p>
 <p>You can see in red junkcodes, it&rsquo;s inserted after each original or mutated instructions. The number of junk instruction is between 0 and 3. Frequently, junk instructions that follows the original instruction use a register that will be overrided by the next original instruction.</p>
 <p>Also, as you can see, instructions used by the junkcode generation are uncommun, and you can spot them easily. For exemple : rcr, bt, btc, sbb, lahf . . .</p>
 <h2 id="control-flow">Control flow</h2>
 <p>Like I said, VMP use control flow protection. It&rsquo;s focused on jumps across all basic blocks and not conditional jumps, so the original control flow could be visible even after mutation.</p>
-<p><img src="/post_images/vmp_1/MUTATION_REAL.png" alt=""></p>
-<p><img src="/post_images/vmp_1/MUTATION_REAL_2.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/MUTATION_REAL.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/MUTATION_REAL_2.png" alt=""></p>
 <h2 id="block-positioning">Block positioning</h2>
 <p>About the control flow, each basic block (code block) is placed in a certain maner with the goal of trick the reverser.</p>
 <h3 id="function-splitting">Function splitting</h3>
 <p>Let&rsquo;s illustrat with a code section, here in dark grey :</p>
-<p><img src="/post_images/vmp_1/CODE_REP.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/CODE_REP.png" alt=""></p>
 <p>As you can see on the first part, the instructions are melt in one block as functions.</p>
 <p>The part in light grey is the padding (null bytes or <code>0xCC</code> int3 instructions) between functions in the code section. This padding is produced by the compiler to follow the <code>Function Alignment</code> (see: TODO).</p>
 <h3 id="block-unalignment">Block unalignment</h3>
 <p>In addition to function splitting, VMP use random sized paddings between codes. For exemple, here is an alignment that could be created by a compiler.</p>
-<p><img src="/post_images/vmp_1/BLOCK_1.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/BLOCK_1.png" alt=""></p>
 <p>As you can see, the first in green is followed by <code>0xCC</code> bytes, it&rsquo;s a one byte instruction that produce a debug even if executed. In this case it&rsquo;s not supposed to happend, but this one byte instruction keep the &ldquo;aligment&rdquo; of each next executed code (see the begin of <a href="TODO">this</a> post if you have trouble to understand)</p>
 <p>Next, let&rsquo;s take a look at the alignment of VMP mutated code :</p>
-<p><img src="/post_images/vmp_1/BLOCK_2.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/BLOCK_2.png" alt=""></p>
 <p>Here the first code in green is executed, but at some point, it will jump to somewhere in the code (the second part in green), but we don&rsquo;t know where. So the code below the <code>call sub_863AF7</code> will never be executed, but the dissasembler don&rsquo;t know it and dissasemble it anyway. And it&rsquo;s junk padding ! random data to fool the dissasembler. And as you can see with the code in red, it&rsquo;s completly wrong.</p>
 <p>This is the right way to dissasemble it :</p>
-<p><img src="/post_images/vmp_1/BLOCK_3.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/BLOCK_3.png" alt=""></p>
 <p>But to know that, we have to launch the executable and follow the flow of its execution to mark all the travelled blocks.</p>
 <h2 id="concrate-example">Concrate example</h2>
 <p>In a concreate example, here C++ function &hellip;.</p>
 <p>the mutation is focused on control flow</p>
-<p><img src="/post_images/vmp_1/MUTATION_REG.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/MUTATION_REG.png" alt=""></p>
 <h2 id="conclusion">Conclusion</h2>
 <p>VMP is impressive, and its mutation engine could make reverse or devirtualization process way longuer that it should, even if the junkcode could be spotted. With high performance optimizations, the junk instructions could be hard to split from the real code in so cases (C++ and other virtualised stuff).</p>
 <h1 id="r0da">~r0da</h1>

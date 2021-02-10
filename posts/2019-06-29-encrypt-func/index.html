@@ -203,38 +203,38 @@ I found this trick with the Zer0Mem0ry post originaly made to bypass memory sign
 <p>This is, again, to make at the end of the software conception, because addresses will be modified for each little changes, so first we will setup all code stuff, with the right space in memory, and after we edit the code with right addresses</p>
 <h2 id="proof-of-concept">Proof Of Concept</h2>
 <p>Here is the function that we wanted to protect</p>
-<p><img src="/post_images/encrypt_function/Screenshot_0.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_0.png" alt=""></p>
 <p>As I said, its address will be hardcoded so take a <code>DWORD</code> to store it (we will edit it after)
 The lenght is the size of the function (hardcoded again)</p>
 <p>I remove one byte to the encrypted buffer because for some reason that I could&rsquo;nt explain, the clean decrypted full buffer in memory will make a unknow exception when the <code>EIP</code> points to him. So to solve that, I just leave the <code>0x55</code> (push ebp) opcode.</p>
 <p>If someone could explain this issue, it would be appreciated.</p>
-<p><img src="/post_images/encrypt_function/Screenshot_1.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_1.png" alt=""></p>
 <p>Here is the main function, we change the secret_function protection page status so we can write over it, and we call the decryption function before call the <code>secret_function</code>, again we can make more efficient way to place the decryption function, but I leave this here</p>
-<p><img src="/post_images/encrypt_function/Screenshot_2.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_2.png" alt=""></p>
 <p>So now, we have the decrypt function, to win time, I will use XOR encryption (because it is the easiest), but you can use any encryption algorithm</p>
 <p>I print a hexdump of the secret_function before and after xoring</p>
 <p>After taking each byte of the function, I xor all with <code>0x25</code> as key, and I write the result at the same place</p>
-<p><img src="/post_images/encrypt_function/Screenshot_3.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_3.png" alt=""></p>
 <p>Just to show the dump function</p>
-<p><img src="/post_images/encrypt_function/Screenshot_4.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_4.png" alt=""></p>
 <p>Now all is ready to work, we have to compile it and grab the address given to us secret_function</p>
-<p><img src="/post_images/encrypt_function/Screenshot_5.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_5.png" alt=""></p>
 <p>So it will be <code>0x4119b0</code></p>
 <p>For some&rsquo;s weird reasons, Visual C++ compiler make a sub function before the call of the real function, It&rsquo;s why I hardcoded the function address. Because when I took the <code>secret_function</code> pointer, is pointing to the function at <code>0x411163</code> function, not the wanted one.</p>
-<p><img src="/post_images/encrypt_function/Screenshot_6.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_6.png" alt=""></p>
 <p>Time to replace the address in the executable (you can do it in the raw executable, it will limitate the chance of realloc new addresses)</p>
-<p><img src="/post_images/encrypt_function/Screenshot_7.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_7.png" alt=""></p>
 <p>To get the xored buffer quickly, I will run the stub with the original opcode in it, normaly the app will make an access violation because of wrong opcode of the function</p>
-<p><img src="/post_images/encrypt_function/Screenshot_8.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_8.png" alt=""></p>
 <p>So now we have the xored buffer, we have just to replace it in the executable. For me I will just use HxD (the best ❤), find the function patern and replace the buffer at the raw file address</p>
-<p><img src="/post_images/encrypt_function/Screenshot_9.png" alt=""></p>
-<p><img src="/post_images/encrypt_function/Screenshot_10.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_9.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_10.png" alt=""></p>
 <p>And after saving, we are done, and the function is unreadable.</p>
-<p><img src="/post_images/encrypt_function/Screenshot_11.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_11.png" alt=""></p>
 <p>There is just a label pointed to the <code>0x4119b0 + 1</code> because we wrote the raw address in code, so IDA quickly made the cross-reference</p>
-<p><img src="/post_images/encrypt_function/Screenshot_12.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_12.png" alt=""></p>
 <p>But with a little bit of obfuscation and higher xor key like we said above, it&rsquo;s not dificult to hide 🙂</p>
-<p><img src="/post_images/encrypt_function/Screenshot_13.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/encrypt_function/Screenshot_13.png" alt=""></p>
 <p>You can improve it by adding obfuscation, or put the decryption state in the function it self, so when it&rsquo;s called it&rsquo;s will decrypt it self</p>
 <p>Even better in a crackme, you can make the function decryption key a part of the user input 👌</p>
 <p>This is a typical exemple of method you could apply with a script or a security program</p>

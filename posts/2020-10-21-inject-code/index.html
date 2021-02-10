@@ -242,15 +242,15 @@ There is a lot of reason why modify / inject code in an assembled executable :
 <p>The simplest way to modify application code is to modify &ldquo;byte by byte&rdquo; opcodes, by replacing an opcode buffer by another one. This technique is very common, but has a big problem, you have to override asm code to execute your&rsquo;s.</p>
 <p>Let&rsquo;s illustrate :</p>
 <p>So this is a normal instruction routine</p>
-<p><img src="/post_images/mod_pe/Screenshot_353.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_353.png" alt=""></p>
 <p>If we want to change the short JNB (Jump if not below) instruction by a short JMP (Jump), we can change it&rsquo;s bytes and see how it goes.</p>
-<p><img src="/post_images/mod_pe/Screenshot_355.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_355.png" alt=""></p>
 <p>Luckily, the short JMP instruction is the same size of short JNB instruction, so our code fits well in the function.</p>
 <p>But if we change this instruction again by a larger instruction, we will have a problem.</p>
-<p><img src="/post_images/mod_pe/Screenshot_356.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_356.png" alt=""></p>
 <p>Here we changed the 2 byte JMP instruction by a <code>mov edi, 1337</code> of 5 bytes, our instruction is here, no problem, but the next instruction is overridden by our new instruction. So now instead of a PUSH instruction, we have an ADD, because the 2 remaining bytes of the old PUSH instruction are interpreted after our MOV</p>
 <p>So we can just NOP it to clear it, but we lose an instruction :(</p>
-<p><img src="/post_images/mod_pe/Screenshot_357.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_357.png" alt=""></p>
 <p>It&rsquo;s the main problem of this kind of modification, the SIZE.</p>
 <p>But there is a solution for this, and it&rsquo;s the next part.</p>
 <h3 id="code-caving">Code caving</h3>
@@ -259,20 +259,20 @@ There is a lot of reason why modify / inject code in an assembled executable :
 <p>This is a better solution than byte patching sometimes, but we have still a limitation of size, we can only put a asm code of cave size.</p>
 <p>Note that the cave should be in a section that has the executable attribut, otherwise our code will not be executed.</p>
 <p>Let&rsquo;s illustate with an executable :</p>
-<p><img src="/post_images/mod_pe/Screenshot_358.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_358.png" alt=""></p>
 <p>So here at the end of the code, we can see that there are 0x200 null bytes (probably due to virtual alignment), this buffer is allocated so we can use it to write our code.</p>
-<p><img src="/post_images/mod_pe/Screenshot_364.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_364.png" alt=""></p>
 <p>So here we have on the top the function we want to modify, and on the bottom the cave buffer where we will write our code (<code>add BYTE PTR [eax],al</code> corresponding to 0x00, 0x00 opcode)</p>
 <p>We write our code in the cave</p>
-<p><img src="/post_images/mod_pe/Screenshot_365.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_365.png" alt=""></p>
 <p>So after, we write the jump to the cave, of course the followed instructions are not aligned</p>
-<p><img src="/post_images/mod_pe/Screenshot_366.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_366.png" alt=""></p>
 <p>So we have to nop them</p>
-<p><img src="/post_images/mod_pe/Screenshot_367.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_367.png" alt=""></p>
 <p>And after we write the opcode that we overrided to keep the code work</p>
-<p><img src="/post_images/mod_pe/Screenshot_368.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_368.png" alt=""></p>
 <p>And to finish the code caving we have to jump after the original function code</p>
-<p><img src="/post_images/mod_pe/Screenshot_369.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_369.png" alt=""></p>
 <h3 id="code-caving-with-new-section">Code caving with new section</h3>
 <p>So it&rsquo;s the same thing as code caving, but instaid of writing our code in a existing section, we will add a section to inject our code without size limitation.</p>
 <p>My next parts will talk about sections, so I will show how add a section ones.</p>
@@ -281,32 +281,32 @@ There is a lot of reason why modify / inject code in an assembled executable :
 <p>You can add a section with a lot of tools (PEBear, CFF Explorer, PE Tools &hellip;) or programatly with a lot of languages (pefile, pe-parse, &hellip;.). I show how to do it using my C# library Serana and PEBear in a less automated way.</p>
 <p>NOTE : The section should have the memory flag Read and Execute to execute our code.</p>
 <p>Here is how you can do it with C# using Serana :</p>
-<p><img src="/post_images/mod_pe/Screenshot_59.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_59.png" alt=""></p>
 <p>And with a tool like PEBear :</p>
 <p>In the Section Headers tab, click on the plus :</p>
-<p><img src="/post_images/mod_pe/Screenshot_61.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_61.png" alt=""></p>
 <p>Then setup your section :</p>
-<p><img src="/post_images/mod_pe/Screenshot_62.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_62.png" alt=""></p>
 <p>And that&rsquo;s it :</p>
-<p><img src="/post_images/mod_pe/Screenshot_63.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_63.png" alt=""></p>
 <p>After adding a section, you can just modify instructions somewhere and jump to the section</p>
-<p><img src="/post_images/mod_pe/Screenshot_155.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_155.png" alt=""></p>
 <h3 id="creating-a-new-section-and-make-the-ep-to-it">Creating a new section and make the EP to it</h3>
 <p>This is the same thing as adding a section with a cave, but instad of changing the code to point to our cave, we change the executable entrypoint to jump directly to our code.</p>
-<p><img src="/post_images/mod_pe/Screenshot_154.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_154.png" alt=""></p>
 <p>You can do this by simply change the Optional Header Entrypoint. Note that this address is the Virtual address, not the Raw address (see: VA (Virtual Address) &amp; RVA (Relative Virtual Address))</p>
-<p><img src="/post_images/mod_pe/Screenshot_193.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_193.png" alt=""></p>
 <h3 id="create-a-new-import-to-a-dll">Create a new import to a DLL</h3>
 <p>For this, you have to add a new entry in the Import table, but in general, the imports are in a section that handle other things. And this means that you can&rsquo;t extend the Import table without destroying or overriding things in the executable. This trick seems complex at the first look, but in fact, you can fix this issue using a new section. The idea could be to REconstruct the import table by adding a new section that contain the new import table. And change the import table offset in the Optional Header to point to the new import table.</p>
 <p>A lot of tool can do this, they are made for other purposes like fixing import table after unpacking, but they do the same thing. You can use PE Bear for this, but I will use the &ldquo;Import Adder&rdquo; function of CFF Explorer which is easier to use.</p>
 <p>You can add new modules that export functions listed here :</p>
-<p><img src="/post_images/mod_pe/Screenshot_189.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_189.png" alt=""></p>
 <p>And selection the one you want to add in the new import table. Finaly just have to check &ldquo;Create New Section&rdquo; and press Rebuild Import Table.</p>
-<p><img src="/post_images/mod_pe/Screenshot_190.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_190.png" alt=""></p>
 <p>A new section have been added with the new import table in it !</p>
-<p><img src="/post_images/mod_pe/Screenshot_191.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_191.png" alt=""></p>
 <p>And the import directory in the Optional header has changed to our new section.</p>
-<p><img src="/post_images/mod_pe/Screenshot_192.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/mod_pe/Screenshot_192.png" alt=""></p>
 <h2 id="part-2--from-external-programme">Part 2 : From external programme</h2>
 <p>For this part, I&rsquo;ve made an entier tutorial about hooking and DLL injection in French on this blog.  See : <a href="https://hajjik666.blogspot.com/2019/06/le-hooking-de-function.html">https://hajjik666.blogspot.com/2019/06/le-hooking-de-function.html</a></p>
 <h2 id="part-3--without-interactions-with-the-executable">Part 3 : Without interactions with the executable</h2>

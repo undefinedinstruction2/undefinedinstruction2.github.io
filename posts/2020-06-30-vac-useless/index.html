@@ -213,7 +213,7 @@ So let&rsquo;s start with the second one, they will &ldquo;restricts&rdquo; the 
       <p>A couple of days ago, Valve released a new update for CSGO, that &ldquo;improve&rdquo; its already pointless anticheat. And I decided to make a thread about it because it&rsquo;s stupidly funny.</p>
 <h2 id="the-article-blur">The article blur</h2>
 <p>In this article, they detail  :</p>
-<p><img src="/post_images/vac_useless/Screenshot_71.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_71.png" alt=""></p>
 <p>I will analyse this by paragraphs.</p>
 <p>So let&rsquo;s start with the second one, they will &ldquo;restricts&rdquo; the types of programs and files that can interact with the game. If you don&rsquo;t know CSGO, and common programs behaviour, know that some programs that have overlays like Discord, OBS, Nvidia stuff, need to inject DLLs (see my post about hooking functions) to execute code in the CSGO process, for overlay purposes. But a cheat is also about injecting and executing a code in CSGO, so VAC Anticheat has to make the difference between a cheat and a legit software like Discord. And during all it&rsquo;s existance, there was false positives made by VAC.</p>
 <p>The next paragraph explain that now, if VAC detect that you load an incompatible file, it will block you from joining the game and impact your trust factor. This is a good thing, but like I wrote above, if their are false positives, this lead to banning non cheating people.</p>
@@ -236,28 +236,28 @@ So let&rsquo;s start with the second one, they will &ldquo;restricts&rdquo; the 
 <p>To summarize again my article, a hook is the ability to redirect the execution flow of one function to another. For exemple, Discord uses it with its overlay to execute the code that draw the overlay on top of a game (EndScene function in DirectX9 for example). A cheat also use this method to execute its code while CSGO is running.</p>
 <p>I will explain later why hooking LoadLibrary is a good and a bad idea at the same time. But for now, let&rsquo;s just see what they do.</p>
 <p>The LoadLibrary function use the function called NtOpenFile (ZwOpenFile) to get the handle of the DLL, and apparently, VAC Anticheat hook this function.When the LoadLibrary function will be called, the execution pointer will jump to Valve code.</p>
-<p><img src="/post_images/vac_useless/Screenshot_74.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_74.png" alt=""></p>
 <p>This is the code executed by CSGO after the jump.</p>
-<p><img src="/post_images/vac_useless/Screenshot_75.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_75.png" alt=""></p>
 <p>To explain in short, the function will check if the DLL is signed using the function isDllSigned. If so, the original ZwOpenFile is executed. But this function is incredibly easy to bypass, but I will return to that later.</p>
-<p><img src="/post_images/vac_useless/Screenshot_77.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_77.png" alt=""></p>
 <p>So the isDllSigned function is too big to be covered in assembly, so I made a pseudocode to show you what is going on.</p>
-<p><img src="/post_images/vac_useless/Screenshot_79.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_79.png" alt=""></p>
 <p>Here is my pseudo code of this function :</p>
-<p><img src="/post_images/vac_useless/Screenshot_78.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_78.png" alt=""></p>
 <p>As you can see in my pseudocode, the signature check method is the second one (Manual code signature check).</p>
 <p>The result of this function look like this :</p>
-<p><img src="/post_images/vac_useless/DvuKJc0.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/DvuKJc0.png" alt=""></p>
 <h3 id="results">Results</h3>
 <p>And now we start to see the impact of this signature check :</p>
-<p><img src="/post_images/vac_useless/Screenshot_81.png" alt=""></p>
-<p><img src="/post_images/vac_useless/Screenshot_82.png" alt=""></p>
-<p><img src="/post_images/vac_useless/Screenshot_83.png" alt=""></p>
-<p><img src="/post_images/vac_useless/Screenshot_84.png" alt=""></p>
-<p><img src="/post_images/vac_useless/Screenshot_85.png" alt=""></p>
-<p><img src="/post_images/vac_useless/Screenshot_86.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_81.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_82.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_83.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_84.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_85.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_86.png" alt=""></p>
 <p>I noticed that there is a signature file named as &ldquo;foreign.signatures&rdquo;. We can think that this file could / will contain all the new 3 party DLL signatures. Because currently there is only one DLL from Microsoft in this file.</p>
-<p><img src="/post_images/vac_useless/Screenshot_87.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_87.png" alt=""></p>
 <p>Note that LoadLibrary is not the only one function that is hook by VAC Anticheat, but the method is the same.</p>
 <h2 id="why-its-useless-">Why it&rsquo;s useless ?</h2>
 <p>Because it&rsquo;s extremely easy to bypass this check, instead of jumping to the original ZwOpenFile if the DLL Module name is NULL. We can patch this to jump everytime without considering the check !</p>
@@ -278,7 +278,7 @@ So let&rsquo;s start with the second one, they will &ldquo;restricts&rdquo; the 
 <p>Like they said, it&rsquo;s a new beta branch of CSGO Steam repo, so we will probably see new improvements in the next months regarding this.</p>
 <p>I would like to point that they should make a real security, instead of making one that erase a little part of cheats, and annoy a big part of the normal players.</p>
 <p>To conclude this, I will just show how people will see this update.</p>
-<p><img src="/post_images/vac_useless/Screenshot_72.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_72.png" alt=""></p>
 <h1 id="r0da">~r0da</h1>
 
     </div>

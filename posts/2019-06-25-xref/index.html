@@ -199,10 +199,10 @@ This simplify drasticly the reverse engenering, but xrefs can be a problem in ca
 <p>Note : the objective is to deceive static analysis</p>
 <h2 id="poc">POC</h2>
 <p>To explain my point, I will take this code :</p>
-<p><img src="/post_images/xref/Screenshot_4.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/xref/Screenshot_4.png" alt=""></p>
 <p>When we reverse the executable, we can clearly see where the string is called and, by logic, when we look at the main function, we see exactly how it will be used</p>
-<p><img src="/post_images/xref/Screenshot_6.png" alt=""></p>
-<p><img src="/post_images/xref/Screenshot_5.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/xref/Screenshot_6.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/xref/Screenshot_5.png" alt=""></p>
 <p>As we can see IDA made a link between the address used in the mov instruction, and the data in the .rdata section at the same address as the mov instruction one.</p>
 <p>To deceive IDA&rsquo;s xref, we have to modify the address used in the mov instruction to unmatch in raw file when IDA analyse it, but make it correct at the execution.</p>
 <p>The trick is to know the memory address of the variable, and, at execution, grab its value from an obfuscated mechanism that hide the address.</p>
@@ -210,22 +210,22 @@ This simplify drasticly the reverse engenering, but xrefs can be a problem in ca
 <p>So first, we have to make an obfuscated algorythm that is allready setup in the assembly and where we just have to modiy values after compilation.</p>
 <p>NOTE : Again my point of view is from the source code in my POC, but with a program that is able to make code caving, code injection and manipulation, we can do it automaticly without thoses steps. And so, in my case, don&rsquo;t forget that a little change in the code at compilation can recalculate all variables addresses, so we have to cosider that in the obfuscation.</p>
 <p>I will take a simple <code>x * y - z</code> algorithm and I will write the values after compilation</p>
-<p><img src="/post_images/xref/Screenshot_7.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/xref/Screenshot_7.png" alt=""></p>
 <p>Let&rsquo;s write the address. (create tool don&rsquo;t write them manualy)</p>
-<p><img src="/post_images/xref/Screenshot_8.png" alt=""></p>
-<p><img src="/post_images/xref/Screenshot_9.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/xref/Screenshot_8.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/xref/Screenshot_9.png" alt=""></p>
 <p>And as result</p>
-<p><img src="/post_images/xref/Screenshot_10.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/xref/Screenshot_10.png" alt=""></p>
 <p>Its working :D</p>
 <p>But we see two more little things, the &ldquo;some chars&rdquo; string is defined in the function, so the function store its address in the bottom of the function, also this function make an additionnal mov to eax to use the variable, so we have to make a more clear code.</p>
 <p>Let&rsquo;s fix</p>
-<p><img src="/post_images/xref/Screenshot_11.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/xref/Screenshot_11.png" alt=""></p>
 <p>(the inline asm of VC++ push the final value at compilation, so I have to nop the push :/ )</p>
-<p><img src="/post_images/xref/Screenshot_12.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/xref/Screenshot_12.png" alt=""></p>
 <p>(I&rsquo;ve push manualy the number and nop the push 0 of the NULL)</p>
 <p>I could make code caving but I will make this in an other post.</p>
 <p>So now the xref is no longer made by IDA :D</p>
-<p><img src="/post_images/xref/Screenshot_13.png" alt=""></p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/xref/Screenshot_13.png" alt=""></p>
 <p>So now the only limit is your imagination about creating complex obfuscation.</p>
 <p>In a little tool like this, it can be found with a little bit of knowledge, but in a big tool, it could be hard</p>
 <h1 id="r0da">~r0da</h1>
