@@ -31,6 +31,17 @@ VMProtect is a well known protection with a lot of features, its core one is its
     </item>
     
     <item>
+      <title>Quick look around VMP - Part 1 : Unpacking</title>
+      <link>https://whereisr0da.github.io/blog/posts/2021-01-05-vmp-1/</link>
+      <pubDate>Tue, 05 Jan 2021 17:14:00 +0000</pubDate>
+      
+      <guid>https://whereisr0da.github.io/blog/posts/2021-01-05-vmp-1/</guid>
+      <description>Hi
+This is my exploration around VMProtect security. VMP is a well known protection with a lot of features, main ones are Code Mutation and Virtualization, and compared to them, this part is the simplest regarding VMP. I will talk about all of those in future posts, but now I will focuse myself on the Packing and the Import Obfuscation.
+Unpacking Packing is about compressing / ciphering executable&amp;rsquo;s sections to prevent static analysis.</description>
+    </item>
+    
+    <item>
       <title>Virtualization in commercial products</title>
       <link>https://whereisr0da.github.io/blog/posts/2020-10-27-virtual-in-com/</link>
       <pubDate>Tue, 27 Oct 2020 17:14:00 +0000</pubDate>

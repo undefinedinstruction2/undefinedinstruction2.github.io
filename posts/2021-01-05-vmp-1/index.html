@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Quick look around VMP - Part 1 : Unpacking | r0da&#39;s Blog</title>
+  <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering and cracking.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Quick look around VMP - Part 1 : Unpacking" />
+<meta property="og:description" content="Hi
+This is my exploration around VMProtect security. VMP is a well known protection with a lot of features, main ones are Code Mutation and Virtualization, and compared to them, this part is the simplest regarding VMP. I will talk about all of those in future posts, but now I will focuse myself on the Packing and the Import Obfuscation.
+Unpacking Packing is about compressing / ciphering executable&rsquo;s sections to prevent static analysis." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://whereisr0da.github.io/blog/posts/2021-01-05-vmp-1/" />
+<meta property="article:published_time" content="2021-01-05T17:14:00+00:00" />
+<meta property="article:modified_time" content="2021-01-05T17:14:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Quick look around VMP - Part 1 : Unpacking"/>
+<meta name="twitter:description" content="Hi
+This is my exploration around VMProtect security. VMP is a well known protection with a lot of features, main ones are Code Mutation and Virtualization, and compared to them, this part is the simplest regarding VMP. I will talk about all of those in future posts, but now I will focuse myself on the Packing and the Import Obfuscation.
+Unpacking Packing is about compressing / ciphering executable&rsquo;s sections to prevent static analysis."/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/style-dark.css">
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/syntax.css" >
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://whereisr0da.github.io/blog/images/favicon.ico" />
+
+  
+  
+  
+  
+</head>
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://whereisr0da.github.io/blog/posts/2020-10-27-virtual-in-com/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&text=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&is_video=false&description=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&name=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking&description=Hi%0aThis%20is%20my%20exploration%20around%20VMProtect%20security.%20VMP%20is%20a%20well%20known%20protection%20with%20a%20lot%20of%20features%2c%20main%20ones%20are%20Code%20Mutation%20and%20Virtualization%2c%20and%20compared%20to%20them%2c%20this%20part%20is%20the%20simplest%20regarding%20VMP.%20I%20will%20talk%20about%20all%20of%20those%20in%20future%20posts%2c%20but%20now%20I%20will%20focuse%20myself%20on%20the%20Packing%20and%20the%20Import%20Obfuscation.%0aUnpacking%20Packing%20is%20about%20compressing%20%2f%20ciphering%20executable%26rsquo%3bs%20sections%20to%20prevent%20static%20analysis.">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&t=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#unpacking">Unpacking</a></li>
+    <li><a href="#finding-the-oep">Finding the OEP</a></li>
+    <li><a href="#iat-obfusaction">IAT Obfusaction</a></li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        Quick look around VMP - Part 1 : Unpacking
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2021-01-05 17:14:00 &#43;0000 UTC" itemprop="datePublished">2021-01-05</time>
+          
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <p>Hi</p>
+<p>This is my exploration around VMProtect security. VMP is a well known protection with a lot of features, main ones are Code Mutation and Virtualization, and compared to them, this part is the simplest regarding VMP. I will talk about all of those in future posts, but now I will focuse myself on the Packing and the Import Obfuscation.</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_2/Screenshot_677.png" alt=""></p>
+<h2 id="unpacking">Unpacking</h2>
+<p>Packing is about compressing / ciphering executable&rsquo;s sections to prevent static analysis. It&rsquo;s not very effective considering that the code and the sections should be deciphered at some point during the execution.</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_2/Screenshot_675.png" alt=""></p>
+<p>In this case, VMProtect doesn&rsquo;t store the real &ldquo;RawFile&rdquo; sections informations in the PE header, which is a good thing. But.. the virtual addresses and size should be stored in the header so the kernel could alloc the correct size for the executable, so we can still notice sections sizes and possible addresses (without considering ASLR).</p>
+<p>Regarding the packing in raw file, everything is melt in one of the VMP section <code>.vmp1</code> (ciphered sections, unpacking routine, section informations, .. )</p>
+<p>The only section that is not &ldquo;protected&rdquo; is <code>.rsrc</code> because Windows need to read it to extract icons and other informations to display on properties menu. VMProtect has an option to protect resources regarding this, so it could split resources in two parts, one readable for Windows. And one containing only &ldquo;program&rsquo;s data&rdquo;, ciphered, and deciphered during the execution of the program.</p>
+<p>As we can see on the screenshot, unless <code>.data</code> section, all sections are not writable. So VMP will have a to call <code>VirtualProtect</code> (or something similar) to change the section&rsquo;s attributes in order to change them. In fact, VMP used <code>VirtualProtect</code> in the past, but since 3.x, it use an higher &ldquo;undocumented&rdquo; kernel API called <code>ZwProtectVirtualMemory</code> which has the same purpose.</p>
+<p>So now we can start dynamic unpacking ! Considering that <code>ZwProtectVirtualMemory</code> is called a lot of times by Windows internals, we will put a breakpoint on it only when the the entrypoint hit.</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_2/Screenshot_189.png" alt=""></p>
+<p>Note that the entrypoint looks like a VMProtect virtualized routine, and in fact, it is ! In the past (version 2.x), VMP unpacking routine were not virtualized (<a href="https://www.youtube.com/watch?v=aoa89Khfgr0">like in this video</a>), so it was easy to rush and breakpoint the jump to OEP (<code>push</code> and <code>ret</code>).</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_2/Screenshot_190.png" alt=""></p>
+<p>Ok, now we know that VMP should modify section&rsquo;s attributs one time to write, and one time to restore section&rsquo;s attributs. After a little bit of hit, here is the number of <code>ZwProtectVirtualMemory</code> calls we should get.</p>
+<pre><code>n = count of section that are not writable
+n + 1 (.vmp0) : change protect to writable flag
+1             : remove COPY flag
+n + 1 (.vmp0) : restore original flags
+</code></pre>
+<p>So <code>((n + 1) * 2) + 1</code> to get the PE unpacked, here is a GIF of this in action (see the flags on the right) :</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_2/44.gif" alt=""></p>
+<p>And from here, we can just dump the executable with any tool to get a clear dump (without import fixed) of the PE.</p>
+<p>From that (and the part 2 of my research around VMP), I will assume that <code>.vmp0</code> section contain virtualized / mutated programer&rsquo;s code (and IAT related code), and <code>.vmp1</code> contain all things linked to the unpacking process (ciphered sections, virtualized unpacking routine, section informations, .. )</p>
+<h2 id="finding-the-oep">Finding the OEP</h2>
+<p>As the unpacking routine is virtualized, it&rsquo;s pretty hard to find it from VMP code. So we need to do it with some tricks. In this case I though it could work if I monitor the EIP and store it when it switch from <code>.vmp1</code> to another section which is not <code>.vmp0</code>, and it worked. I tried a Qiling script for this, but as Qiling doesn&rsquo;t implements <code>ZwProtectVirtualMemory</code> I can&rsquo;t do much. So I did an IDA python script that I will not share here (thx to my gentle friends to lend IDA Home).</p>
+<p>We can find the same result by putting an hardware memory breakpoint about <code>execution</code> on the <code>.text</code> section. In my case, the OEP was the first function on top of <code>.text</code>, but it&rsquo;s a rare case, so you will probably never meat this one.</p>
+<p>You can spot the OEP by looking at the first function stack cookie (<a href="https://baboonrce.github.io/category/unpacking.html">like in this very good article</a>) which as the value <code>0x2B992DDFA232</code> when the executable is compiled using VC++.</p>
+<p>You can still find the OEP by hand, by trying to go on the bottom of the stack to spot the possible first return address.</p>
+<h2 id="iat-obfusaction">IAT Obfusaction</h2>
+<p>VMP&rsquo;s IAT obfuscation is in option, and not set by default. So IAT reconstruction is not necessary when the dev don&rsquo;t know how to use VMP (and trust me, it happens sometimes). Of course, I turned this ON for my post :)</p>
+<p>First thing to see is that the original IAT is still saved, but not used.</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_2/Screenshot_676.png" alt=""></p>
+<p>So you can see what API the program is using, but you can&rsquo;t link them to the code (cross references) because import addresses are &ldquo;calculated&rdquo; runtime. In my point of view is that they should import one random function of the DLL if they want to keep the IAT clear like that, not just leave everything in place. Or just completly remove the IAT content and load each DLL with LoadLibrary and resolve imports later.</p>
+<p>So if we take a look at a call to an API in the executable, we can notice that luckily, the API call&rsquo;s are only mutated, not virtualized !</p>
+<p>Each call to IAT in the <code>.text</code>, exemple : <code>call dword ptr ds:[&lt;&amp;CreateProcessW&gt;]</code>, is 6 bytes long.</p>
+<p>VMP changed each API call to this kind of call :</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="nf">push</span> <span class="no">random_register</span>
+<span class="nf">call</span> <span class="no">mutated_api_resolver</span> 
+</code></pre></div><p>Thoses two instructions are also about 6 bytes in order to keep the code &ldquo;alignment&rdquo;. There is one <code>mutated_api_resolver</code> function for each API call, it could explain why VMP makes such big outputs (also because of virtualization). So VMP use a register <code>random_register</code> to pass something to the api resolver.</p>
+<p>Here is a mutated version (edi is random_register) :</p>
+<p>NOTE : this code is, like I said, in the <code>.vmp0</code> section</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="nf">nop</span>
+<span class="nf">not</span> <span class="no">di</span>
+<span class="nf">bswap</span> <span class="no">di</span>
+<span class="nf">jmp</span> <span class="no">...</span>
+<span class="nf">pop</span> <span class="no">edi</span>
+<span class="nf">jmp</span> <span class="no">...</span>
+<span class="nf">xchg</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="no">ss</span><span class="p">:[</span><span class="no">esp</span><span class="p">],</span> <span class="no">edi</span> 
+<span class="no">push</span> <span class="no">edi</span>
+<span class="nf">not</span> <span class="no">edi</span> 
+<span class="no">xchg</span> <span class="no">di</span><span class="p">,</span> <span class="no">di</span> 
+<span class="no">jmp</span> <span class="no">...</span>
+<span class="nf">mov</span> <span class="no">edi</span><span class="p">,</span> <span class="mi">0x401113</span>
+<span class="nf">mov</span> <span class="no">edi</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="no">ds</span><span class="p">:[</span><span class="no">edi</span> <span class="err">+</span> <span class="mi">0x2B21E</span><span class="p">]</span> 
+<span class="no">jmp</span> <span class="no">...</span>
+<span class="nf">lea</span> <span class="no">edi</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="no">ds</span><span class="p">:[</span><span class="no">edi</span> <span class="err">+</span> <span class="mi">0x724F2141</span><span class="p">]</span> 
+<span class="no">jmp</span> <span class="no">...</span>
+<span class="nf">xchg</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="no">ss</span><span class="p">:[</span><span class="no">esp</span><span class="p">],</span> <span class="no">edi</span>
+<span class="nf">jmp</span> <span class="no">...</span>  
+<span class="no">ret</span> 
+</code></pre></div><p>And here is a cleaned version (reg is random_register) :</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="c"># reg is the pushed register
+</span><span class="c"># grab the return address of the call
+</span><span class="c"></span><span class="nf">pop</span> <span class="no">reg</span>
+<span class="c"># swap the pushed &#34;reg&#34; and the return address of the call
+</span><span class="c"># so the return of the API call will return on the API caller
+</span><span class="c"></span><span class="nf">xchg</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="no">ss</span><span class="p">:[</span><span class="no">esp</span><span class="p">],</span> <span class="no">reg</span> 
+<span class="c"># setup future return address to jump to the API function
+</span><span class="c"></span><span class="no">push</span> <span class="no">reg</span> 
+<span class="c"># calc the function address
+</span><span class="c"># offset to CreateProcessW in kernel32.dll in VMP calculation
+</span><span class="c"></span><span class="no">mov</span> <span class="no">reg</span><span class="p">,</span> <span class="mi">0x401113</span> 
+<span class="c"># calc the function address from offset
+</span><span class="c"># those values are static IAT and API offsets
+</span><span class="c"># get the VMP kernel32.dll IAT offset
+</span><span class="c"></span><span class="no">mov</span> <span class="no">reg</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="no">ds</span><span class="p">:[</span><span class="no">reg</span> <span class="err">+</span> <span class="mi">0x2B21E</span><span class="p">]</span>
+<span class="c"># get the VMP CreateProcessW address from kernel32.dll IAT offset
+</span><span class="c"></span><span class="nf">lea</span> <span class="no">reg</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="no">ds</span><span class="p">:[</span><span class="no">reg</span> <span class="err">+</span> <span class="mi">0x724F2141</span><span class="p">]</span>
+<span class="c"># put the API function address on stack top, using the &#34;push reg&#34; above
+</span><span class="c"></span><span class="nf">xchg</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="no">ss</span><span class="p">:[</span><span class="no">esp</span><span class="p">],</span> <span class="no">reg</span>  
+<span class="c"># jump to the API function
+</span><span class="c"></span><span class="no">ret</span> 
+</code></pre></div><p>So to summerise, VMP setup a variable on the stack to jump to the next API address by doing a <code>push</code> and <code>ret</code>.</p>
+<p>This address is calculated by :</p>
+<pre><code>reg = 0x401113        : offset of CreateProcessW + kernel32.dll
+ds:[reg + 0x2B21E]    : address of kernel32.dll IAT in VMP
+ds:[reg + 0x724F2141] : address of CreateProcessW
+</code></pre>
+<p>I don&rsquo;t have enough time to code an import fixer, but it&rsquo;s doable :).</p>
+<p>Some tools were made by 0xnobody, can1357 and mrxodia to unpack and fix imports in x64 (<a href="https://github.com/0xnobody/vmpdump">here</a>).</p>
+<h1 id="r0da">~r0da</h1>
+
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/blog/">Home</a></li>
+         
+          <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#unpacking">Unpacking</a></li>
+    <li><a href="#finding-the-oep">Finding the OEP</a></li>
+    <li><a href="#iat-obfusaction">IAT Obfusaction</a></li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&text=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&is_video=false&description=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&name=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking&description=Hi%0aThis%20is%20my%20exploration%20around%20VMProtect%20security.%20VMP%20is%20a%20well%20known%20protection%20with%20a%20lot%20of%20features%2c%20main%20ones%20are%20Code%20Mutation%20and%20Virtualization%2c%20and%20compared%20to%20them%2c%20this%20part%20is%20the%20simplest%20regarding%20VMP.%20I%20will%20talk%20about%20all%20of%20those%20in%20future%20posts%2c%20but%20now%20I%20will%20focuse%20myself%20on%20the%20Packing%20and%20the%20Import%20Obfuscation.%0aUnpacking%20Packing%20is%20about%20compressing%20%2f%20ciphering%20executable%26rsquo%3bs%20sections%20to%20prevent%20static%20analysis.">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&t=Quick%20look%20around%20VMP%20-%20Part%201%20%3a%20Unpacking">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2021  r0da 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=/blog/lib/font-awesome/css/all.min.css>
+<script src=/blog/lib/jquery/jquery.min.js></script>
+<script src=/blog/js/main.js></script>
+
+
+
+</html>

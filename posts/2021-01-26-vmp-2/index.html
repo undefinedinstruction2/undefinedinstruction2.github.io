@@ -69,7 +69,7 @@ VMProtect is a well known protection with a lot of features, its core one is its
       <ul>
         
         <li>
-          <a class="icon" href=" https://whereisr0da.github.io/blog/posts/2020-10-27-virtual-in-com/">
+          <a class="icon" href=" https://whereisr0da.github.io/blog/posts/2021-01-05-vmp-1/">
             <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
           </a>
         </li>
@@ -243,10 +243,10 @@ VMProtect is a well known protection with a lot of features, its core one is its
 <p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/BLOCK_3.png" alt=""></p>
 <p>But to know that, we have to launch the executable and follow the flow of its execution to mark all the travelled blocks.</p>
 <h2 id="concrate-example">Concrate example</h2>
-<p>In a concreate example, here a C++ function. We still notice that the mutation is focused on control flow, but the code stay readeable.</p>
+<p>In a concreate example, here a C++ function. We still notice that the mutation is focused on control flow, but the code stay readeable. The junkcode uses registers that will be reset by the next &ldquo;real&rdquo; instruction, so the program is not broken.</p>
 <p><img src="https://whereisr0da.github.io/blog/post_images/vmp_1/MUTATION_REG.png" alt=""></p>
 <h2 id="conclusion">Conclusion</h2>
-<p>VMP is impressive, and its mutation engine could make reverse or devirtualization process way longuer that it should, even if the junkcode could be spotted. With high performance optimizations, the junk instructions could be hard to split from the real code in so cases (C++ and other virtualised stuff).</p>
+<p>VMP is impressive, and its mutation engine could make reverse or devirtualization process way longuer that it should, even if the junkcode could be spotted. With high performance optimizations, the junk instructions could be hard to split from the real code in so cases (C++ and other virtualised stuff). In Ultra Mode (mutated code virtualized), this mutation should be a pain when have to devirtualize the opcode.</p>
 <h1 id="r0da">~r0da</h1>
 
     </div>
