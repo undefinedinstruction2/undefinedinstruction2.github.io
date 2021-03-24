@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> CSAW CTF 2020 : Cuba Write-Up | r0da&#39;s Blog</title>
+  <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering and cracking.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="CSAW CTF 2020 : Cuba Write-Up" />
+<meta property="og:description" content="Hi
+This is my write up for the challange Cuba of CSAW CTF 2020 :
+So this challenge is a CUBA program wrapped in a Windows Executable. CUBA is a GPU langage created by NVIDIA to work around GPU with high performance langage.
+https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
+Luckily there is a public SDK for it, with a disassembler :
+https://docs.nvidia.com/cuda/cuda-binary-utilities/index.html
+Using a tool called cuobjdump, we can extract the assembly code :
+To extract ptx text from a host binary, use the following command:cuobjdump -ptx &lt;host binary&gt; And after reversing the output, we can see that it&rsquo;s a simple xor looping through a ciphered flag" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://whereisr0da.github.io/blog/posts/2020-09-13-kernel-write-up/" />
+<meta property="article:published_time" content="2020-09-13T17:14:00+00:00" />
+<meta property="article:modified_time" content="2020-09-13T17:14:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="CSAW CTF 2020 : Cuba Write-Up"/>
+<meta name="twitter:description" content="Hi
+This is my write up for the challange Cuba of CSAW CTF 2020 :
+So this challenge is a CUBA program wrapped in a Windows Executable. CUBA is a GPU langage created by NVIDIA to work around GPU with high performance langage.
+https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
+Luckily there is a public SDK for it, with a disassembler :
+https://docs.nvidia.com/cuda/cuda-binary-utilities/index.html
+Using a tool called cuobjdump, we can extract the assembly code :
+To extract ptx text from a host binary, use the following command:cuobjdump -ptx &lt;host binary&gt; And after reversing the output, we can see that it&rsquo;s a simple xor looping through a ciphered flag"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/style-dark.css">
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/syntax.css" >
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://whereisr0da.github.io/blog/images/favicon.ico" />
+
+  
+  
+  
+  
+</head>
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://whereisr0da.github.io/blog/posts/2020-08-06-vuzzer/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://whereisr0da.github.io/blog/posts/2020-10-21-inject-code/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&text=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&title=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&is_video=false&description=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&title=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&title=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&title=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&title=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&name=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up&description=Hi%0aThis%20is%20my%20write%20up%20for%20the%20challange%20Cuba%20of%20CSAW%20CTF%202020%20%3a%0aSo%20this%20challenge%20is%20a%20CUBA%20program%20wrapped%20in%20a%20Windows%20Executable.%20CUBA%20is%20a%20GPU%20langage%20created%20by%20NVIDIA%20to%20work%20around%20GPU%20with%20high%20performance%20langage.%0ahttps%3a%2f%2fdocs.nvidia.com%2fcuda%2fcuda-c-programming-guide%2findex.html%0aLuckily%20there%20is%20a%20public%20SDK%20for%20it%2c%20with%20a%20disassembler%20%3a%0ahttps%3a%2f%2fdocs.nvidia.com%2fcuda%2fcuda-binary-utilities%2findex.html%0aUsing%20a%20tool%20called%20cuobjdump%2c%20we%20can%20extract%20the%20assembly%20code%20%3a%0aTo%20extract%20ptx%20text%20from%20a%20host%20binary%2c%20use%20the%20following%20command%3a%0dcuobjdump%20-ptx%20%26lt%3bhost%20binary%26gt%3b%0d%20And%20after%20reversing%20the%20output%2c%20we%20can%20see%20that%20it%26rsquo%3bs%20a%20simple%20xor%20looping%20through%20a%20ciphered%20flag">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&t=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents"></nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        CSAW CTF 2020 : Cuba Write-Up
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2020-09-13 17:14:00 &#43;0000 UTC" itemprop="datePublished">2020-09-13</time>
+          
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <p>Hi</p>
+<p>This is my write up for the challange <code>Cuba</code> of CSAW CTF 2020 :</p>
+<p>So this challenge is a CUBA program wrapped in a Windows Executable. CUBA is a GPU langage created by NVIDIA to work around GPU with high performance langage.</p>
+<p><a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html">https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html</a></p>
+<p>Luckily there is a public SDK for it, with a disassembler :</p>
+<p><a href="https://docs.nvidia.com/cuda/cuda-binary-utilities/index.html">https://docs.nvidia.com/cuda/cuda-binary-utilities/index.html</a></p>
+<p>Using a tool called <code>cuobjdump</code>, we can extract the assembly code :</p>
+<pre><code>To extract ptx text from a host binary, use the following command:
+
+cuobjdump -ptx &lt;host binary&gt;
+</code></pre>
+<p>And after reversing the output, we can see that it&rsquo;s a simple xor looping through a ciphered flag</p>
+<div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"><span class="na">.global</span> <span class="no">.align</span> <span class="mi">1</span> <span class="no">.b8</span> <span class="no">$CORRECT</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span> <span class="err">=</span> <span class="err">{</span><span class="mi">67</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">69</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span> <span class="mi">87</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">0</span><span class="err">}</span><span class="c">;
+</span><span class="c"></span>
+<span class="na">.global</span> <span class="no">.align</span> <span class="mi">1</span> <span class="no">.b8</span> <span class="no">$WRONG</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span> <span class="err">=</span> <span class="err">{</span><span class="mi">87</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">71</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span> <span class="mi">87</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">71</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">73</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">0</span><span class="err">}</span><span class="c">;
+</span><span class="c"></span><span class="no">...</span>
+
+<span class="err">//</span> <span class="nf">load</span> <span class="no">each</span> <span class="no">xorred</span> <span class="no">bytes</span> <span class="no">on</span> <span class="no">stack</span>
+
+<span class="nf">mov.u16</span>         <span class="nv">%rs1</span><span class="p">,</span> <span class="mi">99</span><span class="c">;
+</span><span class="c"></span><span class="no">.loc</span>	        <span class="mi">1</span> <span class="mi">14</span> <span class="mi">18</span><span class="c">;
+</span><span class="c"></span><span class="no">st.u8</span>           <span class="p">[</span><span class="nv">%SP</span><span class="err">+</span><span class="mi">30</span><span class="p">],</span> <span class="nv">%rs1</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u16</span>         <span class="nv">%rs2</span><span class="p">,</span> <span class="mi">103</span><span class="c">;
+</span><span class="c"></span><span class="no">st.u8</span>           <span class="p">[</span><span class="nv">%SP</span><span class="err">+</span><span class="mi">29</span><span class="p">],</span> <span class="nv">%rs2</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u16</span>         <span class="nv">%rs3</span><span class="p">,</span> <span class="mi">104</span><span class="c">;
+</span><span class="c"></span><span class="no">st.u8</span>           <span class="p">[</span><span class="nv">%SP</span><span class="err">+</span><span class="mi">28</span><span class="p">],</span> <span class="nv">%rs3</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u16</span>         <span class="nv">%rs4</span><span class="p">,</span> <span class="mi">122</span><span class="c">;
+</span><span class="c"></span><span class="no">st.u8</span>           <span class="p">[</span><span class="nv">%SP</span><span class="err">+</span><span class="mi">27</span><span class="p">],</span> <span class="nv">%rs4</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u16</span>         <span class="nv">%rs5</span><span class="p">,</span> <span class="mi">41</span><span class="c">;
+</span><span class="c"></span><span class="no">st.u8</span>           <span class="p">[</span><span class="nv">%SP</span><span class="err">+</span><span class="mi">26</span><span class="p">],</span> <span class="nv">%rs5</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u16</span>         <span class="nv">%rs6</span><span class="p">,</span> <span class="mi">113</span><span class="c">;
+</span><span class="c"></span><span class="no">...</span>
+
+<span class="nl">LOOP:</span>
+<span class="na">.loc</span>            <span class="mi">1</span> <span class="mi">20</span> <span class="mi">5</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u32</span>         <span class="err">%</span><span class="no">r4</span><span class="p">,</span> <span class="err">%</span><span class="no">r21</span><span class="c">;              // %r4 = i
+</span><span class="c"></span><span class="no">mov.u32</span>         <span class="err">%</span><span class="no">r3</span><span class="p">,</span> <span class="err">%</span><span class="no">r20</span><span class="c">;
+</span><span class="c"></span><span class="no">ld.u32</span>          <span class="err">%</span><span class="no">r11</span><span class="p">,</span> <span class="p">[</span><span class="err">%</span><span class="no">rd2</span><span class="p">]</span><span class="c">;           // %r11 = FLAG_SIZE
+</span><span class="c"></span><span class="no">setp.lt.s32</span>     <span class="err">%</span><span class="no">p3</span><span class="p">,</span> <span class="err">%</span><span class="no">r4</span><span class="p">,</span> <span class="err">%</span><span class="no">r11</span><span class="c">;         // %p3 = i &lt; %r11
+</span><span class="c"></span><span class="no">not.pred</span>        <span class="err">%</span><span class="no">p4</span><span class="p">,</span> <span class="err">%</span><span class="no">p3</span><span class="c">;               // %p4 = %p3 == 0
+</span><span class="c"></span><span class="err">@%</span><span class="no">p4</span> <span class="no">bra</span>        <span class="no">FINAL_CMP</span><span class="c">;              // if %p4 : jmp
+</span><span class="c"></span><span class="no">bra.uni</span>         <span class="no">UNCIPHER</span><span class="c">;
+</span><span class="c"></span>
+<span class="nl">UNCIPHER:</span>
+<span class="na">.loc</span>            <span class="mi">1</span> <span class="mi">22</span> <span class="mi">9</span><span class="c">;
+</span><span class="c"></span><span class="no">cvt.s64.s32</span>     <span class="err">%</span><span class="no">rd10</span><span class="p">,</span> <span class="err">%</span><span class="no">r4</span><span class="c">;             // %r4 = i
+</span><span class="c"></span><span class="no">add.s64</span>         <span class="err">%</span><span class="no">rd11</span><span class="p">,</span> <span class="err">%</span><span class="no">rd1</span><span class="p">,</span> <span class="err">%</span><span class="no">rd10</span><span class="c">;     // %rd11 = &amp;INPUT + 1
+</span><span class="c"></span><span class="no">ld.u8</span>           <span class="err">%</span><span class="no">rs25</span><span class="p">,</span> <span class="p">[</span><span class="err">%</span><span class="no">rd11</span><span class="p">]</span><span class="c">;         // %rs25 = INPUT[i]
+</span><span class="c"></span><span class="no">cvt.r32.u16</span>     <span class="err">%</span><span class="no">r14</span><span class="p">,</span> <span class="err">%</span><span class="no">rs25</span><span class="c">;            // unsigned -&gt; signed 
+</span><span class="c"></span><span class="no">cvt.s32.s8</span>      <span class="err">%</span><span class="no">r15</span><span class="p">,</span> <span class="err">%</span><span class="no">r14</span><span class="c">;             // %r15 = INPUT[i] 
+</span><span class="c"></span><span class="no">xor.b32</span>         <span class="err">%</span><span class="no">r16</span><span class="p">,</span> <span class="err">%</span><span class="no">r15</span><span class="p">,</span> <span class="err">%</span><span class="no">r4</span><span class="c">;        // %r16 = %r15 ^ i
+</span><span class="c"></span><span class="no">cvt.s64.s32</span>     <span class="err">%</span><span class="no">rd12</span><span class="p">,</span> <span class="err">%</span><span class="no">r4</span><span class="c">;
+</span><span class="c"></span><span class="no">add.u64</span>         <span class="err">%</span><span class="no">rd13</span><span class="p">,</span> <span class="err">%</span><span class="no">SP</span><span class="p">,</span> <span class="mi">0</span><span class="c">;          // %rd13 = &amp;FLAG
+</span><span class="c"></span><span class="no">add.s64</span>         <span class="err">%</span><span class="no">rd14</span><span class="p">,</span> <span class="err">%</span><span class="no">rd13</span><span class="p">,</span> <span class="err">%</span><span class="no">rd12</span><span class="c">;    // %rd13 = &amp;FLAG + 1
+</span><span class="c"></span><span class="no">ld.u8</span>           <span class="err">%</span><span class="no">rs26</span><span class="p">,</span> <span class="p">[</span><span class="err">%</span><span class="no">rd14</span><span class="p">]</span><span class="c">;         // %rs26 = FLAG[i]
+</span><span class="c"></span><span class="no">cvt.u32.u16</span>     <span class="err">%</span><span class="no">r17</span><span class="p">,</span> <span class="err">%</span><span class="no">rs26</span><span class="c">;            // unsigned -&gt; signed 
+</span><span class="c"></span><span class="no">cvt.s32.s8</span>      <span class="err">%</span><span class="no">r18</span><span class="p">,</span> <span class="err">%</span><span class="no">r17</span><span class="c">;             // %r18 = FLAG[i]
+</span><span class="c"></span><span class="no">setp.eq.s32</span>     <span class="err">%</span><span class="no">p7</span><span class="p">,</span> <span class="err">%</span><span class="no">r16</span><span class="p">,</span> <span class="err">%</span><span class="no">r18</span><span class="c">;        // %p7 = %r16 == %r18
+</span><span class="c"></span><span class="no">not.pred</span>        <span class="err">%</span><span class="no">p8</span><span class="p">,</span> <span class="err">%</span><span class="no">p7</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u32</span>         <span class="err">%</span><span class="no">r22</span><span class="p">,</span> <span class="err">%</span><span class="no">r3</span><span class="c">;
+</span><span class="c"></span><span class="err">@%</span><span class="no">p8</span> <span class="no">bra</span>        <span class="no">BB6_6</span><span class="c">;
+</span><span class="c"></span><span class="no">...</span>
+
+<span class="nf">bra.uni</span> <span class="no">LOOP</span><span class="c">;
+</span><span class="c"></span>
+<span class="nl">FINAL_CMP:</span>
+<span class="na">.loc</span>	        <span class="mi">1</span> <span class="mi">26</span> <span class="mi">5</span><span class="c">;
+</span><span class="c"></span><span class="no">setp.eq.s32</span>     <span class="err">%</span><span class="no">p5</span><span class="p">,</span> <span class="err">%</span><span class="no">r3</span><span class="p">,</span> <span class="mi">31</span><span class="c">;           // %p5 = %r3 == 31
+</span><span class="c"></span><span class="no">not.pred</span>        <span class="err">%</span><span class="no">p6</span><span class="p">,</span> <span class="err">%</span><span class="no">p5</span><span class="c">;               // %p6 = %p5 == 0
+</span><span class="c"></span><span class="err">@%</span><span class="no">p6</span> <span class="no">bra</span>        <span class="no">WRONG_PASS</span><span class="c">;
+</span><span class="c"></span><span class="no">bra.uni</span>         <span class="no">CORRECT_PASS</span><span class="c">;
+</span><span class="c"></span>
+<span class="nl">WRONG_PASS:</span>
+<span class="na">.loc</span>	        <span class="mi">1</span> <span class="mi">30</span> <span class="mi">9</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u64</span>         <span class="err">%</span><span class="no">rd4</span><span class="p">,</span> <span class="no">$WRONG</span><span class="c">;
+</span><span class="c"></span><span class="no">cvta.global.u64</span> <span class="err">%</span><span class="no">rd5</span><span class="p">,</span> <span class="err">%</span><span class="no">rd4</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u64</span>         <span class="err">%</span><span class="no">rd6</span><span class="p">,</span> <span class="mi">0</span><span class="c">;
+</span><span class="c"></span>
+<span class="nl">CORRECT_PASS:</span>
+<span class="na">.loc</span>	        <span class="mi">1</span> <span class="mi">27</span> <span class="mi">9</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u64</span>         <span class="err">%</span><span class="no">rd7</span><span class="p">,</span> <span class="no">$CORRECT</span><span class="c">;
+</span><span class="c"></span><span class="no">cvta.global.u64</span> <span class="err">%</span><span class="no">rd8</span><span class="p">,</span> <span class="err">%</span><span class="no">rd7</span><span class="c">;
+</span><span class="c"></span><span class="no">mov.u64</span>         <span class="err">%</span><span class="no">rd9</span><span class="p">,</span> <span class="mi">0</span><span class="c">;
+</span><span class="c"></span>
+</code></pre></div><p>Then a decryption script :</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">xorred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">102</span><span class="p">,</span> <span class="mi">109</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="mi">104</span><span class="p">,</span> <span class="mi">53</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">124</span><span class="p">,</span> <span class="mi">86</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">114</span><span class="p">,</span> <span class="mi">125</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">74</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">122</span><span class="p">,</span> <span class="mi">104</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">99</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xorred</span><span class="p">)):</span>
+    <span class="n">xorred</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">xorred</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">i</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">xorred</span><span class="p">)</span>
+</code></pre></div><p>And here is the flag : <code>flag{m33t_m3_in_blips_n_ch3atz}</code></p>
+<p>~r0da</p>
+
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/blog/">Home</a></li>
+         
+          <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents"></nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&text=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&title=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&is_video=false&description=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&title=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&title=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&title=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&title=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&name=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up&description=Hi%0aThis%20is%20my%20write%20up%20for%20the%20challange%20Cuba%20of%20CSAW%20CTF%202020%20%3a%0aSo%20this%20challenge%20is%20a%20CUBA%20program%20wrapped%20in%20a%20Windows%20Executable.%20CUBA%20is%20a%20GPU%20langage%20created%20by%20NVIDIA%20to%20work%20around%20GPU%20with%20high%20performance%20langage.%0ahttps%3a%2f%2fdocs.nvidia.com%2fcuda%2fcuda-c-programming-guide%2findex.html%0aLuckily%20there%20is%20a%20public%20SDK%20for%20it%2c%20with%20a%20disassembler%20%3a%0ahttps%3a%2f%2fdocs.nvidia.com%2fcuda%2fcuda-binary-utilities%2findex.html%0aUsing%20a%20tool%20called%20cuobjdump%2c%20we%20can%20extract%20the%20assembly%20code%20%3a%0aTo%20extract%20ptx%20text%20from%20a%20host%20binary%2c%20use%20the%20following%20command%3a%0dcuobjdump%20-ptx%20%26lt%3bhost%20binary%26gt%3b%0d%20And%20after%20reversing%20the%20output%2c%20we%20can%20see%20that%20it%26rsquo%3bs%20a%20simple%20xor%20looping%20through%20a%20ciphered%20flag">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-09-13-kernel-write-up%2f&t=CSAW%20CTF%202020%20%3a%20Cuba%20Write-Up">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2021  r0da 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=/blog/lib/font-awesome/css/all.min.css>
+<script src=/blog/lib/jquery/jquery.min.js></script>
+<script src=/blog/js/main.js></script>
+
+
+
+</html>

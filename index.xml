@@ -7,7 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>r0da</copyright>
-    <lastBuildDate>Wed, 03 Feb 2021 10:14:00 +0000</lastBuildDate><atom:link href="https://whereisr0da.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 12 Mar 2021 17:14:00 +0000</lastBuildDate><atom:link href="https://whereisr0da.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>BTSCTF 2021 : BtS emulator Write-Up</title>
+      <link>https://whereisr0da.github.io/blog/posts/2021-03-12-emulator-write-up/</link>
+      <pubDate>Fri, 12 Mar 2021 17:14:00 +0000</pubDate>
+      
+      <guid>https://whereisr0da.github.io/blog/posts/2021-03-12-emulator-write-up/</guid>
+      <description>Hi.
+Last day I did a CTF called BTSCTF, and a challenge called BtS emulator. As I&amp;rsquo;m still working on VMP virtualization currently, I&amp;rsquo;m kind good with VM stuff.
+First I noticed that the binary has all its symbols in it, so easier to reverse. Then I saw that the dispatcher routine seems pretty clean.
+We found the opcode related to it :
+const uint8_t opcode_buffer[256] = { 0xf2, 0x72, 0x45, 0x8a, 0x72, 0xf2, 0x72, 0x6e, 0x8a, 0x72, 0xf2, 0x72, 0x74, 0x8a, 0x72, 0xf2, 0x72, 0x65, 0x8a, 0x72, 0xf2, 0x72, 0x72, 0x8a, 0x72, 0xf2, 0x72, 0x20, 0x8a, 0x72, 0xf2, 0x72, 0x70, 0x8a, 0x72, 0xf2, 0x72, 0x61, 0x8a, 0x72, 0xf2, 0x72, 0x73, 0x8a, 0x72, 0xf2, 0x72, 0x73, .</description>
+    </item>
+    
     <item>
       <title>Bypassing 12 years old Xbox 360 Game Security</title>
       <link>https://whereisr0da.github.io/blog/posts/2021-01-07-forza-check/</link>
@@ -62,6 +75,22 @@ Today I will try to talk about it without revealing the software for obvious rea
 Last year, I thought it could be a great idea to combine all possible ways to modify code of an executable in a thread. And one year later this is it ! the post is out ! (thanks to caffeine)
 There is a lot of reason why modify / inject code in an assembled executable :
  Inject a shellcode in a legit program to make it a malware Modify a program to patch a vulnerability while the update is not available (cc 0patch) Crack a program to bypass a check Make a malware or a protection signature change to be &amp;ldquo;FUD&amp;rdquo; Code a cheat for a game (more about runtime modification) Just make a &amp;ldquo;strong&amp;rdquo; security (assembly level, more about runtime modification again)  Here is what you can do in function of each perspective.</description>
+    </item>
+    
+    <item>
+      <title>CSAW CTF 2020 : Cuba Write-Up</title>
+      <link>https://whereisr0da.github.io/blog/posts/2020-09-13-kernel-write-up/</link>
+      <pubDate>Sun, 13 Sep 2020 17:14:00 +0000</pubDate>
+      
+      <guid>https://whereisr0da.github.io/blog/posts/2020-09-13-kernel-write-up/</guid>
+      <description>Hi
+This is my write up for the challange Cuba of CSAW CTF 2020 :
+So this challenge is a CUBA program wrapped in a Windows Executable. CUBA is a GPU langage created by NVIDIA to work around GPU with high performance langage.
+https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
+Luckily there is a public SDK for it, with a disassembler :
+https://docs.nvidia.com/cuda/cuda-binary-utilities/index.html
+Using a tool called cuobjdump, we can extract the assembly code :
+To extract ptx text from a host binary, use the following command:cuobjdump -ptx &amp;lt;host binary&amp;gt; And after reversing the output, we can see that it&amp;rsquo;s a simple xor looping through a ciphered flag</description>
     </item>
     
     <item>

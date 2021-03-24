@@ -221,7 +221,7 @@ n + 1 (.vmp0) : restore original flags
 <p>And from here, we can just dump the executable with any tool to get a clear dump (without import fixed) of the PE.</p>
 <p>From that (and the part 2 of my research around VMP), I will assume that <code>.vmp0</code> section contain virtualized / mutated programer&rsquo;s code (and IAT related code), and <code>.vmp1</code> contain all things linked to the unpacking process (ciphered sections, virtualized unpacking routine, section informations, .. )</p>
 <h2 id="finding-the-oep">Finding the OEP</h2>
-<p>As the unpacking routine is virtualized, it&rsquo;s pretty hard to find it from VMP code. So we need to do it with some tricks. In this case I though it could work if I monitor the EIP and store it when it switch from <code>.vmp1</code> to another section which is not <code>.vmp0</code>, and it worked. I tried a Qiling script for this, but as Qiling doesn&rsquo;t implements <code>ZwProtectVirtualMemory</code> I can&rsquo;t do much. So I did an IDA python script that I will not share here (thx to my gentle friends to lend IDA Home).</p>
+<p>As the unpacking routine is virtualized, it&rsquo;s pretty hard to find it from VMP code. So we need to do it with some tricks. In this case I though it could work if I monitor the EIP and store it when it switch from <code>.vmp1</code> to another section which is not <code>.vmp0</code>, and it worked. I tried a Qiling script for this, but as Qiling doesn&rsquo;t implements <code>ZwProtectVirtualMemory</code> I can&rsquo;t do much. So I did an unicorn python script to accomplish this.</p>
 <p>We can find the same result by putting an hardware memory breakpoint about <code>execution</code> on the <code>.text</code> section. In my case, the OEP was the first function on top of <code>.text</code>, but it&rsquo;s a rare case, so you will probably never meat this one.</p>
 <p>You can spot the OEP by looking at the first function stack cookie (<a href="https://baboonrce.github.io/category/unpacking.html">like in this very good article</a>) which as the value <code>0x2B992DDFA232</code> when the executable is compiled using VC++.</p>
 <p>You can still find the OEP by hand, by trying to go on the bottom of the stack to spot the possible first return address.</p>
@@ -285,7 +285,7 @@ n + 1 (.vmp0) : restore original flags
 ds:[reg + 0x2B21E]    : address of kernel32.dll IAT in VMP
 ds:[reg + 0x724F2141] : address of CreateProcessW
 </code></pre>
-<p>I don&rsquo;t have enough time to code an import fixer, but it&rsquo;s doable :).</p>
+<p>I don&rsquo;t have enough time to code an import fixer, but it&rsquo;s doable runtime using emulation :) (unicorn, ..).</p>
 <p>Some tools were made by 0xnobody, can1357 and mrxodia to unpack and fix imports in x64 (<a href="https://github.com/0xnobody/vmpdump">here</a>).</p>
 <h1 id="r0da">~r0da</h1>
 
