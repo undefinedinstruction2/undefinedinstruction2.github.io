@@ -47,10 +47,11 @@ I found this trick with the Zer0Mem0ry post originaly made to bypass memory sign
   
   
 </head>
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
 
-  <div id="header-post">
+<body class="max-width mx-auto px3 ltr">
+    <div class="content index py4">
+
+        <div id="header-post">
   <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
   <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
   <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
@@ -176,26 +177,24 @@ I found this trick with the Zer0Mem0ry post originaly made to bypass memory sign
 </div>
 
 
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        Encrypt functions in Windows executables
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2019-06-29 17:14:00 &#43;0000 UTC" itemprop="datePublished">2019-06-29</time>
-          
-        </div>
-        
-        
-      </div>
-    </header>
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header>
+                <h1 class="posttitle" itemprop="name headline">
+                     Encrypt functions in Windows executables 
+                </h1>
+                <div class="meta">
+                    
+                    <div class="postdate">
+                        
+                        <time datetime="2019-06-29 17:14:00 &#43;0000 UTC" itemprop="datePublished">2019-06-29</time> 
+                    </div>
+                     
+                </div>
+            </header>
 
-  
-    <div class="content" itemprop="articleBody">
-      <p>This is a part of my tutorial on how to protect windows executables, so is a little bit disconnected from my others posts, but in wait of my big tutorial I publish this anyway.</p>
+            
+            <div class="content" itemprop="articleBody">
+                <p>This is a part of my tutorial on how to protect windows executables, so is a little bit disconnected from my others posts, but in wait of my big tutorial I publish this anyway.</p>
 <p>Something that you can apply with the others encryption tricks in PE files is the encryption of function, and decrypting at calling time.</p>
 <p>I found this trick with the Zer0Mem0ry post originaly made to bypass memory signatures checks by encrypt functions at runtime. With random xor, so A big thanks to this good guy 😃</p>
 <p>But wait, why use function encryption if we can just encrypt segments, In my point of view, if you make the all segments encrypted, the dissasembler will see only functions related to the decryption of the segments. So immediately you will see where the code is decrypted, I think that having a lot of functions is more efficient in this case. There is a lot of &ldquo;pros and cons&rdquo; about this trick and I will discuss a bit about them at the end</p>
@@ -247,17 +246,15 @@ The lenght is the size of the function (hardcoded again)</p>
 <p>You have to find the good way to use this in your context.</p>
 <h1 id="r0da">~r0da</h1>
 
-    </div>
-  </article>
+            </div>
+        </article>
 
+        
   
-  
 
 
 
-
-
-  <div id="footer-post-container">
+ <div id="footer-post-container">
   <div id="footer-post">
 
     <div id="nav-footer" style="display: none">
@@ -360,9 +357,7 @@ The lenght is the size of the function (hardcoded again)</p>
 
   </div>
 </div>
-
-
-  <footer id="footer">
+ <footer id="footer">
   <div class="footer-left">
     Copyright  &copy; 2021  r0da 
   </div>
@@ -380,13 +375,12 @@ The lenght is the size of the function (hardcoded again)</p>
 </footer>
 
 
-  </div>
+    </div>
 </body>
 
 <link rel="stylesheet" href=/blog/lib/font-awesome/css/all.min.css>
 <script src=/blog/lib/jquery/jquery.min.js></script>
 <script src=/blog/js/main.js></script>
-
-
+  
 
 </html>

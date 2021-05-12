@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Quick look around VAC - Part 1 : Module loading | r0da&#39;s Blog</title>
+  <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering and cracking.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Quick look around VAC - Part 1 : Module loading" />
+<meta property="og:description" content="I already taked about VAC and how useless it is. And recently I decided to take a closer look to it, so this is my quick analysis. My goal will be to understand how VAC execute its modules, and in a Part 2, understand those modules.
+NOTE : I&rsquo;m not a game hacker in the first place, so if something is not accurate, feel free to tell it.
+What is it ?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://whereisr0da.github.io/blog/posts/2021-03-10-quick-vac/" />
+<meta property="article:published_time" content="2021-04-11T11:14:00+00:00" />
+<meta property="article:modified_time" content="2021-04-11T11:14:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Quick look around VAC - Part 1 : Module loading"/>
+<meta name="twitter:description" content="I already taked about VAC and how useless it is. And recently I decided to take a closer look to it, so this is my quick analysis. My goal will be to understand how VAC execute its modules, and in a Part 2, understand those modules.
+NOTE : I&rsquo;m not a game hacker in the first place, so if something is not accurate, feel free to tell it.
+What is it ?"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/style-dark.css">
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/syntax.css" >
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://whereisr0da.github.io/blog/images/favicon.ico" />
+
+  
+  
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    <div class="content index py4">
+
+        <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://whereisr0da.github.io/blog/posts/2021-03-12-emulator-write-up/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&text=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&title=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&is_video=false&description=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&title=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&title=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&title=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&title=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&name=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading&description=I%20already%20taked%20about%20VAC%20and%20how%20useless%20it%20is.%20And%20recently%20I%20decided%20to%20take%20a%20closer%20look%20to%20it%2c%20so%20this%20is%20my%20quick%20analysis.%20My%20goal%20will%20be%20to%20understand%20how%20VAC%20execute%20its%20modules%2c%20and%20in%20a%20Part%202%2c%20understand%20those%20modules.%0aNOTE%20%3a%20I%26rsquo%3bm%20not%20a%20game%20hacker%20in%20the%20first%20place%2c%20so%20if%20something%20is%20not%20accurate%2c%20feel%20free%20to%20tell%20it.%0aWhat%20is%20it%20%3f">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&t=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents"></nav>
+    </div>
+  </span>
+</div>
+
+
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header>
+                <h1 class="posttitle" itemprop="name headline">
+                     Quick look around VAC - Part 1 : Module loading 
+                </h1>
+                <div class="meta">
+                    
+                    <div class="postdate">
+                        
+                        <time datetime="2021-04-11 11:14:00 &#43;0000 UTC" itemprop="datePublished">2021-04-11</time> 
+                    </div>
+                     
+                </div>
+            </header>
+
+            
+            <div class="content" itemprop="articleBody">
+                <p>I already taked about VAC and how useless it is. And recently I decided to take a closer look to it, so this is my quick analysis. My goal will be to understand how VAC execute its modules, and in a Part 2, understand those modules.</p>
+<p>NOTE : I&rsquo;m not a game hacker in the first place, so if something is not accurate, feel free to tell it.</p>
+<h1 id="what-is-it-">What is it ?</h1>
+<p>VAC (Valve Anti Cheat) is an userland Anti Cheat made to scan and detect external cheats (other processes), or internal cheats (in game process).</p>
+<p>Long story short, userland means that it has not acess to advenced features and TRUE system monitoring (kernel-land hypervisors). This is the major issue about VAC, and it&rsquo;s one of the main reasons VAC protected games can be defeated easily. As it&rsquo;s userland, it&rsquo;s core is based in an running executable (or service) in an accessible space regarding the system. It means that we can possibly inject / execute code easily then kernel-land stuff (signed driver, secure boot, ..). By advenced features, I mean that it can only monitor processes like any other userland process does, which doesn&rsquo;t give a complete scope of investigation. So VAC can&rsquo;t detect hardware cheats (unless it&rsquo;s visible userland of course), it also can&rsquo;t properly deal with kernel-land cheats (only enumerate driver list, check names and signatures, and low the trust factor if you allow unsigned drivers on your computer).</p>
+<p>Considering that, we can already code a VAC bypass with a driver that could block each steam process interactions with an external process that modify the game memory. We can also write a kernel-land cheat that will directly write stuff in the game memory. We can sign this driver with a leaked private certificat trusted by microsoft to make it more legitimate. Or we can even modify the Windows boot loader to allocate our driver on the bottom of a legitimate driver. Or even abuse of another software by hidding the cheat in it, in an Anti-virus for example as they write in other processes frequently. The only limit is your creativity.</p>
+<p>I will stop here for the technical problems of userland anti-cheats, but if you want to take a closer look to it, there are a lot of ducumentation on forums like unknowncheats.</p>
+<p>About what we are doing here, know that there are two different things to consider, VAC the Anti-Cheat made by Valve which can be applied to a lot of games. And custom VAC modules that can be applied for specific games like CSGO or Call of Duty. Those two are delivered as modules (executables), and each time you launch a VAC protected game, those modules are downloaded and executed to check specific &ldquo;cheat&rdquo; patterns.</p>
+<p>NOTE : the case of CSGO is different because CSGO itself implements Anti-Cheat behaviors. Everyone consider them as part of VAC because it&rsquo;s the same developpers.</p>
+<h1 id="lets-see">Let&rsquo;s see</h1>
+<p>So after documenting on what was already done by good game hackers, we know that VAC core is stored in <code>steamservice.dll</code> which could be used in <code>SteamService.exe</code>, or in <code>steam.exe</code> if Steam is executed with administrator rights.</p>
+<p>Here are some interesting routines I&rsquo;ve reversed :</p>
+<p>This is one of the routine that execute VAC modules (there are a lot of them, but it seems like it&rsquo;s the most used).</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="n">VacModuleResult_t</span> <span class="nf">ExecVacModule</span><span class="p">(...,</span> <span class="kt">int</span> <span class="n">iInjectionFlag</span><span class="p">,</span> <span class="p">...){</span>
+
+    <span class="c1">// take the module info from vector
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="nc">VacModuleInfo_t</span><span class="o">*</span> <span class="n">pModuleInfo</span> <span class="o">=</span> <span class="p">....;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pModuleInfo</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">){</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">unknown0</span> <span class="o">&lt;</span> <span class="mh">0x58</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">UKN0</span><span class="p">;</span>
+
+        <span class="c1">// setup module
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">GetVacModuleEntrypoint</span><span class="p">(..,</span> <span class="p">..,</span> <span class="p">..,</span> <span class="n">pModuleInfo</span><span class="p">,</span> <span class="n">iInjectionFlag</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span><span class="p">;</span>
+
+        <span class="c1">// I still don&#39;t know what they are deciphering here
+</span><span class="c1"></span>        <span class="n">DecryptUknw</span><span class="p">([</span><span class="n">ebp</span><span class="o">-</span><span class="mh">0x78</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">);</span>
+
+        <span class="c1">// call module exec function
+</span><span class="c1"></span>        <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRunFunc</span><span class="p">(...);</span>
+
+        <span class="n">UnknownSaveRoutine</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">pCallableUnkn11</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">iInjectionFlag</span> <span class="o">&amp;</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">UnknownCallback</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">ALREADY_LOADED</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>Here is the module load routine, as you can see, there are 2 types of module. One which is wrote in temp directory, one which is loaded in memory using RunPE.</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">int32_t</span> <span class="nf">GetVacModuleEntrypoint</span><span class="p">(...,</span> <span class="n">VacModuleInfo_t</span><span class="o">*</span> <span class="n">pModuleInfo</span><span class="p">,</span> <span class="kt">char</span> <span class="n">iInjectionFlag</span><span class="p">){</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRunFunc</span><span class="p">){</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRawModule</span> <span class="o">||</span> <span class="p">(</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRawModule</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nModuleSize</span><span class="p">)){</span>
+
+            <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">FAIL_MODULE_SIZE_NULL</span><span class="p">;</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRawModule</span> <span class="o">&amp;&amp;</span> <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nModuleSize</span><span class="p">){</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pModule</span><span class="p">)</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#34;Assertion Failed&#34;</span><span class="p">);</span>
+
+            <span class="p">.....</span>
+        <span class="p">}</span>
+
+        <span class="c1">// decrypt sections using RSA
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">DecryptVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRawModule</span><span class="p">,</span> <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nModuleSize</span><span class="p">,</span> <span class="p">...)){</span>
+
+            <span class="n">UnloadVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">);</span>
+            <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">FAIL_TO_DECRYPT_VAC_MODULE</span><span class="p">;</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// if VAC module should be on disk
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">((</span><span class="n">iInjectionFlag</span> <span class="o">&amp;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+
+            <span class="k">auto</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">SetupVacModuleInfo</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+            <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">NOT_SET</span><span class="p">;</span>
+
+            <span class="c1">// get temp path
+</span><span class="c1"></span>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">GetModuleTmpPath</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="p">...,</span> <span class="n">pModuleInfo</span><span class="p">)){</span>
+
+                <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">FAIL_GET_MODULE_TEMP_PATH</span><span class="p">;</span>
+                <span class="n">sub_1007f2f0</span><span class="p">(</span><span class="n">FreeHandle</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">));</span>
+                <span class="n">UnloadVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">);</span>
+                <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="n">InitVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">,</span> <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRawModule</span><span class="p">,</span> <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nModuleSize</span><span class="p">,</span> <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nModuleSize</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+            <span class="c1">// write module in temp
+</span><span class="c1"></span>            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">WriteVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">,</span> <span class="p">...,</span> <span class="mi">0</span><span class="p">)){</span>
+
+                <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">FAIL_WRITE_MODULE</span><span class="p">;</span>
+                <span class="n">sub_1007f2f0</span><span class="p">(</span><span class="n">FreeHandle</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">));</span>
+                <span class="n">UnloadVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">);</span>
+                <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="c1">// check CRC32 + resolve imports from &#34;.cpl&#34; section + LoadLibraryW
+</span><span class="c1"></span>            <span class="n">HANDLE</span> <span class="n">hModule</span> <span class="o">=</span> <span class="n">LoadVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+            <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_hModule</span> <span class="o">=</span> <span class="n">hModule</span><span class="p">;</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">hModule</span><span class="p">){</span>
+
+                <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">FAIL_LOAD_MODULE</span><span class="p">;</span>
+                <span class="n">sub_1007f2f0</span><span class="p">(</span><span class="n">FreeHandle</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">));</span>
+                <span class="n">UnloadVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">);</span>
+                <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="c1">// get exec function from export
+</span><span class="c1"></span>            <span class="kt">void</span><span class="o">*</span> <span class="n">pRunFunc</span> <span class="o">=</span> <span class="n">GetProcAddress</span><span class="p">(</span><span class="n">hModule</span><span class="p">,</span> <span class="s">&#34;_runfunc@20&#34;</span><span class="p">);</span>
+
+            <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRunFunc</span> <span class="o">=</span> <span class="n">pRunFunc</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pRunFunc</span><span class="p">)</span>
+                <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">FAIL_GET_EXPORT_RUNFUNC</span><span class="p">;</span>
+
+            <span class="n">sub_1007f2f0</span><span class="p">(</span><span class="n">FreeHandle</span><span class="p">(</span><span class="n">hModule</span><span class="p">));</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRunFunc</span><span class="p">){</span>
+
+                <span class="n">UnloadVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">);</span>
+                <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="n">UnknownSaveRoutine</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">pCallableUnkn11</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span><span class="p">{</span>
+
+            <span class="c1">// section decryption + RunPE the module + exec DllMain
+</span><span class="c1"></span>            <span class="n">VacModule_t</span><span class="o">*</span> <span class="n">pModuleRaw</span> <span class="o">=</span> <span class="n">AllocVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRawModule</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pModule</span> <span class="o">=</span> <span class="n">pModuleRaw</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pModuleRaw</span><span class="p">){</span>
+                <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">FAIL_LOAD_MODULE</span><span class="p">;</span>
+                <span class="n">UnloadVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">);</span>
+                <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="c1">// resolve exec function from new export table
+</span><span class="c1"></span>            <span class="kt">void</span><span class="o">*</span> <span class="n">pRunFunc</span> <span class="o">=</span> <span class="n">ResolveExportFromEAT</span><span class="p">(</span><span class="n">pModuleRaw</span><span class="p">,</span> <span class="s">&#34;_runfunc@20&#34;</span><span class="p">);</span>
+
+            <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_pRunFunc</span> <span class="o">=</span> <span class="n">pRunFunc</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pRunFunc</span><span class="p">){</span>
+                <span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">FAIL_GET_EXPORT_RUNFUNC_2</span><span class="p">;</span>
+                <span class="n">UnloadVacModule</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="p">);</span>
+                <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="n">UnknownSaveRoutine</span><span class="p">(</span><span class="n">pModuleInfo</span><span class="o">-&gt;</span><span class="n">pCallableUnkn11</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>This is the RunPE used by valve :</p>
+<p>The tricks here is that for each section, <code>pSectionHeader-&gt;Name[0]</code> is used as the real section size, <code>pSectionHeader-&gt;Name[4]</code> is the offset of the crypted section.</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="n">VacModule_t</span><span class="o">*</span> <span class="nf">AllocVacModule</span><span class="p">(</span><span class="n">DOS_Header</span><span class="o">*</span> <span class="n">pRawModule</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">iImageBase</span><span class="p">,</span> <span class="kt">char</span> <span class="n">arg3</span><span class="p">){</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">e_magic</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="err">&#39;</span><span class="n">MZ</span><span class="err">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="n">_IMAGE_NT_HEADERS</span><span class="o">*</span> <span class="n">pNtHeader</span> <span class="o">=</span> <span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">e_lfanew</span> <span class="o">+</span> <span class="n">pRawModule</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">FileHeader</span><span class="p">.</span><span class="n">magic</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="err">&#39;</span><span class="n">PE</span><span class="err">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">iImageBase</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">iImageBase</span> <span class="o">=</span> <span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">imageBase</span><span class="p">;</span>
+
+    <span class="n">LPVOID</span> <span class="n">pImageBase</span> <span class="o">=</span> <span class="n">VirtualAlloc</span><span class="p">(</span><span class="n">iImageBase</span><span class="p">,</span> <span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">sizeOfImage</span><span class="p">,</span> <span class="n">MEM_RESERVE</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pImageBase</span><span class="p">)</span>
+        <span class="n">pImageBase</span> <span class="o">=</span> <span class="n">VirtualAlloc</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">sizeOfImage</span><span class="p">,</span> <span class="n">MEM_RESERVE</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pImageBase</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="n">VacModule_t</span><span class="o">*</span> <span class="n">pModule</span> <span class="o">=</span> <span class="n">HeapAlloc</span><span class="p">(</span><span class="n">GetProcessHeap</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0x14</span><span class="p">);</span>
+
+    <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_nRunFuncExportFunctionOrdinal</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_nRunFuncExportModuleOrdinal</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pNTHeaders</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+    <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_nImportedLibrary</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pIAT</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pModuleBase</span> <span class="o">=</span> <span class="n">pImageBase</span><span class="p">;</span>
+
+    <span class="n">pImageBase</span> <span class="o">=</span> <span class="n">VirtualAlloc</span><span class="p">(</span><span class="n">pImageBase</span><span class="p">,</span> <span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">sizeOfImage</span><span class="p">,</span> <span class="n">MEM_COMMIT</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+
+    <span class="n">DecryptUknw_1</span><span class="p">(</span><span class="n">pImageBase</span><span class="p">,</span> <span class="n">pRawModule</span><span class="p">,</span> <span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">sizeOfHeaders</span> <span class="o">+</span> <span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">e_lfanew</span><span class="p">);</span>
+
+    <span class="n">pNtHeader</span> <span class="o">=</span> <span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">e_lfanew</span> <span class="o">+</span> <span class="n">pImageBase</span><span class="p">;</span>
+
+    <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pNTHeaders</span> <span class="o">=</span> <span class="n">pNtHeader</span><span class="p">;</span>
+
+    <span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">imageBase</span> <span class="o">=</span> <span class="n">pImageBase</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">FileHeader</span><span class="p">.</span><span class="n">numberOfSections</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="n">PIMAGE_SECTION_HEADER</span> <span class="n">pSectionHeader</span> <span class="o">=</span> <span class="n">IMAGE_FIRST_SECTION</span><span class="p">(</span><span class="n">pNtHeader</span><span class="p">);</span>
+
+	<span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">FileHeader</span><span class="p">.</span><span class="n">NumberOfSections</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+
+		<span class="n">DWORD</span> <span class="n">iSectionNameSize</span> <span class="o">=</span> <span class="n">pSectionHeader</span><span class="o">-&gt;</span><span class="n">Name</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+		<span class="n">DWORD</span> <span class="n">iStart</span> <span class="o">=</span> <span class="n">pSectionHeader</span><span class="o">-&gt;</span><span class="n">Name</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">iSectionNameSize</span><span class="p">){</span>
+
+            <span class="n">LPVOID</span> <span class="n">pSection</span> <span class="o">=</span> <span class="n">VirtualAlloc</span><span class="p">(</span><span class="n">pSectionHeader</span><span class="o">-&gt;</span><span class="n">virtualAddress</span> <span class="o">+</span> <span class="n">pModuleBase_0</span><span class="p">,</span> <span class="n">iSectionNameSize</span><span class="p">,</span> <span class="n">MEM_COMMIT</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+            <span class="n">pSectionHeader</span><span class="o">-&gt;</span><span class="n">virtualSize</span> <span class="o">=</span> <span class="n">pSection</span><span class="p">;</span>
+            <span class="n">DecryptUknw_1</span><span class="p">(</span><span class="n">pSection</span><span class="p">,</span> <span class="n">iStart</span> <span class="o">+</span> <span class="n">pRawModule</span><span class="p">,</span> <span class="n">iSectionNameSize</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span><span class="p">{</span>
+
+            <span class="n">DWORD</span> <span class="n">iSectionAlignment</span> <span class="o">=</span> <span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">sectionAlignment</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">iSectionAlignment</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+
+                <span class="n">LPVOID</span> <span class="n">pSection</span> <span class="o">=</span> <span class="n">VirtualAlloc</span><span class="p">(</span><span class="n">pSectionHeader</span><span class="o">-&gt;</span><span class="n">virtualAddress</span> <span class="o">+</span> <span class="n">pModuleBase_0</span><span class="p">,</span> <span class="n">iSectionAlignment</span><span class="p">,</span> <span class="n">MEM_COMMIT</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+                <span class="n">pSectionHeader</span><span class="o">-&gt;</span><span class="n">virtualSize</span> <span class="o">=</span> <span class="n">pSection</span><span class="p">;</span>
+                <span class="n">DecryptUknw</span><span class="p">(</span><span class="n">pSection</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">iSectionAlignment</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+		<span class="n">pSectionHeader</span><span class="o">++</span><span class="p">;</span>
+	<span class="p">}</span>
+
+    <span class="kt">void</span><span class="o">*</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">pImageBase</span> <span class="o">-</span> <span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">imageBase</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pImageBase</span> <span class="o">!=</span> <span class="n">pNtHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">imageBase</span><span class="p">)</span>
+        <span class="n">ResolveRelocation</span><span class="p">(</span><span class="n">pModule</span><span class="p">,</span> <span class="n">tmp</span><span class="p">);</span>
+        
+    <span class="n">ResolveIAT</span><span class="p">(</span><span class="n">pModule</span><span class="p">);</span>
+
+    <span class="n">SetPageFlagsVacModule</span><span class="p">(</span><span class="n">pModule</span><span class="p">);</span>
+
+    <span class="kt">uint32_t</span> <span class="n">iEntryPointRva</span> <span class="o">=</span> <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pNTHeaders</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">addressOfEntryPoint</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">iEntryPointRva</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pModule</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pNtHeader</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pModule</span><span class="p">;</span>
+
+    <span class="kt">void</span><span class="o">*</span> <span class="n">pEntryPoint</span> <span class="o">=</span> <span class="n">iEntryPointRva</span> <span class="o">+</span> <span class="n">pImageBase</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">iEntryPointRva</span> <span class="o">!=</span> <span class="n">pImageBase</span><span class="p">){</span>
+
+        <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">pEntryPoint</span><span class="p">(</span><span class="n">pImageBase</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">){</span>
+            <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_nRunFuncExportFunctionOrdinal</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">return</span> <span class="n">pModule</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_nRunFuncExportFunctionOrdinal</span><span class="p">){</span>
+
+        <span class="kt">uint32_t</span> <span class="n">pModuleBase</span> <span class="o">=</span> <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pModuleBase</span><span class="p">;</span>
+        <span class="p">(</span><span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pNTHeaders</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">addressOfEntryPoint</span> <span class="o">+</span> <span class="n">pModuleBase</span><span class="p">)(</span><span class="n">pModuleBase</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kt">uint32_t</span> <span class="n">pIAT</span> <span class="o">=</span> <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pIAT</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pIAT</span><span class="p">){</span>
+
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_nImportedLibrary</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+
+            <span class="n">pIAT</span> <span class="o">=</span> <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pIAT</span><span class="p">;</span>
+            <span class="n">HMODULE</span> <span class="n">hLibModule</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">pIAT</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span><span class="p">));</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">hLibModule</span> <span class="o">!=</span> <span class="mh">0xffffffff</span><span class="p">){</span>
+
+                <span class="n">FreeLibrary</span><span class="p">(</span><span class="n">hLibModule</span><span class="p">);</span>
+                <span class="n">pIAT</span> <span class="o">=</span> <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pIAT</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kt">uint32_t</span> <span class="n">pModuleBase</span> <span class="o">=</span> <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pModuleBase</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pModuleBase</span><span class="p">)</span>
+        <span class="n">VirtualFree</span><span class="p">(</span><span class="n">pModuleBase</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0x8000</span><span class="p">);</span>
+
+    <span class="n">HeapFree</span><span class="p">(</span><span class="n">GetProcessHeap</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pModule</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>This is the decryption routine of a module.</p>
+<p>Valve uses the DOS header to store informations, Those informations are located right after the end of the DOS header, through the <code>e_lfanew</code> value of the DOS header as an offset. Those informations are section&rsquo;s decryption keys, and CRC. Valve uses RSA to cipher them, as always, the RSA public key is stored in the executable.</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">struct</span> <span class="nc">VacModuleCustomDosHeader_t</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="nc">_IMAGE_DOS_HEADER</span> <span class="n">m_DosHeader</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">m_ValveHeaderMagic</span><span class="p">;</span> <span class="c1">// &#34;VLV&#34;
+</span><span class="c1"></span>    <span class="n">DWORD</span> <span class="n">m_nIsCrypted</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">m_nCryptedDataSize</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">unkn0</span><span class="p">;</span>
+    <span class="n">BYTE</span>  <span class="n">m_CryptedRSASignature</span><span class="p">[</span><span class="mh">0x80</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="kt">int32_t</span> <span class="nf">DecryptVacModule</span><span class="p">(</span><span class="n">VacModuleCustomDosHeader_t</span><span class="o">*</span> <span class="n">pRawModule</span><span class="p">,</span> <span class="kt">int</span> <span class="n">iModuleSize</span><span class="p">,</span> <span class="n">DWORD</span><span class="o">**</span> <span class="n">decodedData</span><span class="p">,</span> <span class="kt">int32_t</span> <span class="n">arg5</span><span class="p">){</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">iModuleSize</span> <span class="o">&gt;=</span> <span class="mh">0x200</span> <span class="o">&amp;&amp;</span> <span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">m_DosHeader</span><span class="p">.</span><span class="n">e_magic</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">MZ</span><span class="err">&#39;</span><span class="p">){</span>
+
+        <span class="kt">uint32_t</span> <span class="n">pNtHeaderOffset</span> <span class="o">=</span> <span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">m_DosHeader</span><span class="p">.</span><span class="n">e_lfanew</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">pNtHeaderOffset</span> <span class="o">&gt;=</span> <span class="mh">0x40</span> <span class="o">&amp;&amp;</span> <span class="n">pNtHeaderOffset</span> <span class="o">&lt;</span> <span class="n">iModuleSize</span> <span class="o">+</span> <span class="mi">8</span> <span class="o">&amp;&amp;</span> <span class="o">*</span><span class="p">(</span><span class="n">pNtHeaderOffset</span> <span class="o">+</span> <span class="n">pRawModule</span><span class="p">)</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">PE</span><span class="err">&#39;</span><span class="p">){</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">m_ValveHeaderMagic</span> <span class="o">!=</span> <span class="err">&#39;</span><span class="n">VLV</span><span class="err">&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">m_nIsCrypted</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">return</span> <span class="mi">4</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">iModuleSize</span> <span class="o">&gt;=</span> <span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">m_nCryptedDataSize</span><span class="p">)</span>
+                <span class="k">return</span> <span class="mi">3</span><span class="p">;</span>
+
+            <span class="p">....</span>
+
+            <span class="kt">void</span><span class="o">*</span> <span class="n">pCryptedRSASignature</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">m_CryptedRSASignature</span><span class="p">;</span>
+
+            <span class="p">....</span>
+
+            <span class="n">DecryptUknw</span><span class="p">(</span><span class="n">pCryptedRSASignature</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">);</span>
+
+            <span class="p">....</span>
+
+            <span class="n">CCrypto</span><span class="o">::</span><span class="n">RSAVerifySignature</span><span class="p">(.....,</span> <span class="n">pRawModule</span><span class="p">,</span> <span class="n">pRawModule</span><span class="o">-&gt;</span><span class="n">m_nCryptedDataSize</span><span class="p">,</span> <span class="n">pubSignature</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="n">rsaKey</span><span class="p">);</span>
+
+            <span class="p">....</span>
+        <span class="p">}</span>
+        <span class="k">else</span><span class="p">{</span>
+            <span class="k">return</span> <span class="mi">6</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">else</span><span class="p">{</span>
+        <span class="k">return</span> <span class="mi">6</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>Finaly the struct used :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">VacModule_t</span>
+<span class="p">{</span>
+    <span class="n">WORD</span> <span class="n">m_nRunFuncExportFunctionOrdinal</span><span class="p">;</span>
+    <span class="n">WORD</span> <span class="n">m_nRunFuncExportModuleOrdinal</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">m_pModuleBase</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">_IMAGE_NT_HEADERS</span><span class="o">*</span> <span class="n">m_pNTHeaders</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">m_nImportedLibraryCount</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">m_pIAT</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">enum</span> <span class="n">VacModuleResult_t</span>
+<span class="p">{</span>
+    <span class="n">NOT_SET</span> <span class="o">=</span> <span class="mh">0x0</span><span class="p">,</span>
+    <span class="n">SUCCESS</span> <span class="o">=</span> <span class="mh">0x1</span><span class="p">,</span>
+    <span class="n">ALREADY_LOADED</span> <span class="o">=</span> <span class="mh">0x2</span><span class="p">,</span>
+    <span class="n">UKN0</span> <span class="o">=</span> <span class="mh">0x5</span><span class="p">,</span>
+    <span class="n">FAIL_TO_DECRYPT_VAC_MODULE</span> <span class="o">=</span> <span class="mh">0xb</span><span class="p">,</span>
+    <span class="n">FAIL_MODULE_SIZE_NULL</span> <span class="o">=</span> <span class="mh">0xc</span><span class="p">,</span>
+    <span class="n">UKN1</span> <span class="o">=</span> <span class="mh">0xf</span><span class="p">,</span>
+    <span class="n">FAIL_GET_MODULE_TEMP_PATH</span> <span class="o">=</span> <span class="mh">0x13</span><span class="p">,</span>
+    <span class="n">FAIL_WRITE_MODULE</span> <span class="o">=</span> <span class="mh">0x15</span><span class="p">,</span>
+    <span class="n">FAIL_LOAD_MODULE</span> <span class="o">=</span> <span class="mh">0x16</span><span class="p">,</span>
+    <span class="n">FAIL_GET_EXPORT_RUNFUNC</span> <span class="o">=</span> <span class="mh">0x17</span><span class="p">,</span>
+    <span class="n">FAIL_GET_EXPORT_RUNFUNC_2</span> <span class="o">=</span> <span class="mh">0x19</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">VacModuleInfo_t</span>
+<span class="p">{</span>
+    <span class="n">DWORD</span> <span class="n">m_unCRC32</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">m_hModule</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">VacModule_t</span><span class="o">*</span> <span class="n">m_pModule</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">m_pRunFunc</span><span class="p">;</span>
+    <span class="k">enum</span> <span class="n">VacModuleResult_t</span> <span class="n">m_nLastResult</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">m_nModuleSize</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">VacModuleCustomDosHeader_t</span><span class="o">*</span> <span class="n">m_pRawModule</span><span class="p">;</span>
+    <span class="n">WORD</span> <span class="n">unkn08</span><span class="p">;</span>
+    <span class="n">BYTE</span> <span class="n">m_nUnknFlag_1</span><span class="p">;</span>
+    <span class="n">BYTE</span> <span class="n">m_nUnknFlag_0</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">pCallableUnkn11</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">pCallableUnkn12</span><span class="p">;</span>
+<span class="p">};</span>
+
+</code></pre></div><h1 id="bypass">Bypass</h1>
+<p>Well, people already covered this, it&rsquo;s simple. You can disable the execution of module, and pretend that everything is fine.</p>
+<p>You can hook GetVacModuleEntrypoint to load the module without executing it, and unload it right after. I reality you have to patch the return value (<code>VacModuleResult_t</code>) to make this work.</p>
+<p>Sadly, some modules are necessary to play some games like CSGO. So you have to filter what module should be patched.</p>
+<p>NOTE : CRC are somehow unique per Steam ID. So you have to take another detection vector, like hashing <code>.text</code> section size like people did.</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">bool</span> <span class="kr">__stdcall</span> <span class="nf">GetVacModuleEntrypointHook</span><span class="p">(</span><span class="k">struct</span> <span class="nc">VacModuleInfo_t</span><span class="o">*</span> <span class="n">pModule</span><span class="p">,</span> <span class="kt">int</span> <span class="n">iFlags</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// call the original, load module
+</span><span class="c1"></span>    <span class="kt">bool</span> <span class="n">bOriginalReturn</span> <span class="o">=</span> <span class="p">((</span><span class="n">GetVacModuleEntrypointPrototype</span><span class="p">)</span><span class="n">pOriginalGetVacModuleEntrypoint</span><span class="p">)(</span><span class="n">pModule</span><span class="p">,</span> <span class="n">iFlags</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_unCRC32</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kt">bool</span> <span class="n">bFound</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">DWORD</span> <span class="nl">iCrc</span> <span class="p">:</span> <span class="n">m_KnownCRC</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_unCRC32</span> <span class="o">==</span> <span class="n">iCrc</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="n">PF</span><span class="p">(</span><span class="s">&#34;[+] GetVacModuleEntrypointHook : known module %p&#34;</span><span class="p">,</span> <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_unCRC32</span><span class="p">);</span>
+                <span class="n">bFound</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// dump it
+</span><span class="c1"></span>        <span class="n">DumpVacModule</span><span class="p">(</span><span class="n">pModule</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">bFound</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="n">PF</span><span class="p">(</span><span class="s">&#34;[-] GetVacModuleEntrypointHook : unknown module %p&#34;</span><span class="p">,</span> <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_unCRC32</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// check that this module is not whitelisted
+</span><span class="c1"></span>            <span class="k">for</span> <span class="p">(</span><span class="n">DWORD</span> <span class="nl">iCrc</span> <span class="p">:</span> <span class="n">m_WhiteListedCRC</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="c1">// it&#39;s a needed module
+</span><span class="c1"></span>                <span class="k">if</span> <span class="p">(</span><span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_unCRC32</span> <span class="o">==</span> <span class="n">iCrc</span><span class="p">)</span> <span class="p">{</span>
+
+                    <span class="n">PF</span><span class="p">(</span><span class="s">&#34;[+] GetVacModuleEntrypointHook : whitelisted module %p&#34;</span><span class="p">,</span> <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_unCRC32</span><span class="p">);</span>
+                    <span class="k">return</span> <span class="n">bOriginalReturn</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pRunFunc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// null _runfunc@20
+</span><span class="c1"></span>        <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_pRunFunc</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// unload the module
+</span><span class="c1"></span>    <span class="p">((</span><span class="n">UnloadVacModulePrototype</span><span class="p">)</span><span class="n">pUnloadVacModule</span><span class="p">)(</span><span class="n">pModule</span><span class="p">);</span>
+
+    <span class="c1">// patch the result 
+</span><span class="c1"></span>    <span class="n">pModule</span><span class="o">-&gt;</span><span class="n">m_nLastResult</span> <span class="o">=</span> <span class="n">SUCCESS</span><span class="p">;</span>
+	
+    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><h1 id="conclusion">Conclusion</h1>
+<p>As you can see, the bypass is pretty doable considering that there is no other security regarding VAC itself (no integrity check, no obfuscation, usermode anticheat ..).</p>
+<p>If VAC has a bad reputation in the first place, it&rsquo;s because its directors don&rsquo;t want to invest in it. But it&rsquo;s more related to Valve itself. In 2016, devs said that each public cheat (source code on github) will be flagged, and people that will try to use it will be banned. Of course, nothing of this is true (at least for the most part). A lot of people already published bypasses using hooks in 2018, and there are still working today without any banning issues.</p>
+<p>But you don&rsquo;t even need to touch to VAC itself. You can just deal with it by staying under the radar using tricks like code mutation, &ldquo;hidden&rdquo; hooks and DLL hijacking. I&rsquo;m doing it since 2018, and as soon as you don&rsquo;t copy public cheat source codes, you don&rsquo;t get banned at all.</p>
+<p>In the next part, I will reverse some modules to see what they actualy check.</p>
+<h1 id="r0da">~r0da</h1>
+
+            </div>
+        </article>
+
+        
+  
+
+
+
+ <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/blog/">Home</a></li>
+         
+          <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents"></nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&text=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&title=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&is_video=false&description=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&title=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&title=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&title=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&title=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&name=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading&description=I%20already%20taked%20about%20VAC%20and%20how%20useless%20it%20is.%20And%20recently%20I%20decided%20to%20take%20a%20closer%20look%20to%20it%2c%20so%20this%20is%20my%20quick%20analysis.%20My%20goal%20will%20be%20to%20understand%20how%20VAC%20execute%20its%20modules%2c%20and%20in%20a%20Part%202%2c%20understand%20those%20modules.%0aNOTE%20%3a%20I%26rsquo%3bm%20not%20a%20game%20hacker%20in%20the%20first%20place%2c%20so%20if%20something%20is%20not%20accurate%2c%20feel%20free%20to%20tell%20it.%0aWhat%20is%20it%20%3f">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-03-10-quick-vac%2f&t=Quick%20look%20around%20VAC%20-%20Part%201%20%3a%20Module%20loading">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+ <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2021  r0da 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+    </div>
+</body>
+
+<link rel="stylesheet" href=/blog/lib/font-awesome/css/all.min.css>
+<script src=/blog/lib/jquery/jquery.min.js></script>
+<script src=/blog/js/main.js></script>
+  
+
+</html>

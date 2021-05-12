@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>r0da</copyright>
-    <lastBuildDate>Fri, 12 Mar 2021 17:14:00 +0000</lastBuildDate><atom:link href="https://whereisr0da.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 11 Apr 2021 11:14:00 +0000</lastBuildDate><atom:link href="https://whereisr0da.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Quick look around VAC - Part 1 : Module loading</title>
+      <link>https://whereisr0da.github.io/blog/posts/2021-03-10-quick-vac/</link>
+      <pubDate>Sun, 11 Apr 2021 11:14:00 +0000</pubDate>
+      
+      <guid>https://whereisr0da.github.io/blog/posts/2021-03-10-quick-vac/</guid>
+      <description>I already taked about VAC and how useless it is. And recently I decided to take a closer look to it, so this is my quick analysis. My goal will be to understand how VAC execute its modules, and in a Part 2, understand those modules.
+NOTE : I&amp;rsquo;m not a game hacker in the first place, so if something is not accurate, feel free to tell it.
+What is it ?</description>
+    </item>
+    
     <item>
       <title>BTSCTF 2021 : BtS emulator Write-Up</title>
       <link>https://whereisr0da.github.io/blog/posts/2021-03-12-emulator-write-up/</link>
@@ -33,7 +44,7 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
     </item>
     
     <item>
-      <title>Quick look around VMP - Part 2 : Code Mutation</title>
+      <title>🔥 Quick look around VMP - Part 2 : Code Mutation</title>
       <link>https://whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/</link>
       <pubDate>Tue, 26 Jan 2021 17:14:00 +0000</pubDate>
       
@@ -207,10 +218,7 @@ What I used :
       <guid>https://whereisr0da.github.io/blog/about/</guid>
       <description>Whoami I&amp;rsquo;m a reverser, I love to crack things by doing reverse engineering. I&amp;rsquo;m Doing RE since 2015 (mainly dataminig), but practicing serioucly since 2018. In this blog, I try to share my research / work I&amp;rsquo;m doing during my free time.
 Currently  Looking for a job in re I&amp;rsquo;m a ctf player in r2s team  Links Find me on :
-Discord: r0da#7263
-Github: whereisr0da
-Twitter: @r0da__
-RootMe: r0da</description>
+ Discord: r0da#7263 Github: whereisr0da Twitter: @r0da__ RootMe: r0da  </description>
     </item>
     
   </channel>

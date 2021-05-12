@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> Quick look around VMP - Part 2 : Code Mutation | r0da&#39;s Blog</title>
+  <title> 🔥 Quick look around VMP - Part 2 : Code Mutation | r0da&#39;s Blog</title>
   <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering and cracking.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Quick look around VMP - Part 2 : Code Mutation" />
+  <meta property="og:title" content="🔥 Quick look around VMP - Part 2 : Code Mutation" />
 <meta property="og:description" content="Hi
 Here is my short research about VMP mutation engine.
 VMProtect is a well known protection with a lot of features, its core one is its virtualization engine. It&rsquo;s a very good and optimized one, even if elite crackz say that it&rsquo;s not at the level of Themida. Cracking its virtualization engine is time consuming, so I&rsquo;m not specialy focused on it right now. But there is another feature of VMP that is interesting for me, its code mutation engine." />
@@ -18,7 +18,7 @@ VMProtect is a well known protection with a lot of features, its core one is its
 <meta property="article:modified_time" content="2021-01-26T17:14:00+00:00" />
 
   <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Quick look around VMP - Part 2 : Code Mutation"/>
+<meta name="twitter:title" content="🔥 Quick look around VMP - Part 2 : Code Mutation"/>
 <meta name="twitter:description" content="Hi
 Here is my short research about VMP mutation engine.
 VMProtect is a well known protection with a lot of features, its core one is its virtualization engine. It&rsquo;s a very good and optimized one, even if elite crackz say that it&rsquo;s not at the level of Themida. Cracking its virtualization engine is time consuming, so I&rsquo;m not specialy focused on it right now. But there is another feature of VMP that is interesting for me, its code mutation engine."/>
@@ -47,10 +47,11 @@ VMProtect is a well known protection with a lot of features, its core one is its
   
   
 </head>
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
 
-  <div id="header-post">
+<body class="max-width mx-auto px3 ltr">
+    <div class="content index py4">
+
+        <div id="header-post">
   <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
   <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
   <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
@@ -112,52 +113,52 @@ VMProtect is a well known protection with a lot of features, its core one is its
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&text=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&text=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&is_video=false&description=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&is_video=false&description=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f">
+    <a class="icon" href="mailto:?subject=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-stumbleupon " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-digg " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&name=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation&description=Hi%0aHere%20is%20my%20short%20research%20about%20VMP%20mutation%20engine.%0aVMProtect%20is%20a%20well%20known%20protection%20with%20a%20lot%20of%20features%2c%20its%20core%20one%20is%20its%20virtualization%20engine.%20It%26rsquo%3bs%20a%20very%20good%20and%20optimized%20one%2c%20even%20if%20elite%20crackz%20say%20that%20it%26rsquo%3bs%20not%20at%20the%20level%20of%20Themida.%20Cracking%20its%20virtualization%20engine%20is%20time%20consuming%2c%20so%20I%26rsquo%3bm%20not%20specialy%20focused%20on%20it%20right%20now.%20But%20there%20is%20another%20feature%20of%20VMP%20that%20is%20interesting%20for%20me%2c%20its%20code%20mutation%20engine.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&name=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation&description=Hi%0aHere%20is%20my%20short%20research%20about%20VMP%20mutation%20engine.%0aVMProtect%20is%20a%20well%20known%20protection%20with%20a%20lot%20of%20features%2c%20its%20core%20one%20is%20its%20virtualization%20engine.%20It%26rsquo%3bs%20a%20very%20good%20and%20optimized%20one%2c%20even%20if%20elite%20crackz%20say%20that%20it%26rsquo%3bs%20not%20at%20the%20level%20of%20Themida.%20Cracking%20its%20virtualization%20engine%20is%20time%20consuming%2c%20so%20I%26rsquo%3bm%20not%20specialy%20focused%20on%20it%20right%20now.%20But%20there%20is%20another%20feature%20of%20VMP%20that%20is%20interesting%20for%20me%2c%20its%20code%20mutation%20engine.">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&t=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&t=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -186,26 +187,26 @@ VMProtect is a well known protection with a lot of features, its core one is its
 </div>
 
 
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        Quick look around VMP - Part 2 : Code Mutation
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2021-01-26 17:14:00 &#43;0000 UTC" itemprop="datePublished">2021-01-26</time>
-          
-        </div>
-        
-        
-      </div>
-    </header>
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header>
+                <h1 class="posttitle" itemprop="name headline">
+                    
+                    <div id="flame">🔥 Quick look around VMP - Part 2 : Code Mutation</div>
+                    
+                </h1>
+                <div class="meta">
+                    
+                    <div class="postdate">
+                        
+                        <time datetime="2021-01-26 17:14:00 &#43;0000 UTC" itemprop="datePublished">2021-01-26</time> 
+                    </div>
+                     
+                </div>
+            </header>
 
-  
-    <div class="content" itemprop="articleBody">
-      <p>Hi</p>
+            
+            <div class="content" itemprop="articleBody">
+                <p>Hi</p>
 <p>Here is my short research about VMP mutation engine.</p>
 <p>VMProtect is a well known protection with a lot of features, its core one is its virtualization engine. It&rsquo;s a very good and optimized one, even if elite crackz say that it&rsquo;s not at the level of Themida. Cracking its virtualization engine is time consuming, so I&rsquo;m not specialy focused on it right now. But there is another feature of VMP that is interesting for me, its code mutation engine. Its basicaly a way to change the form of the code, without changing its purpose. As there is multiple way to do one thing, VMP mutate the code so it&rsquo;s still the same, but with a different signature.</p>
 <p>Note : I used VMProtect 3.5 demo version for me tests.</p>
@@ -253,22 +254,20 @@ VMProtect is a well known protection with a lot of features, its core one is its
 <h2 id="how-to-get-rid-of-it-">How to get rid of it ?</h2>
 <p>Well, if you want absolutly to remove it, first you can code a tool to remove instructions that play with a register and reset it right after. After you can remove useless instructions like movs and cmps on the same target and other things I said previously. Another idea could be remove uncommon instructions, but it could be dangerous if the real program do some tricky operations. Last approach is data tracing or dynamic taint flow analysis, by tracing the behavior of registers and their data, we are able to define what is junkcode. Using symbolic emulation, you can remove useless instruction with frameworks like <code>miasm</code> or <code>triton</code> (<a href="https://www.sstic.org/2014/presentation/Tutorial_miasm/">see the exemple here</a>)</p>
 <h2 id="conclusion">Conclusion</h2>
-<p>VMP is impressive, and its mutation engine could make reverse or devirtualization process way longuer that it should, even if the junkcode could be spotted. With high performance optimizations, the junk instructions could be hard to split from the real code in so cases (C++ and other virtualised stuff). In Ultra Mode (mutated code virtualized), this mutation should be a pain when you have to devirtualize the opcode.</p>
+<p>VMP is impressive, and its mutation engine could make reverse or devirtualization process way longuer that it should, even if the junkcode could be spotted. With high performance optimizations, the junk instructions could be hard to split from the real code in so cases (C++ and other virtualized stuff). In Ultra Mode (mutated code virtualized), this mutation should be a pain when you have to devirtualize the opcode.</p>
 <p>Regarding code signature, it&rsquo;s perfect, if you want to make your code different without adding useless junkcode it&rsquo;s one of the best solution. Personaly I&rsquo;m using it to bypass signature checks of Anti-cheats, but you could use it for some other mean ways x)</p>
 <p>UPDATE : After being a while in virtualized VMP routines (which are mutated), I think they should use more traditional instructions and commom registers. Because otherwise you can spot the junkcode easily, they have the ability to know which register size is used in the code context, and they should keep the same &ldquo;flow&rdquo; of data manipulation size instead of switching from <code>eax</code> to <code>al</code> and return back to <code>ax</code>.</p>
 <h1 id="r0da">~r0da</h1>
 
-    </div>
-  </article>
+            </div>
+        </article>
 
+        
   
-  
 
 
 
-
-
-  <div id="footer-post-container">
+ <div id="footer-post-container">
   <div id="footer-post">
 
     <div id="nav-footer" style="display: none">
@@ -314,52 +313,52 @@ VMProtect is a well known protection with a lot of features, its core one is its
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&text=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&text=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&is_video=false&description=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&is_video=false&description=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f">
+    <a class="icon" href="mailto:?subject=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&name=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation&description=Hi%0aHere%20is%20my%20short%20research%20about%20VMP%20mutation%20engine.%0aVMProtect%20is%20a%20well%20known%20protection%20with%20a%20lot%20of%20features%2c%20its%20core%20one%20is%20its%20virtualization%20engine.%20It%26rsquo%3bs%20a%20very%20good%20and%20optimized%20one%2c%20even%20if%20elite%20crackz%20say%20that%20it%26rsquo%3bs%20not%20at%20the%20level%20of%20Themida.%20Cracking%20its%20virtualization%20engine%20is%20time%20consuming%2c%20so%20I%26rsquo%3bm%20not%20specialy%20focused%20on%20it%20right%20now.%20But%20there%20is%20another%20feature%20of%20VMP%20that%20is%20interesting%20for%20me%2c%20its%20code%20mutation%20engine.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&name=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation&description=Hi%0aHere%20is%20my%20short%20research%20about%20VMP%20mutation%20engine.%0aVMProtect%20is%20a%20well%20known%20protection%20with%20a%20lot%20of%20features%2c%20its%20core%20one%20is%20its%20virtualization%20engine.%20It%26rsquo%3bs%20a%20very%20good%20and%20optimized%20one%2c%20even%20if%20elite%20crackz%20say%20that%20it%26rsquo%3bs%20not%20at%20the%20level%20of%20Themida.%20Cracking%20its%20virtualization%20engine%20is%20time%20consuming%2c%20so%20I%26rsquo%3bm%20not%20specialy%20focused%20on%20it%20right%20now.%20But%20there%20is%20another%20feature%20of%20VMP%20that%20is%20interesting%20for%20me%2c%20its%20code%20mutation%20engine.">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&t=Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-26-vmp-2%2f&t=%f0%9f%94%a5%20Quick%20look%20around%20VMP%20-%20Part%202%20%3a%20Code%20Mutation">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>
@@ -381,9 +380,7 @@ VMProtect is a well known protection with a lot of features, its core one is its
 
   </div>
 </div>
-
-
-  <footer id="footer">
+ <footer id="footer">
   <div class="footer-left">
     Copyright  &copy; 2021  r0da 
   </div>
@@ -401,13 +398,12 @@ VMProtect is a well known protection with a lot of features, its core one is its
 </footer>
 
 
-  </div>
+    </div>
 </body>
 
 <link rel="stylesheet" href=/blog/lib/font-awesome/css/all.min.css>
 <script src=/blog/lib/jquery/jquery.min.js></script>
 <script src=/blog/js/main.js></script>
-
-
+  
 
 </html>

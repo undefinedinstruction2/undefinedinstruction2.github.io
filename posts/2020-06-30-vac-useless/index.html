@@ -49,10 +49,11 @@ So let&rsquo;s start with the second one, they will &ldquo;restricts&rdquo; the 
   
   
 </head>
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
 
-  <div id="header-post">
+<body class="max-width mx-auto px3 ltr">
+    <div class="content index py4">
+
+        <div id="header-post">
   <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
   <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
   <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
@@ -191,26 +192,24 @@ So let&rsquo;s start with the second one, they will &ldquo;restricts&rdquo; the 
 </div>
 
 
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        Why last VAC Anticheat update is useless
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2020-06-30 17:14:00 &#43;0000 UTC" itemprop="datePublished">2020-06-30</time>
-          
-        </div>
-        
-        
-      </div>
-    </header>
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header>
+                <h1 class="posttitle" itemprop="name headline">
+                     Why last VAC Anticheat update is useless 
+                </h1>
+                <div class="meta">
+                    
+                    <div class="postdate">
+                        
+                        <time datetime="2020-06-30 17:14:00 &#43;0000 UTC" itemprop="datePublished">2020-06-30</time> 
+                    </div>
+                     
+                </div>
+            </header>
 
-  
-    <div class="content" itemprop="articleBody">
-      <p>A couple of days ago, Valve released a new update for CSGO, that &ldquo;improve&rdquo; its already pointless anticheat. And I decided to make a thread about it because it&rsquo;s stupidly funny.</p>
+            
+            <div class="content" itemprop="articleBody">
+                <p>A couple of days ago, Valve released a new update for CSGO, that &ldquo;improve&rdquo; its already pointless anticheat. And I decided to make a thread about it because it&rsquo;s stupidly funny.</p>
 <h2 id="the-article-blur">The article blur</h2>
 <p>In this article, they detail  :</p>
 <p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_71.png" alt=""></p>
@@ -228,7 +227,7 @@ So let&rsquo;s start with the second one, they will &ldquo;restricts&rdquo; the 
 <p>So just by looking at this article, we can see that there is a lot of weird things in their explanations, but before checking this out. I would note that the last sentence says &ldquo;we will block signed DLL if their functionality interferes with the game in any way&rdquo;. So even if we bypass the signature check, they will check the injected DLL, which is a good thing, but they already said that in the past, and they are already supposed to do it.</p>
 <h2 id="what-are-they-actually-doing-">What are they actually doing ?</h2>
 <p>Well it&rsquo;s even worst than what I though.</p>
-<p>To find a way to start, we can assume that everything is dealing with DLL injections. There is a lot of DLL injection methods, I made a short article about the most common one called LoadLibrary (see : <a href="https://hajjik666.blogspot.com/2019/06/le-hooking-de-function.html)">https://hajjik666.blogspot.com/2019/06/le-hooking-de-function.html)</a>.</p>
+<p>To find a way to start, we can assume that everything is dealing with DLL injections. There is a lot of DLL injection methods, I made a short article about the most common one called LoadLibrary (see : <a href="https://whereisr0da.github.io/blog/posts/2019-06-24-function-hooking/)">https://whereisr0da.github.io/blog/posts/2019-06-24-function-hooking/)</a>.</p>
 <p>To summarize, the LoadLibrary method will execute the function LoadLibrary in the target application. And like its name said, this function will load a library (DLL) in the application, and will call its entrypoint to execute the code contained in the DLL.</p>
 <p>DLL injections are done by &ldquo;Injectors&rdquo; that will handle this task. Legit softwares like Discord use this LoadLibrary method in their Injectors. And in this context, public / bad coded / pasted injectors for  internal CSGO cheats are using this method with LoadLibrary, or other functions.</p>
 <h3 id="the-reality">The reality</h3>
@@ -281,17 +280,15 @@ So let&rsquo;s start with the second one, they will &ldquo;restricts&rdquo; the 
 <p><img src="https://whereisr0da.github.io/blog/post_images/vac_useless/Screenshot_72.png" alt=""></p>
 <h1 id="r0da">~r0da</h1>
 
-    </div>
-  </article>
+            </div>
+        </article>
 
+        
   
-  
 
 
 
-
-
-  <div id="footer-post-container">
+ <div id="footer-post-container">
   <div id="footer-post">
 
     <div id="nav-footer" style="display: none">
@@ -407,9 +404,7 @@ So let&rsquo;s start with the second one, they will &ldquo;restricts&rdquo; the 
 
   </div>
 </div>
-
-
-  <footer id="footer">
+ <footer id="footer">
   <div class="footer-left">
     Copyright  &copy; 2021  r0da 
   </div>
@@ -427,13 +422,12 @@ So let&rsquo;s start with the second one, they will &ldquo;restricts&rdquo; the 
 </footer>
 
 
-  </div>
+    </div>
 </body>
 
 <link rel="stylesheet" href=/blog/lib/font-awesome/css/all.min.css>
 <script src=/blog/lib/jquery/jquery.min.js></script>
 <script src=/blog/js/main.js></script>
-
-
+  
 
 </html>
