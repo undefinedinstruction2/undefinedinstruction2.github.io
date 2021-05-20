@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> Deceive the cross references analyse | r0da&#39;s Blog</title>
+  <title> Deceive cross references analysis (XREF) | r0da&#39;s Blog</title>
   <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering and cracking.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Deceive the cross references analyse" />
+  <meta property="og:title" content="Deceive cross references analysis (XREF)" />
 <meta property="og:description" content="One of the usefull thing in reverse engenering is xrefs (cross-references), with a complet analyse of all the PE, variables and function addresses can be linked to functions where they are called or used. This simplify drasticly the reverse engenering, but xrefs can be a problem in case of security check. If you have a big executable and you want to look at the license check system, a string like “Check License” or “Enter License” can be find easily and the xrefs associated to him will show you directly what you wanted to find." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://whereisr0da.github.io/blog/posts/2019-06-25-xref/" />
@@ -16,7 +16,7 @@
 <meta property="article:modified_time" content="2019-06-25T17:14:00+00:00" />
 
   <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Deceive the cross references analyse"/>
+<meta name="twitter:title" content="Deceive cross references analysis (XREF)"/>
 <meta name="twitter:description" content="One of the usefull thing in reverse engenering is xrefs (cross-references), with a complet analyse of all the PE, variables and function addresses can be linked to functions where they are called or used. This simplify drasticly the reverse engenering, but xrefs can be a problem in case of security check. If you have a big executable and you want to look at the license check system, a string like “Check License” or “Enter License” can be find easily and the xrefs associated to him will show you directly what you wanted to find."/>
 
   
@@ -109,52 +109,52 @@
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&text=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&text=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&is_video=false&description=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&is_video=false&description=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=Deceive%20the%20cross%20references%20analyse&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f">
+    <a class="icon" href="mailto:?subject=Deceive%20cross%20references%20analysis%20%28XREF%29&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-stumbleupon " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-digg " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&name=Deceive%20the%20cross%20references%20analyse&description=One%20of%20the%20usefull%20thing%20in%20reverse%20engenering%20is%20xrefs%20%28cross-references%29%2c%20with%20a%20complet%20analyse%20of%20all%20the%20PE%2c%20variables%20and%20function%20addresses%20can%20be%20linked%20to%20functions%20where%20they%20are%20called%20or%20used.%20This%20simplify%20drasticly%20the%20reverse%20engenering%2c%20but%20xrefs%20can%20be%20a%20problem%20in%20case%20of%20security%20check.%20If%20you%20have%20a%20big%20executable%20and%20you%20want%20to%20look%20at%20the%20license%20check%20system%2c%20a%20string%20like%20%e2%80%9cCheck%20License%e2%80%9d%20or%20%e2%80%9cEnter%20License%e2%80%9d%20can%20be%20find%20easily%20and%20the%20xrefs%20associated%20to%20him%20will%20show%20you%20directly%20what%20you%20wanted%20to%20find.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&name=Deceive%20cross%20references%20analysis%20%28XREF%29&description=One%20of%20the%20usefull%20thing%20in%20reverse%20engenering%20is%20xrefs%20%28cross-references%29%2c%20with%20a%20complet%20analyse%20of%20all%20the%20PE%2c%20variables%20and%20function%20addresses%20can%20be%20linked%20to%20functions%20where%20they%20are%20called%20or%20used.%20This%20simplify%20drasticly%20the%20reverse%20engenering%2c%20but%20xrefs%20can%20be%20a%20problem%20in%20case%20of%20security%20check.%20If%20you%20have%20a%20big%20executable%20and%20you%20want%20to%20look%20at%20the%20license%20check%20system%2c%20a%20string%20like%20%e2%80%9cCheck%20License%e2%80%9d%20or%20%e2%80%9cEnter%20License%e2%80%9d%20can%20be%20find%20easily%20and%20the%20xrefs%20associated%20to%20him%20will%20show%20you%20directly%20what%20you%20wanted%20to%20find.">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&t=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&t=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -175,7 +175,7 @@
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
             <header>
                 <h1 class="posttitle" itemprop="name headline">
-                     Deceive the cross references analyse 
+                     Deceive cross references analysis (XREF) 
                 </h1>
                 <div class="meta">
                     
@@ -272,52 +272,52 @@ This simplify drasticly the reverse engenering, but xrefs can be a problem in ca
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&text=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&text=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&is_video=false&description=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&is_video=false&description=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=Deceive%20the%20cross%20references%20analyse&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f">
+    <a class="icon" href="mailto:?subject=Deceive%20cross%20references%20analysis%20%28XREF%29&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&title=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&name=Deceive%20the%20cross%20references%20analyse&description=One%20of%20the%20usefull%20thing%20in%20reverse%20engenering%20is%20xrefs%20%28cross-references%29%2c%20with%20a%20complet%20analyse%20of%20all%20the%20PE%2c%20variables%20and%20function%20addresses%20can%20be%20linked%20to%20functions%20where%20they%20are%20called%20or%20used.%20This%20simplify%20drasticly%20the%20reverse%20engenering%2c%20but%20xrefs%20can%20be%20a%20problem%20in%20case%20of%20security%20check.%20If%20you%20have%20a%20big%20executable%20and%20you%20want%20to%20look%20at%20the%20license%20check%20system%2c%20a%20string%20like%20%e2%80%9cCheck%20License%e2%80%9d%20or%20%e2%80%9cEnter%20License%e2%80%9d%20can%20be%20find%20easily%20and%20the%20xrefs%20associated%20to%20him%20will%20show%20you%20directly%20what%20you%20wanted%20to%20find.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&name=Deceive%20cross%20references%20analysis%20%28XREF%29&description=One%20of%20the%20usefull%20thing%20in%20reverse%20engenering%20is%20xrefs%20%28cross-references%29%2c%20with%20a%20complet%20analyse%20of%20all%20the%20PE%2c%20variables%20and%20function%20addresses%20can%20be%20linked%20to%20functions%20where%20they%20are%20called%20or%20used.%20This%20simplify%20drasticly%20the%20reverse%20engenering%2c%20but%20xrefs%20can%20be%20a%20problem%20in%20case%20of%20security%20check.%20If%20you%20have%20a%20big%20executable%20and%20you%20want%20to%20look%20at%20the%20license%20check%20system%2c%20a%20string%20like%20%e2%80%9cCheck%20License%e2%80%9d%20or%20%e2%80%9cEnter%20License%e2%80%9d%20can%20be%20find%20easily%20and%20the%20xrefs%20associated%20to%20him%20will%20show%20you%20directly%20what%20you%20wanted%20to%20find.">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&t=Deceive%20the%20cross%20references%20analyse">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-06-25-xref%2f&t=Deceive%20cross%20references%20analysis%20%28XREF%29">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>

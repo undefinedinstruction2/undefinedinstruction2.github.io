@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> KoreanCTF : CSHARP Write-Up | r0da&#39;s Blog</title>
+  <title> KoreanCTF 2017 : CSHARP Write-Up | r0da&#39;s Blog</title>
   <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering and cracking.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="KoreanCTF : CSHARP Write-Up" />
+  <meta property="og:title" content="KoreanCTF 2017 : CSHARP Write-Up" />
 <meta property="og:description" content="Hi people
 Starting a blogspot by reversing a .Net PE sound weird to me, but I need to start somewhere :p
 This a Write Up about a Korean CTF challenge, the one is named CSHARP It&rsquo;s not really hard (because of .net) but I found it interresting
@@ -21,7 +21,7 @@ What I used :
 <meta property="article:modified_time" content="2019-02-27T17:41:00+00:00" />
 
   <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="KoreanCTF : CSHARP Write-Up"/>
+<meta name="twitter:title" content="KoreanCTF 2017 : CSHARP Write-Up"/>
 <meta name="twitter:description" content="Hi people
 Starting a blogspot by reversing a .Net PE sound weird to me, but I need to start somewhere :p
 This a Write Up about a Korean CTF challenge, the one is named CSHARP It&rsquo;s not really hard (because of .net) but I found it interresting
@@ -119,52 +119,52 @@ What I used :
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&text=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&text=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&is_video=false&description=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&is_video=false&description=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=KoreanCTF%20%3a%20CSHARP%20Write-Up&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f">
+    <a class="icon" href="mailto:?subject=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-stumbleupon " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-digg " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&name=KoreanCTF%20%3a%20CSHARP%20Write-Up&description=Hi%20people%0aStarting%20a%20blogspot%20by%20reversing%20a%20.Net%20PE%20sound%20weird%20to%20me%2c%20but%20I%20need%20to%20start%20somewhere%20%3ap%0aThis%20a%20Write%20Up%20about%20a%20Korean%20CTF%20challenge%2c%20the%20one%20is%20named%20CSHARP%20It%26rsquo%3bs%20not%20really%20hard%20%28because%20of%20.net%29%20but%20I%20found%20it%20interresting%0aMD5%20%3a%20E8B0B5173B14D118FFD687D37F1A6F06%0aWhat%20I%20used%20%3a%0a%20DIE%20%28Detect%20It%20Easy%29%20DNSpy%20%20Part%201%20%3a%20Post%20analyse%20The%20first%20thing%20to%20do%20is%20identify%20what%20is%20this%20PE">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&name=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up&description=Hi%20people%0aStarting%20a%20blogspot%20by%20reversing%20a%20.Net%20PE%20sound%20weird%20to%20me%2c%20but%20I%20need%20to%20start%20somewhere%20%3ap%0aThis%20a%20Write%20Up%20about%20a%20Korean%20CTF%20challenge%2c%20the%20one%20is%20named%20CSHARP%20It%26rsquo%3bs%20not%20really%20hard%20%28because%20of%20.net%29%20but%20I%20found%20it%20interresting%0aMD5%20%3a%20E8B0B5173B14D118FFD687D37F1A6F06%0aWhat%20I%20used%20%3a%0a%20DIE%20%28Detect%20It%20Easy%29%20DNSpy%20%20Part%201%20%3a%20Post%20analyse%20The%20first%20thing%20to%20do%20is%20identify%20what%20is%20this%20PE">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&t=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&t=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -187,7 +187,7 @@ What I used :
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
             <header>
                 <h1 class="posttitle" itemprop="name headline">
-                     KoreanCTF : CSHARP Write-Up 
+                     KoreanCTF 2017 : CSHARP Write-Up 
                 </h1>
                 <div class="meta">
                     
@@ -326,52 +326,52 @@ I directly jump in the modules from memory</p>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&text=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&text=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&is_video=false&description=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&is_video=false&description=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=KoreanCTF%20%3a%20CSHARP%20Write-Up&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f">
+    <a class="icon" href="mailto:?subject=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&title=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&name=KoreanCTF%20%3a%20CSHARP%20Write-Up&description=Hi%20people%0aStarting%20a%20blogspot%20by%20reversing%20a%20.Net%20PE%20sound%20weird%20to%20me%2c%20but%20I%20need%20to%20start%20somewhere%20%3ap%0aThis%20a%20Write%20Up%20about%20a%20Korean%20CTF%20challenge%2c%20the%20one%20is%20named%20CSHARP%20It%26rsquo%3bs%20not%20really%20hard%20%28because%20of%20.net%29%20but%20I%20found%20it%20interresting%0aMD5%20%3a%20E8B0B5173B14D118FFD687D37F1A6F06%0aWhat%20I%20used%20%3a%0a%20DIE%20%28Detect%20It%20Easy%29%20DNSpy%20%20Part%201%20%3a%20Post%20analyse%20The%20first%20thing%20to%20do%20is%20identify%20what%20is%20this%20PE">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&name=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up&description=Hi%20people%0aStarting%20a%20blogspot%20by%20reversing%20a%20.Net%20PE%20sound%20weird%20to%20me%2c%20but%20I%20need%20to%20start%20somewhere%20%3ap%0aThis%20a%20Write%20Up%20about%20a%20Korean%20CTF%20challenge%2c%20the%20one%20is%20named%20CSHARP%20It%26rsquo%3bs%20not%20really%20hard%20%28because%20of%20.net%29%20but%20I%20found%20it%20interresting%0aMD5%20%3a%20E8B0B5173B14D118FFD687D37F1A6F06%0aWhat%20I%20used%20%3a%0a%20DIE%20%28Detect%20It%20Easy%29%20DNSpy%20%20Part%201%20%3a%20Post%20analyse%20The%20first%20thing%20to%20do%20is%20identify%20what%20is%20this%20PE">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&t=KoreanCTF%20%3a%20CSHARP%20Write-Up">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2019-02-27-korean-ctf%2f&t=KoreanCTF%202017%20%3a%20CSHARP%20Write-Up">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>
