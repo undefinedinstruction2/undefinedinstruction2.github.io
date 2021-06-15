@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 45% Polymothism applied to Windows Executables | r0da&#39;s Blog</title>
+  <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering, cracking, OSINT and anonimization.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="45% Polymothism applied to Windows Executables" />
+<meta property="og:description" content="Hi all.
+Theories only, apply polymothism to
+Very general because of my knowleg
+It&rsquo;s an &ldquo;exostive&rdquo; list
+Why ? (bypass hypervisor, IDS)
+&hellip;.
+In shellcode&rsquo;s we care about the size, in executable it&rsquo;s not the case,
+Fuzzing about Debuggers, Disassemblers, Antivirus, Hypervisors &hellip;. even Windows Kernel &hellip;..
+Polymothism. Not Metamorphosis Commun struct modification Header and PE structures DOS header Considering that the PE executable will never use the DOS header (unless to jump to the PE header), we can write anything we want in it." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://whereisr0da.github.io/blog/posts/2020-10-28-poly-pe/" />
+<meta property="article:published_time" content="2020-10-28T17:14:00+00:00" />
+<meta property="article:modified_time" content="2020-10-28T17:14:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="45% Polymothism applied to Windows Executables"/>
+<meta name="twitter:description" content="Hi all.
+Theories only, apply polymothism to
+Very general because of my knowleg
+It&rsquo;s an &ldquo;exostive&rdquo; list
+Why ? (bypass hypervisor, IDS)
+&hellip;.
+In shellcode&rsquo;s we care about the size, in executable it&rsquo;s not the case,
+Fuzzing about Debuggers, Disassemblers, Antivirus, Hypervisors &hellip;. even Windows Kernel &hellip;..
+Polymothism. Not Metamorphosis Commun struct modification Header and PE structures DOS header Considering that the PE executable will never use the DOS header (unless to jump to the PE header), we can write anything we want in it."/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/style-dark.css">
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/syntax.css" >
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://whereisr0da.github.io/blog/images/favicon.ico" />
+
+  
+  
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    <div class="content index py4">
+
+        <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://whereisr0da.github.io/blog/posts/2020-10-27-virtual-in-com/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://whereisr0da.github.io/blog/posts/2020-10-28-poly-pe-lock/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&text=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&title=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&is_video=false&description=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=45%25%20Polymothism%20applied%20to%20Windows%20Executables&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&title=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&title=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&title=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&title=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&name=45%25%20Polymothism%20applied%20to%20Windows%20Executables&description=Hi%20all.%0aTheories%20only%2c%20apply%20polymothism%20to%0aVery%20general%20because%20of%20my%20knowleg%0aIt%26rsquo%3bs%20an%20%26ldquo%3bexostive%26rdquo%3b%20list%0aWhy%20%3f%20%28bypass%20hypervisor%2c%20IDS%29%0a%26hellip%3b.%0aIn%20shellcode%26rsquo%3bs%20we%20care%20about%20the%20size%2c%20in%20executable%20it%26rsquo%3bs%20not%20the%20case%2c%0aFuzzing%20about%20Debuggers%2c%20Disassemblers%2c%20Antivirus%2c%20Hypervisors%20%26hellip%3b.%20even%20Windows%20Kernel%20%26hellip%3b..%0aPolymothism.%20Not%20Metamorphosis%20Commun%20struct%20modification%20Header%20and%20PE%20structures%20DOS%20header%20Considering%20that%20the%20PE%20executable%20will%20never%20use%20the%20DOS%20header%20%28unless%20to%20jump%20to%20the%20PE%20header%29%2c%20we%20can%20write%20anything%20we%20want%20in%20it.">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&t=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#why-">Why ?</a></li>
+    <li><a href="#polymothism-not-metamorphosis">Polymothism. Not Metamorphosis</a></li>
+    <li><a href="#commun-struct-modification">Commun struct modification</a>
+      <ul>
+        <li><a href="#header-and-pe-structures">Header and PE structures</a>
+          <ul>
+            <li><a href="#dos-header">DOS header</a></li>
+            <li><a href="#rich-header">Rich header</a></li>
+            <li><a href="#file-header">File header</a></li>
+            <li><a href="#optional-header">Optional header</a></li>
+            <li><a href="#section-headers">Section headers</a></li>
+          </ul>
+        </li>
+        <li><a href="#sections-data">Sections data</a>
+          <ul>
+            <li><a href="#text--code-section-">.text / .code section :</a></li>
+            <li><a href="#data-section-">.data section :</a></li>
+            <li><a href="#idata---import-table">.idata / ???? (import table)</a></li>
+          </ul>
+        </li>
+        <li><a href="#other-data">Other data</a></li>
+      </ul>
+    </li>
+    <li><a href="#instruction-modification">Instruction modification</a>
+      <ul>
+        <li><a href="#code-mutation">Code mutation</a></li>
+        <li><a href="#junkcode">Junkcode</a></li>
+        <li><a href="#obfuscation">Obfuscation</a>
+          <ul>
+            <li><a href="#control-flow-obfuscation">Control flow obfuscation</a></li>
+            <li><a href="#encrypt-functions">Encrypt functions</a></li>
+          </ul>
+        </li>
+        <li><a href="#using-simple-tricks">Using simple tricks</a></li>
+        <li><a href="#virtualization">Virtualization</a></li>
+      </ul>
+    </li>
+    <li><a href="#wrapping-all-of-this">Wrapping all of this</a></li>
+    <li><a href="#finalisation">Finalisation</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header>
+                <h1 class="posttitle" itemprop="name headline">
+                     45% Polymothism applied to Windows Executables 
+                </h1>
+                <div class="meta">
+                    
+                    <div class="postdate">
+                        
+                        <time datetime="2020-10-28 17:14:00 &#43;0000 UTC" itemprop="datePublished">2020-10-28</time> 
+                    </div>
+                     
+                </div>
+            </header>
+
+            
+            <div class="content" itemprop="articleBody">
+                <p>Hi all.</p>
+<p>Theories only, apply polymothism to</p>
+<p>Very general because of my knowleg</p>
+<p>It&rsquo;s an &ldquo;exostive&rdquo; list</p>
+<h2 id="why-">Why ?</h2>
+<p>(bypass hypervisor, IDS)</p>
+<p>&hellip;.</p>
+<p>In shellcode&rsquo;s we care about the size, in executable it&rsquo;s not the case,</p>
+<p>Fuzzing about Debuggers, Disassemblers, Antivirus, Hypervisors &hellip;. even Windows Kernel
+&hellip;..</p>
+<h2 id="polymothism-not-metamorphosis">Polymothism. Not Metamorphosis</h2>
+<h2 id="commun-struct-modification">Commun struct modification</h2>
+<h3 id="header-and-pe-structures">Header and PE structures</h3>
+<h4 id="dos-header">DOS header</h4>
+<p>Considering that the PE executable will never use the DOS header (unless to jump to the PE header), we can write anything we want in it. We can even hide things in it (see <a href="https://osandamalith.com/2020/07/19/exploring-the-ms-dos-stub/">OsandaMalith&rsquo;s post</a>)</p>
+<p>From ReactOS, here is the DOS Program struct :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_IMAGE_DOS_HEADER</span> <span class="p">{</span>
+  <span class="n">WORD</span> <span class="n">e_magic</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_cblp</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_cp</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_crlc</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_cparhdr</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_minalloc</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_maxalloc</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_ss</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_sp</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_csum</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_ip</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_cs</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_lfarlc</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_ovno</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_res</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+  <span class="n">WORD</span> <span class="n">e_oemid</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_oeminfo</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">e_res2</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+  <span class="n">LONG</span> <span class="n">e_lfanew</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">IMAGE_DOS_HEADER</span><span class="p">,</span><span class="o">*</span><span class="n">PIMAGE_DOS_HEADER</span><span class="p">;</span>
+</code></pre></div><p>So we can&rsquo;t avoid <code>e_magic</code> value <code>&quot;MZ&quot;</code> because it&rsquo;s the header of every DOS and PE programs, so nothing lost here because every file should get it.</p>
+<p><code>e_cblp</code> is the number of bytes used in the memory page of the DOS program, so as we don&rsquo;t use the DOS program, we can randomize it</p>
+<p><code>e_cp</code> is the number of pages &hellip;.</p>
+<p><code>e_crlc</code> is</p>
+<p><code>e_cparhdr</code> is</p>
+<p><code>e_minalloc</code> is</p>
+<p><code>e_maxalloc</code> is</p>
+<p>// all are not used</p>
+<p><code>e_lfarlc</code> point to the relocation table of the DOS program (so in the gap between _IMAGE_DOS_HEADER end and _IMAGE_FILE_HEADER), so could be random too.</p>
+<p><code>e_res</code> and <code>e_res2</code> can be random as they are not used.</p>
+<p><code>e_lfanew</code> can&rsquo;t be randomized because it&rsquo;s an offset to the next header <code>_IMAGE_FILE_HEADER</code>, but right after the end of the struct, there is the DOS stub. So this could be randomized as long as your DOS stub is large.</p>
+<p>About the stub program, you can write what ever you want in it as we are focused on PE code, and not DOS code.</p>
+<p>NOTE : I tried to change the stub size, but appar &hellip; 0x90</p>
+<h4 id="rich-header">Rich header</h4>
+<p>&hellip;</p>
+<h4 id="file-header">File header</h4>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_IMAGE_FILE_HEADER</span> <span class="p">{</span>
+  <span class="n">WORD</span> <span class="n">Machine</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">NumberOfSections</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">TimeDateStamp</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">PointerToSymbolTable</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">NumberOfSymbols</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">SizeOfOptionalHeader</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">Characteristics</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">IMAGE_FILE_HEADER</span><span class="p">,</span> <span class="o">*</span><span class="n">PIMAGE_FILE_HEADER</span><span class="p">;</span>
+</code></pre></div><p>Again <code>Machine</code> value can&rsquo;t be avoid, its value should be <code>PE</code>, but like I said, it&rsquo;s always the same for every PE.</p>
+<p><code>NumberOfSections</code> could be random if you put new fake sections that point nowhere or with junk data, but it should always be above the real number of section of the program.</p>
+<p><code>TimeDateStamp</code> is the compilation date, so could be random x)</p>
+<p><code>PointerToSymbolTable</code></p>
+<p><code>NumberOfSymbols</code></p>
+<p>Now we can try some intersting things, because the next header size is variable because of x86 and x64 header difference (and <code>NumberOfRvaAndSizes</code>). <code>SizeOfOptionalHeader</code> define its size, but we will see that later.</p>
+<p><code>Characteristics</code> can&rsquo;t be random because it define how the kernel will setup the executable environment (DYNAMIC LINKING RESOLVING&hellip;.)</p>
+<h4 id="optional-header">Optional header</h4>
+<p>This is the <code>_IMAGE_OPTIONAL_HEADER</code> for x86</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_IMAGE_OPTIONAL_HEADER32</span> <span class="p">{</span>
+  <span class="n">WORD</span> <span class="n">Magic</span><span class="p">;</span>
+  <span class="n">BYTE</span> <span class="n">MajorLinkerVersion</span><span class="p">;</span>
+  <span class="n">BYTE</span> <span class="n">MinorLinkerVersion</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfCode</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfInitializedData</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfUninitializedData</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">AddressOfEntryPoint</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">BaseOfCode</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">BaseOfData</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">ImageBase</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SectionAlignment</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">FileAlignment</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">MajorOperatingSystemVersion</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">MinorOperatingSystemVersion</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">MajorImageVersion</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">MinorImageVersion</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">MajorSubsystemVersion</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">MinorSubsystemVersion</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">Win32VersionValue</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfImage</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfHeaders</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">CheckSum</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">Subsystem</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">DllCharacteristics</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfStackReserve</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfStackCommit</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfHeapReserve</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfHeapCommit</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">LoaderFlags</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">NumberOfRvaAndSizes</span><span class="p">;</span>
+  <span class="n">IMAGE_DATA_DIRECTORY</span> <span class="n">DataDirectory</span><span class="p">[</span><span class="n">IMAGE_NUMBEROF_DIRECTORY_ENTRIES</span><span class="p">];</span>
+<span class="p">}</span> <span class="n">IMAGE_OPTIONAL_HEADER32</span><span class="p">,</span><span class="o">*</span><span class="n">PIMAGE_OPTIONAL_HEADER32</span><span class="p">;</span>
+</code></pre></div><p><code>Magic</code> should stay the same as it&rsquo;s the signature of the PE header : <code>PE\0\0</code></p>
+<p><code>MajorLinkerVersion</code> and <code>MinorLinkerVersion</code> give informations about the linker used during the compilation, so could be random.</p>
+<p><code>SizeOfCode</code>, <code>SizeOfInitializedData</code> and</p>
+<p><code>SizeOfUninitializedData</code> : is &hellip;.. You can randomize it without any problem.</p>
+<p><code>AddressOfEntryPoint</code> could be random of course ! But it depend of the code and it&rsquo;s in the next part</p>
+<p><code>BaseOfCode</code> and <code>BaseOfData</code></p>
+<p><code>ImageBase</code> : &hellip;. useless if ASLR &hellip;.</p>
+<p><code>SectionAlignment</code> and <code>FileAlignment</code></p>
+<p><code>MajorLinkerVersion</code>, <code>MinorLinkerVersion</code>, <code>MajorOSVersion</code>, <code>MinorOSVersion</code>, <code>MajorImageVersion</code>, <code>MinorImageVersion</code> can be random</p>
+<p>But <code>MajorSubsystemVersion</code> and <code>MinorSubsystemVersion</code></p>
+<p><code>Win32VersionValue</code> : The documentation said <code>&quot;This member is reserved and must be 0.&quot;</code>, I&rsquo;ve tested it and in fact it could be random.</p>
+<p><code>SizeOfImage</code></p>
+<p><code>SizeOfHeaders</code></p>
+<p>I&rsquo;ve never meet a PE using <code>CheckSum</code>, but some people told me that this is used for drivers, so I guess it could be random until it&rsquo;s not one.</p>
+<p><code>Subsystem</code> and <code>DllCharacteristics</code> can&rsquo;t be changed as they define the core process behavior (Window,Console,DEP,ASLR,&hellip;), of course, you can add other flags that doesn&rsquo;t impact the program behavior.</p>
+<p><code>SizeOfStackReserve</code> to <code>SizeOfHeapCommit</code> could be random, but aligned with system specs.</p>
+<p><code>LoaderFlags</code> : One thing to say <code>&quot;This member is obsolete.&quot;</code>, so could be random.</p>
+<p><code>NumberOfRvaAndSizes</code> is the number of <code>_IMAGE_DATA_DIRECTORY</code>, it is always <code>0x10</code> &hellip; Theorically, you could add more <code>_IMAGE_DATA_DIRECTORY</code> &hellip;</p>
+<p>&hellip;</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_IMAGE_DATA_DIRECTORY</span> <span class="p">{</span>
+  <span class="n">DWORD</span> <span class="n">VirtualAddress</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">Size</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">IMAGE_DATA_DIRECTORY</span><span class="p">,</span><span class="o">*</span><span class="n">PIMAGE_DATA_DIRECTORY</span><span class="p">;</span>
+</code></pre></div><p>&hellip;</p>
+<p>Anyway, if you want to randomize everything, if <code>VirtualAddress</code> you can fill random data in <code>Size</code> value.</p>
+<p>&hellip;</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_EXPORT</code> :</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_IMPORT</code> :</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_RESOURCE</code> :</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_EXCEPTION</code> : can&rsquo;t</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_SECURITY</code> :</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_BASERELOC</code> :</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_DEBUG</code> : This is not checked at startup, and used while debugging as you guess, so we can randomize <code>VirtualAddress</code> and <code>Size</code> without any problem. Of course in legit mode, you can create legitimate-randomized data in a new section.</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_ARCHITECTURE</code> :</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_GLOBALPTR</code> :</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_TLS</code> :</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG</code> :</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT</code> : &hellip;.. Of course unlike normal imports, those are not checked at startup, so if the software doesn&rsquo;t use this feature, you can randomize it.</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_IAT</code> :</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT</code> : &hellip;.. Same as <code>IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT</code>, could be randomized.</p>
+<p><code>IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR</code> : &hellip; you can pretend</p>
+<p>&hellip;.</p>
+<h4 id="section-headers">Section headers</h4>
+<p>Like I said, you could add fake sections : pointing to another section, pointing nowhere or with junk code in it.</p>
+<p>Add junk sections&hellip;</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_IMAGE_SECTION_HEADER</span> <span class="p">{</span>
+  <span class="n">BYTE</span> <span class="n">Name</span><span class="p">[</span><span class="n">IMAGE_SIZEOF_SHORT_NAME</span><span class="p">];</span>
+  <span class="k">union</span> <span class="p">{</span>
+    <span class="n">DWORD</span> <span class="n">PhysicalAddress</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">VirtualSize</span><span class="p">;</span>
+  <span class="p">}</span> <span class="n">Misc</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">VirtualAddress</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfRawData</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">PointerToRawData</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">PointerToRelocations</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">PointerToLinenumbers</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">NumberOfRelocations</span><span class="p">;</span>
+  <span class="n">WORD</span> <span class="n">NumberOfLinenumbers</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">Characteristics</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">IMAGE_SECTION_HEADER</span><span class="p">,</span><span class="o">*</span><span class="n">PIMAGE_SECTION_HEADER</span><span class="p">;</span>
+</code></pre></div><p><code>Name</code> : the name of the section could be random</p>
+<p><code>PhysicalAddress</code> :</p>
+<p><code>VirtualAddress</code> :</p>
+<p><code>VirtualSize</code> : you can increase it randomly (considering section alignment and the next section&rsquo;s <code>VirtualAddress</code>)</p>
+<p><code>SizeOfRawData</code> :</p>
+<p><code>PointerToRawData</code> :</p>
+<p><code>PointerToRelocations</code> :</p>
+<p><code>PointerToLinenumbers</code> :</p>
+<p><code>NumberOfRelocations</code> :</p>
+<p><code>NumberOfLinenumbers</code> :</p>
+<p><code>Characteristics</code> : you can obfuscate &hellip;. because you only need to <code>&amp; value</code> &hellip;&hellip;</p>
+<h3 id="sections-data">Sections data</h3>
+<p>I will talk about general sections, but this could be applied to any type of section unless you understand what they content.</p>
+<h4 id="text--code-section-">.text / .code section :</h4>
+<p>this section contains the main asm code of the program, so this is the main part that we will work on.</p>
+<h4 id="data-section-">.data section :</h4>
+<p>this section contains all data of the program like strings, numbers, &hellip;
+so the only way to polymorth is crypto with random key, .</p>
+<p>at each compilation, xor strings with a random key</p>
+<h4 id="idata---import-table">.idata / ???? (import table)</h4>
+<p>fake imports</p>
+<p>Hide imports</p>
+<p>random Exports (x64dbg bug)</p>
+<p>ressource obfu</p>
+<p>junk / legitimate data in others <code>_IMAGE_DATA_DIRECTORY</code> (Debug, TLS, .Net &hellip;)</p>
+<h3 id="other-data">Other data</h3>
+<p>If EOF data exists, you can try to add more data, if not you can add random chunks of data.</p>
+<h2 id="instruction-modification">Instruction modification</h2>
+<p>Concret modifications &hellip;</p>
+<h3 id="code-mutation">Code mutation</h3>
+<p>The main goal of this is to keep the algorithm, and change its form, we can change instructions be other that do same thing.</p>
+<p>Exemple :</p>
+<p><code>mov eax, [edx]</code> : mov edx content in eax</p>
+<p>Can be also represented as :</p>
+<p><code>xor eax, eax</code>   : xorring eax by it self to set it to 0
+<code>xor eax, [edx]</code> : xorring 0 to the value of edx so set eax to edx value</p>
+<p>There is a lot of things to do here and the only limit is your imagination, but don&rsquo;t forget to care about the file size and the performance.</p>
+<p>Polymorthisme is used a lot in shellcoding, so you can get a lot of asm code obfuscation tricks from here.</p>
+<p>Its complex to implement from the compiled executable (you need to dissasemble the assembly, interpret all address and modify them in function of your amount of code added, and reassemble the all thing).</p>
+<p>You could try to modify the asm code after the compiler interpretation, and after compile the asm code, but I never succeded, mvc generate a code that cannot be compiled to him seft -_- (good luck tried to fix imports errors)</p>
+<p>You can also use uncommun instructions</p>
+<p>You can see a very good exemple here with VMProtect mutation engine : (TODO)</p>
+<h3 id="junkcode">Junkcode</h3>
+<p>junk is prety useless about polymorthism because your signature will be still there, you can radomize your junkcode but still</p>
+<p>NOTE : I saw a curious junkcode technic a while ago in a SmokeLoader RunPE, &hellip;. adding fake API</p>
+<h3 id="obfuscation">Obfuscation</h3>
+<p>// SEE MY TUT</p>
+<h4 id="control-flow-obfuscation">Control flow obfuscation</h4>
+<h4 id="encrypt-functions">Encrypt functions</h4>
+<h3 id="using-simple-tricks">Using simple tricks</h3>
+<p>SDK versions</p>
+<p>Compilator versions</p>
+<p>Linker versions</p>
+<p>Optimisation options</p>
+<h3 id="virtualization">Virtualization</h3>
+<h2 id="wrapping-all-of-this">Wrapping all of this</h2>
+<p>Packing, RunPE, &hellip; with crypto</p>
+<h2 id="finalisation">Finalisation</h2>
+<p>(90% diff)</p>
+<p>Scan time</p>
+<p>Runtime</p>
+<h2 id="references">References</h2>
+<p>MSDN PE Format</p>
+<p><a href="http://www.phreedom.org/research/tinype/">http://www.phreedom.org/research/tinype/</a></p>
+
+            </div>
+        </article>
+
+        
+  
+
+
+
+ <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/blog/">Home</a></li>
+         
+          <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#why-">Why ?</a></li>
+    <li><a href="#polymothism-not-metamorphosis">Polymothism. Not Metamorphosis</a></li>
+    <li><a href="#commun-struct-modification">Commun struct modification</a>
+      <ul>
+        <li><a href="#header-and-pe-structures">Header and PE structures</a>
+          <ul>
+            <li><a href="#dos-header">DOS header</a></li>
+            <li><a href="#rich-header">Rich header</a></li>
+            <li><a href="#file-header">File header</a></li>
+            <li><a href="#optional-header">Optional header</a></li>
+            <li><a href="#section-headers">Section headers</a></li>
+          </ul>
+        </li>
+        <li><a href="#sections-data">Sections data</a>
+          <ul>
+            <li><a href="#text--code-section-">.text / .code section :</a></li>
+            <li><a href="#data-section-">.data section :</a></li>
+            <li><a href="#idata---import-table">.idata / ???? (import table)</a></li>
+          </ul>
+        </li>
+        <li><a href="#other-data">Other data</a></li>
+      </ul>
+    </li>
+    <li><a href="#instruction-modification">Instruction modification</a>
+      <ul>
+        <li><a href="#code-mutation">Code mutation</a></li>
+        <li><a href="#junkcode">Junkcode</a></li>
+        <li><a href="#obfuscation">Obfuscation</a>
+          <ul>
+            <li><a href="#control-flow-obfuscation">Control flow obfuscation</a></li>
+            <li><a href="#encrypt-functions">Encrypt functions</a></li>
+          </ul>
+        </li>
+        <li><a href="#using-simple-tricks">Using simple tricks</a></li>
+        <li><a href="#virtualization">Virtualization</a></li>
+      </ul>
+    </li>
+    <li><a href="#wrapping-all-of-this">Wrapping all of this</a></li>
+    <li><a href="#finalisation">Finalisation</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&text=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&title=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&is_video=false&description=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=45%25%20Polymothism%20applied%20to%20Windows%20Executables&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&title=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&title=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&title=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&title=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&name=45%25%20Polymothism%20applied%20to%20Windows%20Executables&description=Hi%20all.%0aTheories%20only%2c%20apply%20polymothism%20to%0aVery%20general%20because%20of%20my%20knowleg%0aIt%26rsquo%3bs%20an%20%26ldquo%3bexostive%26rdquo%3b%20list%0aWhy%20%3f%20%28bypass%20hypervisor%2c%20IDS%29%0a%26hellip%3b.%0aIn%20shellcode%26rsquo%3bs%20we%20care%20about%20the%20size%2c%20in%20executable%20it%26rsquo%3bs%20not%20the%20case%2c%0aFuzzing%20about%20Debuggers%2c%20Disassemblers%2c%20Antivirus%2c%20Hypervisors%20%26hellip%3b.%20even%20Windows%20Kernel%20%26hellip%3b..%0aPolymothism.%20Not%20Metamorphosis%20Commun%20struct%20modification%20Header%20and%20PE%20structures%20DOS%20header%20Considering%20that%20the%20PE%20executable%20will%20never%20use%20the%20DOS%20header%20%28unless%20to%20jump%20to%20the%20PE%20header%29%2c%20we%20can%20write%20anything%20we%20want%20in%20it.">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2020-10-28-poly-pe%2f&t=45%25%20Polymothism%20applied%20to%20Windows%20Executables">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+ <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2021  r0da 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+    </div>
+</body>
+
+<link rel="stylesheet" href=/blog/lib/font-awesome/css/all.min.css>
+<script src=/blog/lib/jquery/jquery.min.js></script>
+<script src=/blog/js/main.js></script>
+  
+
+</html>

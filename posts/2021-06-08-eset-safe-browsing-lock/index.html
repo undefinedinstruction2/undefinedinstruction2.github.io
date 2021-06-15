@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> 🔒 42% : Quick look around VMP - Part 4 : Cracking approach | r0da&#39;s Blog</title>
+  <title> 🔒 20% : Attacking ESET Secure Browsing Protection | r0da&#39;s Blog</title>
   <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering, cracking, OSINT and anonimization.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="🔒 42% : Quick look around VMP - Part 4 : Cracking approach" />
+  <meta property="og:title" content="🔒 20% : Attacking ESET Secure Browsing Protection" />
 <meta property="og:description" content="🙁 Oops work in progress This thread is not available." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://whereisr0da.github.io/blog/posts/2021-02-21-vmp-4-lock/" />
-<meta property="article:published_time" content="2021-02-20T14:14:00+00:00" />
-<meta property="article:modified_time" content="2021-02-20T14:14:00+00:00" />
+<meta property="og:url" content="https://whereisr0da.github.io/blog/posts/2021-06-08-eset-safe-browsing-lock/" />
+<meta property="article:published_time" content="2021-06-06T17:00:00+00:00" />
+<meta property="article:modified_time" content="2021-06-06T17:00:00+00:00" />
 
   <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="🔒 42% : Quick look around VMP - Part 4 : Cracking approach"/>
+<meta name="twitter:title" content="🔒 20% : Attacking ESET Secure Browsing Protection"/>
 <meta name="twitter:description" content="🙁 Oops work in progress This thread is not available."/>
 
   
@@ -66,14 +66,14 @@
       <ul>
         
         <li>
-          <a class="icon" href=" https://whereisr0da.github.io/blog/posts/2021-01-07-forza-check/">
+          <a class="icon" href=" https://whereisr0da.github.io/blog/posts/2021-05-16-fingerp-1-lock/">
             <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
           </a>
         </li>
         
         
         <li>
-          <a class="icon" href="https://whereisr0da.github.io/blog/posts/2021-03-12-emulator-write-up/">
+          <a class="icon" href="https://whereisr0da.github.io/blog/posts/2021-02-16-vmp-3/">
             <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
           </a>
         </li>
@@ -104,57 +104,57 @@
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f">
       <i class="fab fa-facebook " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&text=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&text=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&title=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&title=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&is_video=false&description=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&is_video=false&description=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f">
+    <a class="icon" href="mailto:?subject=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&title=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&title=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&title=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&title=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&title=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&title=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-stumbleupon " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&title=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&title=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-digg " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&name=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach&description=%f0%9f%99%81%20Oops%20work%20in%20progress%20This%20thread%20is%20not%20available.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&name=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection&description=%f0%9f%99%81%20Oops%20work%20in%20progress%20This%20thread%20is%20not%20available.">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&t=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&t=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -172,14 +172,14 @@
             <header>
                 <h1 class="posttitle" itemprop="name headline">
                     
-                    <div id="locked">🔒 42% : Quick look around VMP - Part 4 : Cracking approach</div>
+                    <div id="locked">🔒 20% : Attacking ESET Secure Browsing Protection</div>
                     
                 </h1>
                 <div class="meta">
                     
                     <div class="postdate">
                         
-                        <time datetime="2021-02-20 14:14:00 &#43;0000 UTC" itemprop="datePublished">2021-02-20</time> 
+                        <time datetime="2021-06-06 17:00:00 &#43;0000 UTC" itemprop="datePublished">2021-06-06</time> 
                     </div>
                      
                 </div>
@@ -224,57 +224,57 @@
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f">
       <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&text=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&text=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&title=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&title=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&is_video=false&description=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&is_video=false&description=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f">
+    <a class="icon" href="mailto:?subject=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&title=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&title=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&title=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&title=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&title=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&title=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&title=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&title=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&name=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach&description=%f0%9f%99%81%20Oops%20work%20in%20progress%20This%20thread%20is%20not%20available.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&name=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection&description=%f0%9f%99%81%20Oops%20work%20in%20progress%20This%20thread%20is%20not%20available.">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-21-vmp-4-lock%2f&t=%f0%9f%94%92%2042%25%20%3a%20Quick%20look%20around%20VMP%20-%20Part%204%20%3a%20Cracking%20approach">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-06-08-eset-safe-browsing-lock%2f&t=%f0%9f%94%92%2020%25%20%3a%20Attacking%20ESET%20Secure%20Browsing%20Protection">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>

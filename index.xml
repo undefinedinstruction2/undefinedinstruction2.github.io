@@ -7,9 +7,27 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>r0da</copyright>
-    <lastBuildDate>Sun, 16 May 2021 17:00:00 +0000</lastBuildDate><atom:link href="https://whereisr0da.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 15 Jun 2021 10:14:00 +0000</lastBuildDate><atom:link href="https://whereisr0da.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>🔒 15% : Fingerprint anonymisation - Part 1 : From Windows</title>
+      <title>🔥 Quick look around VMP 3.x - Part 3 : Virtualization</title>
+      <link>https://whereisr0da.github.io/blog/posts/2021-02-16-vmp-3/</link>
+      <pubDate>Tue, 15 Jun 2021 10:14:00 +0000</pubDate>
+      
+      <guid>https://whereisr0da.github.io/blog/posts/2021-02-16-vmp-3/</guid>
+      <description>0 - ⚠️ IMPORTANT NOTE This article explain how VMProtect works, not how to crack a VMP protected software. I&amp;rsquo;m not talking about any kind of Licensing System provided by VMP, or a developped one using VMP. I DON&amp;rsquo;T SUPPORT PIRACY in any way. This protection (cracked / leaked version of it) is used to protect malwares, and my objective with this article is to improve the commun knowledge of it to help and simplify the analysis of this type of malware.</description>
+    </item>
+    
+    <item>
+      <title>🔒 20% : Attacking ESET Secure Browsing Protection</title>
+      <link>https://whereisr0da.github.io/blog/posts/2021-06-08-eset-safe-browsing-lock/</link>
+      <pubDate>Sun, 06 Jun 2021 17:00:00 +0000</pubDate>
+      
+      <guid>https://whereisr0da.github.io/blog/posts/2021-06-08-eset-safe-browsing-lock/</guid>
+      <description>🙁 Oops work in progress This thread is not available.</description>
+    </item>
+    
+    <item>
+      <title>🔒 40% : Anonimity and safety - Part 1 : From Windows</title>
       <link>https://whereisr0da.github.io/blog/posts/2021-05-16-fingerp-1-lock/</link>
       <pubDate>Sun, 16 May 2021 17:00:00 +0000</pubDate>
       
@@ -18,7 +36,7 @@
     </item>
     
     <item>
-      <title>🔒 60% : Exploiting Android 4.x to RCE</title>
+      <title>🔒 70% : Exploiting an Android - Part 1 : Preface</title>
       <link>https://whereisr0da.github.io/blog/posts/2021-05-11-android-vuln-lock/</link>
       <pubDate>Tue, 11 May 2021 17:14:00 +0000</pubDate>
       
@@ -60,15 +78,6 @@ const uint8_t opcode_buffer[256] = { 0xf2, 0x72, 0x45, 0x8a, 0x72, 0xf2, 0x72, 0
     </item>
     
     <item>
-      <title>🔒 85% : Quick look around VMP - Part 3 : Virtualization</title>
-      <link>https://whereisr0da.github.io/blog/posts/2021-02-16-vmp-3-lock/</link>
-      <pubDate>Tue, 16 Feb 2021 17:14:00 +0000</pubDate>
-      
-      <guid>https://whereisr0da.github.io/blog/posts/2021-02-16-vmp-3-lock/</guid>
-      <description>🙁 Oops work in progress This thread is not available.</description>
-    </item>
-    
-    <item>
       <title>Bypassing 12 years old Xbox 360 Game Security</title>
       <link>https://whereisr0da.github.io/blog/posts/2021-01-07-forza-check/</link>
       <pubDate>Wed, 03 Feb 2021 10:14:00 +0000</pubDate>
@@ -89,7 +98,7 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
     </item>
     
     <item>
-      <title>🔥 Quick look around VMP - Part 2 : Code Mutation</title>
+      <title>🔥 Quick look around VMP 3.x - Part 2 : Code Mutation</title>
       <link>https://whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/</link>
       <pubDate>Tue, 26 Jan 2021 17:14:00 +0000</pubDate>
       
@@ -100,7 +109,7 @@ VMProtect is a well known protection with a lot of features, its core one is its
     </item>
     
     <item>
-      <title>Quick look around VMP - Part 1 : Unpacking</title>
+      <title>Quick look around VMP 3.x - Part 1 : Unpacking</title>
       <link>https://whereisr0da.github.io/blog/posts/2021-01-05-vmp-1/</link>
       <pubDate>Tue, 05 Jan 2021 17:14:00 +0000</pubDate>
       
@@ -117,6 +126,23 @@ Unpacking Packing is about compressing / ciphering executable&amp;rsquo;s sectio
       
       <guid>https://whereisr0da.github.io/blog/posts/2020-10-28-poly-pe-lock/</guid>
       <description>🙁 Oops work in progress This thread is not available.</description>
+    </item>
+    
+    <item>
+      <title>45% Polymothism applied to Windows Executables</title>
+      <link>https://whereisr0da.github.io/blog/posts/2020-10-28-poly-pe/</link>
+      <pubDate>Wed, 28 Oct 2020 17:14:00 +0000</pubDate>
+      
+      <guid>https://whereisr0da.github.io/blog/posts/2020-10-28-poly-pe/</guid>
+      <description>Hi all.
+Theories only, apply polymothism to
+Very general because of my knowleg
+It&amp;rsquo;s an &amp;ldquo;exostive&amp;rdquo; list
+Why ? (bypass hypervisor, IDS)
+&amp;hellip;.
+In shellcode&amp;rsquo;s we care about the size, in executable it&amp;rsquo;s not the case,
+Fuzzing about Debuggers, Disassemblers, Antivirus, Hypervisors &amp;hellip;. even Windows Kernel &amp;hellip;..
+Polymothism. Not Metamorphosis Commun struct modification Header and PE structures DOS header Considering that the PE executable will never use the DOS header (unless to jump to the PE header), we can write anything we want in it.</description>
     </item>
     
     <item>

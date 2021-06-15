@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 🔥 Quick look around VMP 3.x - Part 3 : Virtualization | r0da&#39;s Blog</title>
+  <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering, cracking, OSINT and anonimization.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="🔥 Quick look around VMP 3.x - Part 3 : Virtualization" />
+<meta property="og:description" content="0 - ⚠️ IMPORTANT NOTE This article explain how VMProtect works, not how to crack a VMP protected software. I&rsquo;m not talking about any kind of Licensing System provided by VMP, or a developped one using VMP. I DON&rsquo;T SUPPORT PIRACY in any way. This protection (cracked / leaked version of it) is used to protect malwares, and my objective with this article is to improve the commun knowledge of it to help and simplify the analysis of this type of malware." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://whereisr0da.github.io/blog/posts/2021-02-16-vmp-3/" />
+<meta property="article:published_time" content="2021-06-15T10:14:00+00:00" />
+<meta property="article:modified_time" content="2021-06-15T10:14:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="🔥 Quick look around VMP 3.x - Part 3 : Virtualization"/>
+<meta name="twitter:description" content="0 - ⚠️ IMPORTANT NOTE This article explain how VMProtect works, not how to crack a VMP protected software. I&rsquo;m not talking about any kind of Licensing System provided by VMP, or a developped one using VMP. I DON&rsquo;T SUPPORT PIRACY in any way. This protection (cracked / leaked version of it) is used to protect malwares, and my objective with this article is to improve the commun knowledge of it to help and simplify the analysis of this type of malware."/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/style-dark.css">
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/syntax.css" >
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://whereisr0da.github.io/blog/images/favicon.ico" />
+
+  
+  
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    <div class="content index py4">
+
+        <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://whereisr0da.github.io/blog/posts/2021-06-08-eset-safe-browsing-lock/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&text=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&is_video=false&description=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&name=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization&description=0%20-%20%e2%9a%a0%ef%b8%8f%20IMPORTANT%20NOTE%20This%20article%20explain%20how%20VMProtect%20works%2c%20not%20how%20to%20crack%20a%20VMP%20protected%20software.%20I%26rsquo%3bm%20not%20talking%20about%20any%20kind%20of%20Licensing%20System%20provided%20by%20VMP%2c%20or%20a%20developped%20one%20using%20VMP.%20I%20DON%26rsquo%3bT%20SUPPORT%20PIRACY%20in%20any%20way.%20This%20protection%20%28cracked%20%2f%20leaked%20version%20of%20it%29%20is%20used%20to%20protect%20malwares%2c%20and%20my%20objective%20with%20this%20article%20is%20to%20improve%20the%20commun%20knowledge%20of%20it%20to%20help%20and%20simplify%20the%20analysis%20of%20this%20type%20of%20malware.">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&t=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#0----important-note">0 - ⚠️ IMPORTANT NOTE</a></li>
+    <li><a href="#i---intro">I - Intro</a></li>
+    <li><a href="#ii---demo-vs-paid">II - Demo vs Paid</a></li>
+    <li><a href="#iii---first-look">III - First look</a></li>
+    <li><a href="#iv---lets-reverse">IV - Let&rsquo;s reverse</a></li>
+    <li><a href="#v---vm-structure">V - VM Structure</a>
+      <ul>
+        <li><a href="#v1---architecture">V.1 - Architecture</a></li>
+        <li><a href="#v2---instructions">V.2 - Instructions</a></li>
+        <li><a href="#v3---rolling-key">V.3 - Rolling key</a>
+          <ul>
+            <li><a href="#v31---instruction-flow">V.3.1 - Instruction flow</a></li>
+            <li><a href="#v32---operands">V.3.2 - Operands</a></li>
+          </ul>
+        </li>
+        <li><a href="#v4---control-flow">V.4 - Control flow</a></li>
+        <li><a href="#v5---about-the-junkcode">V.5 - About the junkcode</a></li>
+      </ul>
+    </li>
+    <li><a href="#vi---automation">VI - Automation</a></li>
+    <li><a href="#vii---an-example">VII - An example</a>
+      <ul>
+        <li><a href="#vii1---simple-routine">VII.1 - Simple routine</a></li>
+        <li><a href="#vii2---virtualized-control-flow">VII.2 - Virtualized control flow</a></li>
+      </ul>
+    </li>
+    <li><a href="#viii---tricks-to-make-things-harder">VIII - Tricks to make things harder</a>
+      <ul>
+        <li><a href="#viii1---outside-vmp-code">VIII.1 - Outside VMP code</a>
+          <ul>
+            <li><a href="#viii11---intruction-variants">VIII.1.1 - Intruction variants</a></li>
+            <li><a href="#viii12---operand-offsets-variants">VIII.1.2 - Operand offsets variants</a></li>
+            <li><a href="#viii13---vip-and-vsp-swapping">VIII.1.3 - VIP and VSP swapping</a></li>
+          </ul>
+        </li>
+        <li><a href="#viii2---inside-vmp-code">VIII.2 - Inside VMP code</a>
+          <ul>
+            <li><a href="#viii21---vmp-registers-swapping">VIII.2.1 - VMP registers swapping</a></li>
+            <li><a href="#viii22---mba">VIII.2.2 - MBA</a></li>
+            <li><a href="#viii23---random-calls">VIII.2.3 - Random &lsquo;calls&rsquo;</a></li>
+          </ul>
+        </li>
+        <li><a href="#viii3---ultra-mode">VIII.3 - Ultra mode</a></li>
+      </ul>
+    </li>
+    <li><a href="#ix---devirtualization">IX - Devirtualization</a>
+      <ul>
+        <li><a href="#ix1---the-less-proper-way--pattern-matching">IX.1 - The &ldquo;less proper way&rdquo; : Pattern matching</a></li>
+        <li><a href="#ix2---the-efficiant-way--dta--symbolic-execution">IX.2 - The efficiant way : DTA &amp; Symbolic execution</a></li>
+      </ul>
+    </li>
+    <li><a href="#x---about-speed">X - About speed</a></li>
+    <li><a href="#xi---what-do-we-do-now-">XI - What do we do now ?</a></li>
+    <li><a href="#xii---end-word">XII - End word</a></li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header>
+                <h1 class="posttitle" itemprop="name headline">
+                    
+                    <div id="flame">🔥 Quick look around VMP 3.x - Part 3 : Virtualization</div>
+                    
+                </h1>
+                <div class="meta">
+                    
+                    <div class="postdate">
+                        
+                        <time datetime="2021-06-15 10:14:00 &#43;0000 UTC" itemprop="datePublished">2021-06-15</time> 
+                    </div>
+                     
+                </div>
+            </header>
+
+            
+            <div class="content" itemprop="articleBody">
+                <p><img src="https://whereisr0da.github.io/blog/post_images/vmp_3/Screenshot_677.png" alt=""></p>
+<h2 id="0----important-note">0 - ⚠️ IMPORTANT NOTE</h2>
+<p>This article explain how VMProtect works, not how to crack a VMP protected software. I&rsquo;m not talking about any kind of Licensing System provided by VMP, or a developped one using VMP. I DON&rsquo;T SUPPORT PIRACY in any way. This protection (cracked / leaked version of it) is used to protect malwares, and my objective with this article is to improve the commun knowledge of it to help and simplify the analysis of this type of malware. I posted this article ONLY for EDUCATIONAL PURPOSES. This could be maliciously used and it&rsquo;s why I DO NOT GUARANTEE AND IS RESPONSIBLE, in no case, of such use. You are responsible of your actions towards this article.</p>
+<h2 id="i---intro">I - Intro</h2>
+<p>Hello, finally, like I said a while ago here is the Part 3 of my work around VMP. A step in the madness of virtualization. I&rsquo;m not going to talk about specific stuff like Licensing System of VMP, Locked by key virtualized routines and other things that involve comercial stuff. My motivation is the challenge of understanding something that big, and help malware reversers to understand malicious content protected by VMP. My analysis in only based on Windows x86 virtualization, I will analyse VMP routines, and give an example while explaining how hard it is to understand.</p>
+<p>Note : I&rsquo;m not perfect regarding my reverse, I could be wrong in some part</p>
+<h2 id="ii---demo-vs-paid">II - Demo vs Paid</h2>
+<p>Demo version is not even close to the difficulty of paid version. Demo version is a &ldquo;normal&rdquo; vm in term of conception, a dispatcher with a switch like offset jump to handles. You can trace easily the vm code, there are no key chain to jump to the next opcode, the opcode arguments are not even ciphered. And there are way less mutations in handles. Files produced by the demo version can&rsquo;t even be considered as VMP POC as there are less protected than Paid version. Also, keychains where not used for control flow execution in versions 2.x (handle offset was ciphered &ldquo;statically&rdquo;), VMP 2.x is basically today&rsquo;s VMP 3.x demo with rolling key on the operands. In order to do a real research about VMP x86, I based my work on the paid version, thanks to one of my friend that shared a license 🧡</p>
+<h2 id="iii---first-look">III - First look</h2>
+<p>To start somewhere, I will show you what is a VMP routine. The first thing we can notice when we virtualize a function is that a <code>jump</code> to <code>.vmp0</code> section is made.</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_3/binaryninja_hk4OSTVZVX.png" alt=""></p>
+<p>And the rest of the original function has been replaced by actual VMP code (in this case it&rsquo;s an actual handle part)</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_3/binaryninja_RydIieTpH2.png" alt=""></p>
+<p>Then, the code in VMP section is starting by a <code>push uint32</code> and a <code>call function</code>. Those are the main indicators of a VMP routine. Sometimes it&rsquo;s a &ldquo;never returning call&rdquo; and the data behind it is random, sometimes it&rsquo;s a custom handle to go to a <code>VENTER</code>.</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_3/binaryninja_HwFMFIH9xG.png" alt=""></p>
+<p>The pushed value (in this case <code>0xfe628c90</code>) is the encrypted opcode start (the start VIP, EP), and the called function is a <code>VENTER</code> instruction that will decrypt this value (it&rsquo;s a small spoil, all is explained below). Let&rsquo;s pretend that we don&rsquo;t know it&rsquo;s an instruction (<code>VENTER</code>). If we continue in the called function, we end up in list of instructions that are obviously mutated (see: <a href="https://whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/">Part 2 : Code Mutation</a>), and this code ends on a <code>jump</code> to an address in a register.</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_3/binaryninja_u2gJIgMDOx.png" alt=""></p>
+<p>If we continue a bit, we start to quickly figure out a pattern. We notice that those kind of &ldquo;blocks&rdquo; (code followed by a jump to a register) are executed right after each other. In order to understand, I will split each one of those &ldquo;blocks&rdquo; and list them. Here is a preview of the execution flow (each line is the start of a block)</p>
+<p>NOTE : I removed parts of junkcode to make things easier</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="err">======================================================================</span>
+<span class="err">0</span><span class="nl">x7ae901:</span>	<span class="nf">mov</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x7ae905:</span>	<span class="nf">lea</span>	<span class="no">esi</span><span class="p">,</span> <span class="p">[</span><span class="no">esi</span> <span class="err">+</span> <span class="mi">4</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x7ae914:</span>	<span class="nf">movzx</span>	<span class="no">eax</span><span class="p">,</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">ebp</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x83e3c2:</span>	<span class="nf">lea</span>	<span class="no">ebp</span><span class="p">,</span> <span class="p">[</span><span class="no">ebp</span> <span class="err">+</span> <span class="mi">1</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x7d7bf8:</span>	<span class="nf">mov</span>	<span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esp</span> <span class="err">+</span> <span class="no">eax</span><span class="p">],</span> <span class="no">ecx</span>
+<span class="na">...</span>
+<span class="err">0</span><span class="nl">x8429bf:</span>	<span class="nf">add</span>	<span class="no">edi</span><span class="p">,</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x6d015e:</span>	<span class="nf">jmp</span>	<span class="no">edi</span>
+<span class="err">======================================================================</span>
+<span class="err">0</span><span class="nl">x755912:</span>	<span class="nf">mov</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x75591a:</span>	<span class="nf">lea</span>	<span class="no">esi</span><span class="p">,</span> <span class="p">[</span><span class="no">esi</span> <span class="err">+</span> <span class="mi">4</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x755925:</span>	<span class="nf">movzx</span>	<span class="no">eax</span><span class="p">,</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">ebp</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x6c94c6:</span>	<span class="nf">mov</span>	<span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esp</span> <span class="err">+</span> <span class="no">eax</span><span class="p">],</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x6c94d7:</span>	<span class="nf">lea</span>	<span class="no">ebp</span><span class="p">,</span> <span class="p">[</span><span class="no">ebp</span> <span class="err">+</span> <span class="mi">4</span><span class="p">]</span>
+<span class="na">...</span>
+<span class="err">0</span><span class="nl">x79cdbd:</span>	<span class="nf">add</span>	<span class="no">edi</span><span class="p">,</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x79cdbf:</span>	<span class="nf">push</span>	<span class="no">edi</span>
+<span class="err">0</span><span class="nl">x79cdc0:</span>	<span class="nf">ret</span>	
+<span class="err">======================================================================</span>
+<span class="err">0</span><span class="nl">x7b821a:</span>	<span class="nf">mov</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x7b8222:</span>	<span class="nf">lea</span>	<span class="no">esi</span><span class="p">,</span> <span class="p">[</span><span class="no">esi</span> <span class="err">+</span> <span class="mi">4</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x7b822b:</span>	<span class="nf">movzx</span>	<span class="no">eax</span><span class="p">,</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">ebp</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x7b695c:</span>	<span class="nf">mov</span>	<span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esp</span> <span class="err">+</span> <span class="no">eax</span><span class="p">],</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x7b6966:</span>	<span class="nf">lea</span>	<span class="no">ebp</span><span class="p">,</span> <span class="p">[</span><span class="no">ebp</span> <span class="err">+</span> <span class="mi">4</span><span class="p">]</span>
+<span class="na">...</span>
+<span class="err">0</span><span class="nl">x7637cb:</span>	<span class="nf">add</span>	<span class="no">edi</span><span class="p">,</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x78cc6a:</span>	<span class="nf">jmp</span>	<span class="no">edi</span>
+</code></pre></div><p>It&rsquo;s definitly looking like instructions !</p>
+<h2 id="iv---lets-reverse">IV - Let&rsquo;s reverse</h2>
+<p>So, let&rsquo;s understand one of those blocks as an example. As you may guess, those blocks are in fact VM instructions (handles).</p>
+<p>Here is an example of a raw handle (with code mutation) :</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="err">0</span><span class="nl">x45bf82:</span>	<span class="nf">lea</span>	<span class="no">esi</span><span class="p">,</span> <span class="p">[</span><span class="no">esi</span> <span class="p">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x45bf88:</span>	<span class="nf">shl</span>	<span class="no">dl</span><span class="p">,</span> <span class="no">cl</span>
+<span class="err">0</span><span class="nl">x45bf8a:</span>	<span class="nf">shr</span>	<span class="no">dh</span><span class="p">,</span> <span class="no">cl</span>
+<span class="err">0</span><span class="nl">x45bf8c:</span>	<span class="nf">movzx</span>	<span class="no">eax</span><span class="p">,</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x45bf8f:</span>	<span class="nf">inc</span>	<span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x45bf90:</span>	<span class="nf">shrd</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">ebx</span><span class="p">,</span> <span class="mi">0x3f</span>
+<span class="err">0</span><span class="nl">x45bf94:</span>	<span class="nf">xor</span>	<span class="no">al</span><span class="p">,</span> <span class="no">bl</span>
+<span class="err">0</span><span class="nl">x45bf96:</span>	<span class="nf">rcl</span>	<span class="no">cx</span><span class="p">,</span> <span class="no">cl</span>
+<span class="err">0</span><span class="nl">x45bf99:</span>	<span class="nf">ror</span>	<span class="no">al</span><span class="p">,</span> <span class="mi">1</span>
+<span class="err">0</span><span class="nl">x45bf9b:</span>	<span class="nf">jmp</span>	<span class="mi">0x40a4fa</span>
+<span class="err">0</span><span class="nl">x40a4fa:</span>	<span class="nf">dec</span>	<span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a4fc:</span>	<span class="nf">xchg</span>	<span class="no">dh</span><span class="p">,</span> <span class="no">dh</span>
+<span class="err">0</span><span class="nl">x40a4fe:</span>	<span class="nf">cmovs</span>	<span class="no">dx</span><span class="p">,</span> <span class="no">ax</span>
+<span class="err">0</span><span class="nl">x40a502:</span>	<span class="nf">bswap</span>	<span class="no">dx</span>
+<span class="err">0</span><span class="nl">x40a505:</span>	<span class="nf">not</span>	<span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a507:</span>	<span class="nf">dec</span>	<span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a509:</span>	<span class="nf">cmp</span>	<span class="no">dl</span><span class="p">,</span> <span class="no">ch</span>
+<span class="err">0</span><span class="nl">x40a50b:</span>	<span class="nf">bsr</span>	<span class="no">cx</span><span class="p">,</span> <span class="no">si</span>
+<span class="err">0</span><span class="nl">x40a50f:</span>	<span class="nf">btc</span>	<span class="no">cx</span><span class="p">,</span> <span class="mi">0x1f</span>
+<span class="err">0</span><span class="nl">x40a514:</span>	<span class="nf">xor</span>	<span class="no">bl</span><span class="p">,</span> <span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a516:</span>	<span class="nf">cmovp</span>	<span class="no">dx</span><span class="p">,</span> <span class="no">bp</span>
+<span class="err">0</span><span class="nl">x40a51a:</span>	<span class="nf">movzx</span>	<span class="no">dx</span><span class="p">,</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esp</span> <span class="err">+</span> <span class="no">eax</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x40a51f:</span>	<span class="nf">sub</span>	<span class="no">ebp</span><span class="p">,</span> <span class="mi">2</span>
+<span class="err">0</span><span class="nl">x40a525:</span>	<span class="nf">movsx</span>	<span class="no">cx</span><span class="p">,</span> <span class="no">ch</span>
+<span class="err">0</span><span class="nl">x40a529:</span>	<span class="nf">mov</span>	<span class="no">word</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">ebp</span><span class="p">],</span> <span class="no">dx</span>
+<span class="err">0</span><span class="nl">x40a52e:</span>	<span class="nf">sar</span>	<span class="no">cl</span><span class="p">,</span> <span class="mi">0xf6</span>
+<span class="err">0</span><span class="nl">x40a531:</span>	<span class="nf">lea</span>	<span class="no">esi</span><span class="p">,</span> <span class="p">[</span><span class="no">esi</span> <span class="p">-</span> <span class="mi">4</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x40a537:</span>	<span class="nf">mov</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x40a539:</span>	<span class="nf">test</span>	<span class="no">si</span><span class="p">,</span> <span class="mi">0x701e</span>
+<span class="err">0</span><span class="nl">x40a53e:</span>	<span class="nf">xor</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">ebx</span>
+<span class="err">0</span><span class="nl">x40a540:</span>	<span class="nf">jmp</span>	<span class="mi">0x438108</span>
+<span class="err">0</span><span class="nl">x438108:</span>	<span class="nf">sub</span>	<span class="no">ecx</span><span class="p">,</span> <span class="mi">0x5eac74dd</span>
+<span class="err">0</span><span class="nl">x43810e:</span>	<span class="nf">cmc</span>	
+<span class="mi">0x43810f</span><span class="p">:</span>	<span class="no">not</span>	<span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x438111:</span>	<span class="nf">jmp</span>	<span class="mi">0x41743d</span>
+<span class="err">0</span><span class="nl">x41743d:</span>	<span class="nf">bswap</span>	<span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x41743f:</span>	<span class="nf">rol</span>	<span class="no">ecx</span><span class="p">,</span> <span class="mi">1</span>
+<span class="err">0</span><span class="nl">x417441:</span>	<span class="nf">jmp</span>	<span class="mi">0x4513d8</span>
+<span class="err">0</span><span class="nl">x4513d8:</span>	<span class="nf">neg</span>	<span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x4513da:</span>	<span class="nf">stc</span>	
+<span class="mi">0x4513db</span><span class="p">:</span>	<span class="no">xor</span>	<span class="no">ebx</span><span class="p">,</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x4513dd:</span>	<span class="nf">cmp</span>	<span class="no">bx</span><span class="p">,</span> <span class="no">ax</span>
+<span class="err">0</span><span class="nl">x4513e0:</span>	<span class="nf">add</span>	<span class="no">edi</span><span class="p">,</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x4513e2:</span>	<span class="nf">jmp</span>	<span class="mi">0x45af97</span>
+<span class="err">0</span><span class="nl">x45af97:</span>	<span class="nf">jmp</span>	<span class="mi">0x4752b4</span>
+<span class="err">0</span><span class="nl">x4752b4:</span>	<span class="nf">lea</span>	<span class="no">ecx</span><span class="p">,</span> <span class="p">[</span><span class="no">esp</span> <span class="err">+</span> <span class="mi">0x60</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x4752b8:</span>	<span class="nf">test</span>	<span class="no">sp</span><span class="p">,</span> <span class="no">sp</span>
+<span class="err">0</span><span class="nl">x4752bb:</span>	<span class="nf">cmp</span>	<span class="no">ebp</span><span class="p">,</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x4752bd:</span>	<span class="nf">jmp</span>	<span class="mi">0x48a866</span>
+<span class="err">0</span><span class="nl">x48a866:</span>	<span class="nf">ja</span>	<span class="mi">0x461417</span>
+<span class="err">0</span><span class="nl">x461417:</span>	<span class="nf">push</span>	<span class="no">edi</span>
+<span class="err">0</span><span class="nl">x461418:</span>	<span class="nf">ret</span>	
+</code></pre></div><p>As you can see the code mutation is pretty heavy, so let&rsquo;s remove it. Here is the same version, without junkcode :</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="err">0</span><span class="nl">x45bf82:</span>	<span class="nf">lea</span>	<span class="no">esi</span><span class="p">,</span> <span class="p">[</span><span class="no">esi</span> <span class="p">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x45bf8c:</span>	<span class="nf">movzx</span>	<span class="no">eax</span><span class="p">,</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x45bf94:</span>	<span class="nf">xor</span>	<span class="no">al</span><span class="p">,</span> <span class="no">bl</span>
+<span class="err">0</span><span class="nl">x45bf99:</span>	<span class="nf">ror</span>	<span class="no">al</span><span class="p">,</span> <span class="mi">1</span>
+<span class="err">0</span><span class="nl">x40a4fa:</span>	<span class="nf">dec</span>	<span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a505:</span>	<span class="nf">not</span>	<span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a507:</span>	<span class="nf">dec</span>	<span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a514:</span>	<span class="nf">xor</span>	<span class="no">bl</span><span class="p">,</span> <span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a51a:</span>	<span class="nf">movzx</span>	<span class="no">dx</span><span class="p">,</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esp</span> <span class="err">+</span> <span class="no">eax</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x40a51f:</span>	<span class="nf">sub</span>	<span class="no">ebp</span><span class="p">,</span> <span class="mi">2</span>
+<span class="err">0</span><span class="nl">x40a529:</span>	<span class="nf">mov</span>	<span class="no">word</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">ebp</span><span class="p">],</span> <span class="no">dx</span>
+<span class="err">0</span><span class="nl">x40a531:</span>	<span class="nf">lea</span>	<span class="no">esi</span><span class="p">,</span> <span class="p">[</span><span class="no">esi</span> <span class="p">-</span> <span class="mi">4</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x40a537:</span>	<span class="nf">mov</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x40a53e:</span>	<span class="nf">xor</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">ebx</span>
+<span class="err">0</span><span class="nl">x438108:</span>	<span class="nf">sub</span>	<span class="no">ecx</span><span class="p">,</span> <span class="mi">0x5eac74dd</span>
+<span class="err">0</span><span class="nl">x43810e:</span>	<span class="nf">cmc</span>	
+<span class="mi">0x43810f</span><span class="p">:</span>	<span class="no">not</span>	<span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x41743d:</span>	<span class="nf">bswap</span>	<span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x41743f:</span>	<span class="nf">rol</span>	<span class="no">ecx</span><span class="p">,</span> <span class="mi">1</span>
+<span class="err">0</span><span class="nl">x4513d8:</span>	<span class="nf">neg</span>	<span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x4513da:</span>	<span class="nf">stc</span>	
+<span class="mi">0x4513db</span><span class="p">:</span>	<span class="no">xor</span>	<span class="no">ebx</span><span class="p">,</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x4513e0:</span>	<span class="nf">add</span>	<span class="no">edi</span><span class="p">,</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x4752b4:</span>	<span class="nf">lea</span>	<span class="no">ecx</span><span class="p">,</span> <span class="p">[</span><span class="no">esp</span> <span class="err">+</span> <span class="mi">0x60</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x461417:</span>	<span class="nf">push</span>	<span class="no">edi</span>
+<span class="err">0</span><span class="nl">x461418:</span>	<span class="nf">ret</span>	
+</code></pre></div><p>Ok, now let&rsquo;s figure out what it does :</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="err">0</span><span class="nl">x45bf82:</span>	<span class="nl">VUNKNOWN:</span> <span class="err">(</span><span class="nf">VIP</span> <span class="err">=</span> <span class="no">esi</span><span class="p">,</span> <span class="no">VSP</span> <span class="err">=</span> <span class="no">ebp</span><span class="p">)</span>
+
+<span class="c"># update VIP to point on operand (current VIP is pointing on opcode offset)
+</span><span class="c"></span><span class="err">0</span><span class="nl">x45bf82:</span>	<span class="nf">lea</span>	<span class="no">esi</span><span class="p">,</span> <span class="p">[</span><span class="no">esi</span> <span class="p">-</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="c"># get the ciphered operand (1 byte)
+</span><span class="c"></span><span class="err">0</span><span class="nl">x45bf8c:</span>	<span class="nf">movzx</span>	<span class="no">eax</span><span class="p">,</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+
+<span class="c"># mutated operand decryption (keychain)
+</span><span class="c"># NOTE : ebx contain the rolling key
+</span><span class="c"></span><span class="err">0</span><span class="nl">x45bf94:</span>	<span class="nf">xor</span>	<span class="no">al</span><span class="p">,</span> <span class="no">bl</span>
+<span class="err">0</span><span class="nl">x45bf99:</span>	<span class="nf">ror</span>	<span class="no">al</span><span class="p">,</span> <span class="mi">1</span>
+<span class="err">0</span><span class="nl">x40a4fa:</span>	<span class="nf">dec</span>	<span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a505:</span>	<span class="nf">not</span>	<span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a507:</span>	<span class="nf">dec</span>	<span class="no">al</span>
+<span class="err">0</span><span class="nl">x40a514:</span>	<span class="nf">xor</span>	<span class="no">bl</span><span class="p">,</span> <span class="no">al</span>
+
+<span class="c"># push a value into vm stack from vm context
+</span><span class="c"># eax = 8; VCTX[8] -&gt; [VSP-2] = VPUSH R8
+</span><span class="c"></span><span class="err">0</span><span class="nl">x40a51a:</span>	<span class="nf">movzx</span>	<span class="no">dx</span><span class="p">,</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esp</span> <span class="err">+</span> <span class="no">eax</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x40a51f:</span>	<span class="nf">sub</span>	<span class="no">ebp</span><span class="p">,</span> <span class="mi">2</span>
+<span class="err">0</span><span class="nl">x40a529:</span>	<span class="nf">mov</span>	<span class="no">word</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">ebp</span><span class="p">],</span> <span class="no">dx</span>
+
+<span class="c"># update VIP to the next ciphered opcode offset
+</span><span class="c"></span><span class="err">0</span><span class="nl">x40a531:</span>	<span class="nf">lea</span>	<span class="no">esi</span><span class="p">,</span> <span class="p">[</span><span class="no">esi</span> <span class="p">-</span> <span class="mi">4</span><span class="p">]</span>
+
+<span class="c"># get next ciphered opcode offset
+</span><span class="c"></span><span class="err">0</span><span class="nl">x40a537:</span>	<span class="nf">mov</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+
+<span class="c"># mutated next handle offset decryption routine (keychain)
+</span><span class="c"># NOTE : ebx contain the rolling key
+</span><span class="c"></span><span class="err">0</span><span class="nl">x40a53e:</span>	<span class="nf">xor</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">ebx</span>
+<span class="err">0</span><span class="nl">x438108:</span>	<span class="nf">sub</span>	<span class="no">ecx</span><span class="p">,</span> <span class="mi">0x5eac74dd</span>
+<span class="err">0</span><span class="nl">x43810e:</span>	<span class="nf">cmc</span>	
+<span class="mi">0x43810f</span><span class="p">:</span>	<span class="no">not</span>	<span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x41743d:</span>	<span class="nf">bswap</span>	<span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x41743f:</span>	<span class="nf">rol</span>	<span class="no">ecx</span><span class="p">,</span> <span class="mi">1</span>
+<span class="err">0</span><span class="nl">x4513d8:</span>	<span class="nf">neg</span>	<span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x4513da:</span>	<span class="nf">stc</span>	
+<span class="mi">0x4513db</span><span class="p">:</span>	<span class="no">xor</span>	<span class="no">ebx</span><span class="p">,</span> <span class="no">ecx</span>
+
+<span class="c"># update absolute handle position with the next handle offset
+</span><span class="c"></span><span class="err">0</span><span class="nl">x4513e0:</span>	<span class="nf">add</span>	<span class="no">edi</span><span class="p">,</span> <span class="no">ecx</span>
+
+<span class="c"># reset the next rolling key operand
+</span><span class="c"></span><span class="err">0</span><span class="nl">x4752b4:</span>	<span class="nf">lea</span>	<span class="no">ecx</span><span class="p">,</span> <span class="p">[</span><span class="no">esp</span> <span class="err">+</span> <span class="mi">0x60</span><span class="p">]</span>
+
+<span class="c"># jump to the next handle
+</span><span class="c"></span><span class="err">0</span><span class="nl">x461417:</span>	<span class="nf">push</span>	<span class="no">edi</span>
+<span class="err">0</span><span class="nl">x461418:</span>	<span class="nf">ret</span>	
+</code></pre></div><p>So, this handle is a <code>VPUSH16 [VCTX + *]</code> instruction !</p>
+<h2 id="v---vm-structure">V - VM Structure</h2>
+<p>Now that we have an idea of what is an handle, here is the VM structure.</p>
+<h3 id="v1---architecture">V.1 - Architecture</h3>
+<p>The VM works as follow :</p>
+<p>It uses a Virtual Instruction Pointer <code>VIP</code> stored in a x86 register, and a Virtual Stack Pointer <code>VSP</code> also stored in a x86 register. In each VMP routines, those are stored in random registers unlike VMP 2.X, and could be swapped if the routine perform a jump (see parts below).</p>
+<p>The VM comes with a context <code>VCTX</code>, in it, there are 18 registers <code>R0 -&gt; R17</code>, and a stack. This context also contain a rolling key operand in <code>esp + 0x60</code>, and the rolling key itself is stored in a random x86 register. In general, an handle offset (handle base address + instruction offset) is stored in a register.</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_3/vmpEnv.png" alt=""></p>
+<p>NOTE : if you enable VMProtect&rsquo;s packer, <code>.vmp1</code> contain VMP handles and mutated code. Otherwise, all is in <code>.vmp0</code>.</p>
+<h3 id="v2---instructions">V.2 - Instructions</h3>
+<p>The instruction set is about ~20 instructions, ~40 if you take in account the variable size (it could be some remaining instructions I haven&rsquo;t reversed), an instruction is made of two parts, an encrypted handle offset, and its encrypted arguments (operands) (each handle is heavilly mutated)</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_3/vmpInstruction.png" alt=""></p>
+<p>I will not explain intructions in details, but here are some you can find :</p>
+<pre><code>VENTER, VEXIT, VADDU*, VNANDU*, VNORU*, VPUSHV, VPOPR, VPOPVSP, VPUSHVSP, VPUSHI*
+VFETCH*, VJUMP_*, VMOV*, VSHLU*, VSHRU*, VMULU*, VDIVU*, ....
+</code></pre><p>A VMP routine starts by a VENTER intruction, and ends by a VEXIT instruction. When VMP can&rsquo;t handle the original x86 instruction, it is saved as it is in the VM routine, but it uses VMP&rsquo;s registers (see: <code>V.4 - Control flow</code>).</p>
+<h3 id="v3---rolling-key">V.3 - Rolling key</h3>
+<h4 id="v31---instruction-flow">V.3.1 - Instruction flow</h4>
+<p>VMP changed a lot since 2.x regarding this, before, the opcode was grabbed using a simple index in an array, with a jmp right after to go to the handle in function of the opcode in the array. Note that this is still the current behavior of VMP Demo version. Currently, the handle table is still there, but the flow is not &ldquo;linear&rdquo; anymore (an index through an array).</p>
+<p>Let&rsquo;s take an example, the current instruction decrypts the next opcode offset (next instruction) with an unique &ldquo;rolling&rdquo; key and a unique mutated decryption routine. Rolling means a keychain, like for example the first handle decipher the first opcode with its unique key in <code>edi</code>. During the decryption routine, the key in <code>edi</code> has been mutated uniquely in function of the decryption routine, to allows the next handle to be able to decipher the next opcode.</p>
+<p>This means first that you can&rsquo;t decrypt the opcode flow staticaly without using symbolic execution (like NoVmp with VTIL), and you are also obligated to cross all handles in order to get the opcode. But this also means that you can&rsquo;t modify the execution flow (or it&rsquo;s very hard), because if you want to tweak the execution of an instruction, you have make its decryption key feet to the all keychain (static modification).</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_3/vmpKey.png" alt=""></p>
+<p>This is an example of VIP update at the end of an handle :</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="c"># VIP += 4
+</span><span class="c"></span><span class="nf">lea</span>	<span class="no">ebp</span><span class="p">,</span> <span class="p">[</span><span class="no">ebp</span> <span class="err">+</span> <span class="mi">4</span><span class="p">]</span>
+<span class="c"># ebx = last key of the keychain
+</span><span class="c"></span><span class="nf">xor</span>	<span class="no">edx</span><span class="p">,</span> <span class="no">ebx</span>
+<span class="c"># mutated decryption routine
+</span><span class="c"></span><span class="nf">inc</span>	<span class="no">edx</span>
+<span class="nf">add</span>	<span class="no">edx</span><span class="p">,</span> <span class="mi">0x49951f73</span>
+<span class="nf">add</span>	<span class="no">edx</span><span class="p">,</span> <span class="mi">0x794f4349</span>
+<span class="nf">neg</span>	<span class="no">edx</span>
+<span class="nf">inc</span>	<span class="no">edx</span>
+<span class="c"># cipher the current decryption key for the next
+</span><span class="c"># handle decryption routine
+</span><span class="c"></span><span class="nf">xor</span>	<span class="no">ebx</span><span class="p">,</span> <span class="no">edx</span>
+<span class="c"># current handle + offset
+</span><span class="c"></span><span class="nf">add</span>	<span class="no">esi</span><span class="p">,</span> <span class="no">edx</span>
+<span class="c"># jump to next handle
+</span><span class="c"></span><span class="nf">push</span>	<span class="no">esi</span>
+<span class="nf">ret</span>	
+</code></pre></div><p>In this case, the rolling key operand is the handle offset of the previous handle (stored temporary in <code>edx</code> in this example), and the rolling key is stored in <code>ebx</code>.</p>
+<p>NOTE : VMP 3.x x64 in the other hand still keep the handle table in a register, and the decrypted handle offset is just added to it, unlike here where the handle offset is increased</p>
+<h4 id="v32---operands">V.3.2 - Operands</h4>
+<p>Like in VMP 2.x, the rolling key is also applied to intruction operand decryption. Unlike <code>V.3.1 - Instruction flow</code> decryption routine, the rolling key operand is the encrypted instruction argument, but the rolling key is the same as <code>V.3.1 - Instruction flow</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="c"># esi = VIP
+</span><span class="c"># ecx = instruction argument
+</span><span class="c"></span><span class="nf">mov</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+<span class="c"># update VIP 
+</span><span class="c"></span><span class="nf">lea</span>	<span class="no">esi</span><span class="p">,</span> <span class="p">[</span><span class="no">esi</span> <span class="err">+</span> <span class="mi">4</span><span class="p">]</span>
+<span class="c"># decryption routine with instruction argument as rolling key operand
+</span><span class="c"># ebx = rolling key
+</span><span class="c"></span><span class="nf">xor</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">ebx</span>
+<span class="nf">dec</span>	<span class="no">ecx</span>
+<span class="nf">neg</span>	<span class="no">ecx</span>
+<span class="nf">xor</span>	<span class="no">ecx</span><span class="p">,</span> <span class="mi">0x611a1565</span>
+<span class="nf">cmp</span>	<span class="no">ebp</span><span class="p">,</span> <span class="no">edx</span>
+<span class="nf">xor</span>	<span class="no">ebx</span><span class="p">,</span> <span class="no">ecx</span>
+</code></pre></div><h3 id="v4---control-flow">V.4 - Control flow</h3>
+<p>So, like mentined above, the instruction flow is made by rolling key decryption (see: <code>V.3.1 - Instruction flow</code>) and a VMP routine start by a <code>VENTER</code>. But, virtualization can&rsquo;t handle each x86 instructions like I said in an older post, so VMP keep those instructions in the code. At some point during the routine execution, the VM will do a <code>VEXIT</code> to return in x86 context and execute the unsupported instruction. And right after, a VENTER is executed to return in VM context.</p>
+<p>Here are some unsupported instructions : <code>MOVDQ2Q, STOS*, FSINCOS, WBINVD, WRMSR, UD2 (of course), MOVNTPD, CPUID ...</code></p>
+<p>This skip is also applied to some loops (see the integrity check of VMP as a good example).</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_3/vmpControlFlow.png" alt=""></p>
+<p>API call are also done outside of VMP. Before the call, a custom <code>VEXIT</code> will pop the arguments in the real x86 context. And right after, the real call is performed using its calling convention.</p>
+<p>In rare cases, I saw a VMP instruction that contain custom code, like a loop or a special instruction, without a <code>VEXIT</code>. But it&rsquo;s not presistant enough so I can talk about it more.</p>
+<h3 id="v5---about-the-junkcode">V.5 - About the junkcode</h3>
+<p>Now that we know the behaviour of VMP, we can consider this to remove more junkcode. So, VMP doesn&rsquo;t do any <code>cmp</code> / <code>test</code> on <code>VIP</code> and <code>VSP</code> registers as comparisons are melted using MBA (see below). Some instructions are useless, like <code>mov</code>, <code>cmp</code> and <code>xchg</code> on the same register, and some register size are not used in some circumstances (a <code>mov al, dl</code> is not related to a handle that move 32 bits values). If you want more informations about the code mutation engine of VMP, and its junkcode, check my last article on it (<a href="https://whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/">Part 2 : Code Mutation</a>).</p>
+<h2 id="vi---automation">VI - Automation</h2>
+<p>So, how to handle this ? You have two main options, doing devirtualization, or tracing the executed VMP opcode. Tracing is simple, as you only have to monitor or emulate each executed instruction, and do pattern matching to see what VMP instructions are executed. Devirtualization in the other hand could give you the ability to retrive an x86 code that is close to the original code. But it&rsquo;s way more complicated as you have to understand and reconstruct the control flow in anycase possible, and using lifting tools to simplify the obfuscated code. Those two options could be done staticaly or dynamicly, this first required symbolic execution to bypass the rolling decryption routines, and the second one need an complet emulation framework to handle each aspect of the VM. I shortly detailed the devirtualization approach in <code>IX - Devirtualization</code>.</p>
+<p>As I don&rsquo;t want to spend too much time on this, I made a short tracer based on qiling (using unicorn emulation). This &ldquo;debugger&rdquo; will emulate routines instructions, and using pattern matching, will understand which VMP instruction is executed.</p>
+<p><img src="https://whereisr0da.github.io/blog/post_images/vmp_3/demo4.gif" alt=""></p>
+<h2 id="vii---an-example">VII - An example</h2>
+<p>Now, as we can read the instructions executed by VMP, we can try to recover the original x86 code. Here are two examples of virtualized routines, the first is just a simple math operation around a variable, and the second is an if statement.</p>
+<p>NOTE : of course, my tracer skipped the decryption routines stuff, all immediates are already decrypted</p>
+<h3 id="vii1---simple-routine">VII.1 - Simple routine</h3>
+<p>In order to understand how a virtualized routine look like, here is an example of a simple code.</p>
+<p>Here is the original code :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span> <span class="n">var_0</span> <span class="o">=</span> <span class="mh">0x1337</span><span class="p">;</span>
+
+<span class="n">var_0</span> <span class="o">^=</span> <span class="mh">0x50</span><span class="p">;</span>
+<span class="n">var_0</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="n">var_0</span> <span class="o">-=</span> <span class="mi">5</span><span class="p">;</span>
+<span class="n">var_0</span> <span class="o">+=</span> <span class="mh">0x80</span><span class="p">;</span>
+
+<span class="k">return</span> <span class="n">var_0</span><span class="p">;</span>
+</code></pre></div><p>Here is the original assembly code :</p>
+<p>NOTE : as you can see, this code is not optimized due to the constant assignation. It&rsquo;s intended to see how VMP stores this variables.</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="nf">mov</span>     <span class="no">dword</span> <span class="p">[</span><span class="no">ebp-0x4</span><span class="p">],</span> <span class="mi">0x1337</span>
+<span class="nf">mov</span>     <span class="no">eax</span><span class="p">,</span> <span class="no">dword</span> <span class="p">[</span><span class="no">ebp-0x4</span><span class="p">]</span>
+<span class="nf">xor</span>     <span class="no">eax</span><span class="p">,</span> <span class="mi">0x50</span>               <span class="err">{</span><span class="mi">0x1367</span><span class="err">}</span>
+<span class="nf">mov</span>     <span class="no">dword</span> <span class="p">[</span><span class="no">ebp-0x4</span><span class="p">],</span> <span class="no">eax</span>    <span class="err">{</span><span class="mi">0x1367</span><span class="err">}</span>
+<span class="nf">mov</span>     <span class="no">eax</span><span class="p">,</span> <span class="no">dword</span> <span class="p">[</span><span class="no">ebp-0x4</span><span class="p">]</span>
+<span class="nf">shl</span>     <span class="no">eax</span><span class="p">,</span> <span class="mi">0x1</span>                <span class="err">{</span><span class="mi">0x26ce</span><span class="err">}</span>
+<span class="nf">mov</span>     <span class="no">dword</span> <span class="p">[</span><span class="no">ebp-0x4</span><span class="p">],</span> <span class="no">eax</span>    <span class="err">{</span><span class="mi">0x26ce</span><span class="err">}</span>
+<span class="nf">mov</span>     <span class="no">eax</span><span class="p">,</span> <span class="no">dword</span> <span class="p">[</span><span class="no">ebp-0x4</span><span class="p">]</span>
+<span class="nf">sub</span>     <span class="no">eax</span><span class="p">,</span> <span class="mi">0x5</span>                <span class="err">{</span><span class="mi">0x26c9</span><span class="err">}</span>
+<span class="nf">mov</span>     <span class="no">dword</span> <span class="p">[</span><span class="no">ebp-0x4</span><span class="p">],</span> <span class="no">eax</span>    <span class="err">{</span><span class="mi">0x26c9</span><span class="err">}</span>
+<span class="nf">mov</span>     <span class="no">eax</span><span class="p">,</span> <span class="no">dword</span> <span class="p">[</span><span class="no">ebp-0x4</span><span class="p">]</span>
+<span class="nf">add</span>     <span class="no">eax</span><span class="p">,</span> <span class="mi">0x80</span>               <span class="err">{</span><span class="mi">0x2749</span><span class="err">}</span>
+<span class="nf">mov</span>     <span class="no">dword</span> <span class="p">[</span><span class="no">ebp-0x4</span><span class="p">],</span> <span class="no">eax</span>    <span class="err">{</span><span class="mi">0x2749</span><span class="err">}</span>
+<span class="nf">mov</span>     <span class="no">eax</span><span class="p">,</span> <span class="no">dword</span> <span class="p">[</span><span class="no">ebp-0x4</span><span class="p">]</span>    <span class="err">{</span><span class="mi">0x2749</span><span class="err">}</span>
+<span class="nf">jmp</span>     <span class="mi">0x401043</span>
+<span class="err">401043:</span> <span class="c"># NOTE : this will not be virtualized
+</span><span class="c"></span><span class="nf">leave</span>
+<span class="nf">retn</span>
+</code></pre></div><p>After virtualization, the code is about 126 VMP instructions.</p>
+<p>The first thing executed in the VM is storing the x86 context in VMP registers (VENTER pushed each registers on CPU stack)</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="mh">0x44378a</span><span class="o">:</span>       <span class="n">VENTER</span>          <span class="p">(</span><span class="n">VIP</span> <span class="o">=</span> <span class="n">ebp</span><span class="p">,</span> <span class="n">VSP</span> <span class="o">=</span> <span class="n">esi</span><span class="p">)</span>
+<span class="mh">0x44faee</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R7</span>  <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="n">R7</span><span class="p">)</span>
+<span class="mh">0x4771b8</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R9</span>  <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="n">R9</span><span class="p">)</span>
+<span class="mh">0x41e851</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R5</span>  <span class="p">(</span><span class="mh">0xffffcfac</span>     <span class="o">-&gt;</span>      <span class="n">R5</span><span class="p">)</span>
+<span class="mh">0x4307c5</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R2</span>  <span class="p">(</span><span class="mh">0x503cee8</span>      <span class="o">-&gt;</span>      <span class="n">R2</span><span class="p">)</span>
+<span class="mh">0x42861f</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R12</span> <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="n">R12</span><span class="p">)</span>
+<span class="mh">0x42ac89</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R4</span>  <span class="p">(</span><span class="mh">0x44</span>   <span class="o">-&gt;</span>      <span class="n">R4</span><span class="p">)</span>
+<span class="mh">0x43de1a</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R15</span> <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="n">R15</span><span class="p">)</span>
+<span class="mh">0x481993</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R11</span> <span class="p">(</span><span class="mh">0x503cf18</span>      <span class="o">-&gt;</span>      <span class="n">R11</span><span class="p">)</span>
+<span class="mh">0x46ecaf</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R0</span>  <span class="p">(</span><span class="mh">0xffffe000</span>     <span class="o">-&gt;</span>      <span class="n">R0</span><span class="p">)</span>
+<span class="mh">0x434480</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R6</span>  <span class="p">(</span><span class="mh">0x41c63d</span>       <span class="o">-&gt;</span>      <span class="n">R6</span><span class="p">)</span>
+<span class="mh">0x4045f1</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R3</span>  <span class="p">(</span><span class="mh">0xc046bf9b</span>     <span class="o">-&gt;</span>      <span class="n">R3</span><span class="p">)</span>
+</code></pre></div><p>This code is : <code>int var_0 = 0x1337;</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># push current stack pointer
+</span><span class="cp"></span><span class="mh">0x462495</span><span class="o">:</span>       <span class="n">VPUSHVSP</span>
+
+<span class="cp"># setup the variable &#39;var_0&#39; at 0xffffcfa8
+</span><span class="cp"># (0x4 + 0xffffcfa4) : 0xffffcfa8 -&gt; VSP
+</span><span class="cp"></span><span class="mh">0x488c75</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0x4</span>               <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x46769d</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0x4</span> <span class="o">+</span> <span class="mh">0xffffcfa4</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+<span class="mh">0x44faee</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R10</span>               <span class="p">(</span><span class="mh">0x80</span>   <span class="o">-&gt;</span>      <span class="n">R10</span><span class="p">)</span>
+
+<span class="cp"># return to the old stack pointer
+</span><span class="cp"></span><span class="mh">0x42cbcb</span><span class="o">:</span>       <span class="n">VPOPVSP</span>
+
+<span class="cp"># push two values, those two combined give the variable offset 0xffffcfa8
+</span><span class="cp"># 0xfffffffc is an offset to recover &#39;var_0&#39; after the &#39;VPOPVSP&#39;
+</span><span class="cp"># like after a call, but the &#39;VPUSHVSP&#39; seems usless in this case
+</span><span class="cp"># so it&#39;s maybe an obfuscated way get the stack offset of a variable
+</span><span class="cp"></span><span class="mh">0x453bd6</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x7fffff99</span><span class="p">]</span>      <span class="p">(</span><span class="mh">0xffffcfac</span>     <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x43ad59</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xfffffffc</span>        <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="cp"># get the &#39;0x1337&#39; value
+</span><span class="cp"></span><span class="mh">0x4472f7</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0x1337</span>            <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="cp"># &#39;var_0&#39; = 0xffffcfa8 = (0xfffffffc + 0xffffcfac)
+</span><span class="cp"># &#39;var_0&#39; -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x408a8b</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R0</span>                <span class="p">(</span><span class="mh">0xffffcfac</span>     <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x437891</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xfffffffc</span>        <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x45343d</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+
+<span class="cp"># NOTE : after each VADDU32, a VPOPR32 will pop an additional value pushed by VADDU32
+</span><span class="cp">#        I still don&#39;t know if this VPOPR32 means something
+</span><span class="cp"></span><span class="mh">0x4771b8</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R10</span>               <span class="p">(</span><span class="mh">0x91</span>   <span class="o">-&gt;</span>      <span class="n">R10</span><span class="p">)</span>
+
+<span class="cp"># &#39;var_0&#39; initialized with &#39;0x1337&#39;
+</span><span class="cp"></span><span class="mh">0x443f3d</span><span class="o">:</span>       <span class="n">VMOV32</span>      <span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span> <span class="p">(</span><span class="mh">0x1337</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">])</span>
+</code></pre></div><p>This code is : <code>var_0 ^= 0x50;</code></p>
+<p>This one is interesting because it uses MBA (see: <a href="https://hal.archives-ouvertes.fr/hal-01388109/document">Defeating MBA-based Obfuscation</a>)</p>
+<pre><code>Original : 0x1337 ^ 0x50                                         = 0x1367
+VMP      : ~(~(0x1337) &amp; ~(0x50)) &amp; ~(~(~(0x1337)) &amp; ~(~(0x50))) = 0x1367
+</code></pre><p>Here is the code :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># keep &#39;var_0&#39; on stack top
+</span><span class="cp"></span><span class="mh">0x46fd4b</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+<span class="mh">0x41e851</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R3</span>                <span class="p">(</span><span class="mh">0x91</span>   <span class="o">-&gt;</span>      <span class="n">R3</span><span class="p">)</span>
+<span class="mh">0x44e6d5</span><span class="o">:</span>       <span class="n">VFETCH32</span>    <span class="p">[</span><span class="n">VSP</span><span class="p">]</span>             <span class="p">([</span><span class="mh">0xffffcfa8</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x1337</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># 0x1337 -&gt; R8
+</span><span class="cp"></span><span class="mh">0x4307c5</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R8</span>                <span class="p">(</span><span class="mh">0x1337</span> <span class="o">-&gt;</span>      <span class="n">R8</span><span class="p">)</span>
+
+<span class="cp"># ~(0x50) -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x453285</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xffffffaf</span>        <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="cp"># push the value twice
+</span><span class="cp"></span><span class="mh">0x46850b</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0xffff850b</span><span class="p">]</span>      <span class="p">(</span><span class="mh">0x1337</span> <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x4124e2</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x20000000</span><span class="p">]</span>      <span class="p">(</span><span class="mh">0x1337</span> <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># ~(0x1337) -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x42af58</span><span class="o">:</span>       <span class="n">VNORU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0xffffecc8</span> <span class="o">|</span> <span class="mh">0xffffecc8</span> <span class="o">=</span> <span class="mh">0xffffecc8</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x42861f</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R14</span>               <span class="p">(</span><span class="mh">0x80</span>   <span class="o">-&gt;</span>      <span class="n">R14</span><span class="p">)</span>
+
+<span class="cp"># ~(~(0x1337)) &amp; ~(~(0x50)) = 0x10 -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x45567d</span><span class="o">:</span>       <span class="n">VNANDU32</span>    <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0x1337</span> <span class="o">&amp;</span> <span class="mh">0x50</span> <span class="o">=</span> <span class="mh">0x10</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x42ac89</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R10</span>               <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="n">R10</span><span class="p">)</span>
+
+<span class="cp"># 0x50 -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x4545a2</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0x50</span>              <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="cp"># 0x1337 -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x466ec1</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R8</span>                <span class="p">(</span><span class="mh">0x1337</span> <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># ~(0x1337) &amp; ~(0x50) = 0xffffec88 -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x48bfe1</span><span class="o">:</span>       <span class="n">VNANDU32</span>    <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0xffffecc8</span> <span class="o">&amp;</span> <span class="mh">0xffffffaf</span> <span class="o">=</span> <span class="mh">0xffffec88</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x43de1a</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R6</span>                <span class="p">(</span><span class="mh">0x84</span>   <span class="o">-&gt;</span>      <span class="n">R6</span><span class="p">)</span>
+
+<span class="cp"># ~(0xffffec88) &amp; ~(0x10) = 0x1367 -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x420812</span><span class="o">:</span>       <span class="n">VNANDU32</span>    <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0x1377</span> <span class="o">&amp;</span> <span class="mh">0xffffffef</span> <span class="o">=</span> <span class="mh">0x1367</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x481993</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R1</span>                <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="n">R1</span><span class="p">)</span>
+
+<span class="cp"># result : ~(~(0x1337) &amp; ~(0x50)) &amp; ~(~(~(0x1337)) &amp; ~(~(0x50))) = 0x1367 -&gt; [VSP]
+</span><span class="cp"># 0x1367 -&gt; R10 
+</span><span class="cp"></span><span class="mh">0x46ecaf</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R10</span>               <span class="p">(</span><span class="mh">0x1367</span> <span class="o">-&gt;</span>      <span class="n">R10</span><span class="p">)</span>
+<span class="mh">0x432c3c</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x2c3c</span><span class="p">]</span>          <span class="p">(</span><span class="mh">0x1367</span> <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># &#39;var_0&#39; -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x47231a</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x1439</span><span class="p">]</span>          <span class="p">(</span><span class="mh">0xffffcfac</span>     <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x472a7c</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xfffffffc</span>        <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x451c9f</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+<span class="mh">0x434480</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R14</span>               <span class="p">(</span><span class="mh">0x91</span>   <span class="o">-&gt;</span>      <span class="n">R14</span><span class="p">)</span>
+
+<span class="cp"># 0x1367 -&gt; &#39;var_0&#39;
+</span><span class="cp"></span><span class="mh">0x428820</span><span class="o">:</span>       <span class="n">VMOV32</span>      <span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0x1367</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">])</span>
+</code></pre></div><p>This code is : <code>var_0 *= 2;</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># push &#39;var_0&#39; on VMP stack
+</span><span class="cp"></span><span class="mh">0x46835a</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R0</span>                <span class="p">(</span><span class="mh">0xffffcfac</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x4862b9</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xfffffffc</span>        <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x424828</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+<span class="mh">0x4045f1</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R12</span>               <span class="p">(</span><span class="mh">0x91</span> <span class="o">-&gt;</span> <span class="n">R12</span><span class="p">)</span>
+<span class="mh">0x421e74</span><span class="o">:</span>       <span class="n">VFETCH32</span>    <span class="p">[</span><span class="n">VSP</span><span class="p">]</span>             <span class="p">([</span><span class="mh">0xffffcfa8</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x1367</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># 0x1367 -&gt; R12
+</span><span class="cp"></span><span class="mh">0x44faee</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R12</span>               <span class="p">(</span><span class="mh">0x1367</span> <span class="o">-&gt;</span> <span class="n">R12</span><span class="p">)</span>
+
+<span class="cp"># push 0x1367 and 1
+</span><span class="cp"></span><span class="mh">0x4382b0</span><span class="o">:</span>       <span class="n">VPUSHI8</span>     <span class="mh">0x1</span>               <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="mh">0x406aef</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R12</span>               <span class="p">(</span><span class="mh">0x1367</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># 0x1367 &lt;&lt; 0x1 = 0x1367 * 2 = 0x26ce -&gt; [VSP]
+</span><span class="cp"># 0x26ce -&gt; R10
+</span><span class="cp"></span><span class="mh">0x40d36f</span><span class="o">:</span>       <span class="n">VSHLU8</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0x1367</span> <span class="o">&lt;&lt;</span> <span class="mh">0x1</span> <span class="o">=</span> <span class="mh">0x26ce</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x4771b8</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R1</span>                <span class="p">(</span><span class="mh">0x0</span> <span class="o">-&gt;</span> <span class="n">R1</span><span class="p">)</span>
+<span class="mh">0x41e851</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R10</span>               <span class="p">(</span><span class="mh">0x26ce</span> <span class="o">-&gt;</span> <span class="n">R10</span><span class="p">)</span>
+
+<span class="cp"># I don&#39;t know x)
+</span><span class="cp"></span><span class="mh">0x461c9d</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0xffff002b</span><span class="p">]</span>      <span class="p">(</span><span class="mh">0xffffcfac</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x45858d</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xfffffffc</span>        <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x4469c9</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x61740000</span><span class="p">]</span>      <span class="p">(</span><span class="mh">0x26ce</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># &#39;var_0&#39; -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x453bd6</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x7fffff99</span><span class="p">]</span>      <span class="p">(</span><span class="mh">0xffffcfac</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x45c02b</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xfffffffc</span>        <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x4770ad</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+<span class="mh">0x4307c5</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R12</span>               <span class="p">(</span><span class="mh">0x91</span> <span class="o">-&gt;</span> <span class="n">R12</span><span class="p">)</span>
+
+<span class="cp"># &#39;0x26ce&#39; -&gt; &#39;var_0&#39;
+</span><span class="cp"></span><span class="mh">0x40d6da</span><span class="o">:</span>       <span class="n">VMOV32</span>      <span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span> <span class="p">(</span><span class="mh">0x26ce</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">])</span>
+
+</code></pre></div><p>This code is : <code>var_0 -= 5;</code></p>
+<pre><code>Original : 0x26ce - 5       = 0x26c9
+VMP      : ~(~(0x26ce) + 5) = 0x26c9
+</code></pre><p>Here is the code :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># push &#39;var_0&#39; on VMP stack
+</span><span class="cp"></span><span class="mh">0x4079da</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span> <span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+<span class="mh">0x42861f</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R3</span>               <span class="p">(</span><span class="mh">0x91</span> <span class="o">-&gt;</span> <span class="n">R3</span><span class="p">)</span>
+<span class="mh">0x43d21b</span><span class="o">:</span>       <span class="n">VFETCH32</span>    <span class="p">[</span><span class="n">VSP</span><span class="p">]</span>            <span class="p">([</span><span class="mh">0xffffcfa8</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x26ce</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># 0x26ce -&gt; R14
+</span><span class="cp"></span><span class="mh">0x42ac89</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R14</span>              <span class="p">(</span><span class="mh">0x26ce</span> <span class="o">-&gt;</span> <span class="n">R14</span><span class="p">)</span>
+
+<span class="cp"># push 5
+</span><span class="cp"></span><span class="mh">0x45b846</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0x5</span>              <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="cp"># push 0x26ce twice
+</span><span class="cp"></span><span class="mh">0x408a8b</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R0</span>               <span class="p">(</span><span class="mh">0x26ce</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x46850b</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0xffff850b</span><span class="p">]</span>     <span class="p">(</span><span class="mh">0x26ce</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># ~(0x26ce) -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x40ac1f</span><span class="o">:</span>       <span class="n">VNORU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span> <span class="p">(</span><span class="mh">0xffffd931</span> <span class="o">|</span> <span class="mh">0xffffd931</span> <span class="o">=</span> <span class="mh">0xffffd931</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x43de1a</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R8</span>               <span class="p">(</span><span class="mh">0x80</span> <span class="o">-&gt;</span> <span class="n">R8</span><span class="p">)</span>
+
+<span class="cp"># ~(0x26ce) + 5 = 0xffffd936 -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x431c78</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span> <span class="p">(</span><span class="mh">0xffffd931</span> <span class="o">+</span> <span class="mh">0x5</span> <span class="o">=</span> <span class="mh">0xffffd936</span><span class="p">)</span>
+<span class="mh">0x481993</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R12</span>              <span class="p">(</span><span class="mh">0x84</span> <span class="o">-&gt;</span> <span class="n">R12</span><span class="p">)</span>
+
+<span class="cp"># get stack top
+</span><span class="cp"></span><span class="mh">0x470c06</span><span class="o">:</span>       <span class="n">VPUSHVSP</span>
+<span class="mh">0x47d211</span><span class="o">:</span>       <span class="n">VFETCH32</span>    <span class="p">[</span><span class="n">VSP</span><span class="p">]</span>            <span class="p">([</span><span class="mh">0xffffcfa4</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># ~(~(0x26ce) + 5) -&gt; R10
+</span><span class="cp"></span><span class="mh">0x45794d</span><span class="o">:</span>       <span class="n">VNORU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span> <span class="p">(</span><span class="mh">0x26c9</span> <span class="o">|</span> <span class="mh">0x26c9</span> <span class="o">=</span> <span class="mh">0x26c9</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x46ecaf</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R1</span>               <span class="p">(</span><span class="mh">0x4</span> <span class="o">-&gt;</span> <span class="n">R1</span><span class="p">)</span>
+<span class="mh">0x434480</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R10</span>              <span class="p">(</span><span class="mh">0x26c9</span> <span class="o">-&gt;</span> <span class="n">R10</span><span class="p">)</span>
+
+<span class="cp"># maybe to be use later
+</span><span class="cp"></span><span class="mh">0x4124e2</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x14000000</span><span class="p">]</span>     <span class="p">(</span><span class="mh">0xffffcfac</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x488c75</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xfffffffc</span>       <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="cp"># push 0x26c9 to be stored at 0x46af11
+</span><span class="cp"></span><span class="mh">0x466ec1</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R10</span>              <span class="p">(</span><span class="mh">0x26c9</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># &#39;var_0&#39; -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x432c3c</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x2c3c</span><span class="p">]</span>         <span class="p">(</span><span class="mh">0xffffcfac</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x43ad59</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xfffffffc</span>       <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x453e4c</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span> <span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+<span class="mh">0x4045f1</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R6</span>               <span class="p">(</span><span class="mh">0x91</span> <span class="o">-&gt;</span> <span class="n">R6</span><span class="p">)</span>
+
+<span class="cp"># save &#39;0x26c9&#39; in &#39;var_0&#39;
+</span><span class="cp"></span><span class="mh">0x46af11</span><span class="o">:</span>       <span class="n">VMOV32</span>      <span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span> <span class="p">(</span><span class="mh">0x26c9</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">])</span>
+</code></pre></div><p>This code is : <code>var_0 += 0x80;</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># push &#39;var_0&#39; on VMP stack
+</span><span class="cp"># 0x26c9 -&gt; R14
+</span><span class="cp"></span><span class="mh">0x47af9a</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+<span class="mh">0x44faee</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R6</span>                <span class="p">(</span><span class="mh">0x91</span>   <span class="o">-&gt;</span>      <span class="n">R6</span><span class="p">)</span>
+<span class="mh">0x479e60</span><span class="o">:</span>       <span class="n">VFETCH32</span>    <span class="p">[</span><span class="n">VSP</span><span class="p">]</span>             <span class="p">([</span><span class="mh">0xffffcfa8</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x26c9</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x4771b8</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R14</span>               <span class="p">(</span><span class="mh">0x26c9</span> <span class="o">-&gt;</span>      <span class="n">R14</span><span class="p">)</span>
+
+<span class="cp"># 0x26c9 + 0x80 = 0x2749 -&gt; [VSP]
+</span><span class="cp"># 0x2749 -&gt; R6
+</span><span class="cp"></span><span class="mh">0x4472f7</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0x80</span>              <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x47231a</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x145d</span><span class="p">]</span>          <span class="p">(</span><span class="mh">0x26c9</span> <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x43e04a</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0x26c9</span> <span class="o">+</span> <span class="mh">0x80</span> <span class="o">=</span> <span class="mh">0x2749</span><span class="p">)</span>
+<span class="mh">0x41e851</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R8</span>                <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="n">R8</span><span class="p">)</span>
+<span class="mh">0x4307c5</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R6</span>                <span class="p">(</span><span class="mh">0x2749</span> <span class="o">-&gt;</span>      <span class="n">R6</span><span class="p">)</span>
+
+<span class="cp"># &#39;var_0&#39; -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x46835a</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R0</span>                <span class="p">(</span><span class="mh">0xffffcfac</span>     <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x437891</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xfffffffc</span>        <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x46769d</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+
+<span class="cp"># push result to save it latter at 0x45cd94
+</span><span class="cp"></span><span class="mh">0x406aef</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R6</span>                <span class="p">(</span><span class="mh">0x2749</span> <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># &#39;var_0&#39; -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x461c9d</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0xffff002b</span><span class="p">]</span>      <span class="p">(</span><span class="mh">0xffffcfac</span>     <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x453285</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0xfffffffc</span>        <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x45343d</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+<span class="mh">0x42861f</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R14</span>               <span class="p">(</span><span class="mh">0x91</span>   <span class="o">-&gt;</span>      <span class="n">R14</span><span class="p">)</span>
+
+<span class="cp"># &#39;0x2749&#39; -&gt; &#39;var_0&#39;
+</span><span class="cp"></span><span class="mh">0x45cd94</span><span class="o">:</span>       <span class="n">VMOV32</span>      <span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>  <span class="p">(</span><span class="mh">0x2749</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">])</span>
+<span class="mh">0x42ac89</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R12</span>               <span class="p">(</span><span class="mh">0x91</span>   <span class="o">-&gt;</span>      <span class="n">R12</span><span class="p">)</span>
+
+<span class="cp"># &#39;var_0&#39; -&gt; R10
+</span><span class="cp"></span><span class="mh">0x4112dd</span><span class="o">:</span>       <span class="n">VFETCH32</span>    <span class="p">[</span><span class="n">VSP</span><span class="p">]</span>             <span class="p">([</span><span class="mh">0xffffcfa8</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x2749</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x43de1a</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R10</span>               <span class="p">(</span><span class="mh">0x2749</span> <span class="o">-&gt;</span>      <span class="n">R10</span><span class="p">)</span>
+</code></pre></div><p>At the end, the virtualized routine return address is pushed (<code>0x401043</code>, the address of <code>leave; retn</code>). The modified CPU context is restored by pushing each value on VMP stack, and VEXIT will set each CPU registers in function of VMP stack.</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># push return address
+</span><span class="cp"># 0x401043 -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x4545a2</span><span class="o">:</span>       <span class="n">VPUSHI32</span>    <span class="mh">0x401043</span>            <span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="cp"># add offset to return address (used in loops) 
+</span><span class="cp"># 0x0 + 0x401043 -&gt; [VSP]
+</span><span class="cp"></span><span class="mh">0x4469c9</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x61740000</span><span class="p">]</span>        <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x46fd4b</span><span class="o">:</span>       <span class="n">VADDU32</span>     <span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>    <span class="p">(</span><span class="mh">0x0</span> <span class="o">+</span> <span class="mh">0x401043</span> <span class="o">=</span> <span class="mh">0x401043</span><span class="p">)</span>
+<span class="mh">0x481993</span><span class="o">:</span>       <span class="n">VPOPR32</span>     <span class="n">R6</span>                  <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="n">R6</span><span class="p">)</span>
+
+<span class="cp"># push VMP context
+</span><span class="cp"></span><span class="mh">0x453bd6</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x7fff0000</span><span class="p">]</span>        <span class="p">(</span><span class="mh">0xffffe000</span>     <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x408a8b</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R0</span>                  <span class="p">(</span><span class="mh">0x503cf18</span>      <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x46850b</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0xffff850b</span><span class="p">]</span>        <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x4124e2</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x20000000</span><span class="p">]</span>        <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x466ec1</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R10</span>                 <span class="p">(</span><span class="mh">0x2749</span> <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x432c3c</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x2c3c</span><span class="p">]</span>            <span class="p">(</span><span class="mh">0x503cee8</span>      <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x47231a</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="p">[</span><span class="mh">0x1439</span><span class="p">]</span>            <span class="p">(</span><span class="mh">0xffffcfac</span>     <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x46835a</span><span class="o">:</span>       <span class="n">VPUSH32</span>     <span class="n">R0</span>                  <span class="p">(</span><span class="mh">0x0</span>    <span class="o">-&gt;</span>      <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># save the VMP context to x86 registers
+</span><span class="cp"></span><span class="mh">0x433bfa</span><span class="o">:</span>       <span class="n">VEXIT</span>
+</code></pre></div><p>Still here ? As you can see, we can recover the code, but it&rsquo;s not that easy :)</p>
+<p>Here is a pseudo code :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span> <span class="n">var_0</span> <span class="o">=</span> <span class="mh">0x1337</span><span class="p">;</span>
+
+<span class="n">var_0</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">var_0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="mh">0x50</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">var_0</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="mh">0x50</span><span class="p">)));</span>
+<span class="n">var_0</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="n">var_0</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">var_0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span><span class="p">);</span>
+<span class="n">var_0</span> <span class="o">+=</span> <span class="mh">0x80</span><span class="p">;</span>
+
+<span class="k">return</span> <span class="n">var_0</span><span class="p">;</span>
+</code></pre></div><h3 id="vii2---virtualized-control-flow">VII.2 - Virtualized control flow</h3>
+<p>Now how VMP deal with the control flow, here a simple if state :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span> <span class="n">var_0</span> <span class="o">=</span> <span class="mi">999</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">var_0</span> <span class="o">==</span> <span class="mi">999</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">var_0</span> <span class="o">=</span> <span class="mi">666</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="p">{</span>
+    <span class="n">var_0</span> <span class="o">=</span> <span class="mi">777</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>Its assembly code :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">mov</span>     <span class="n">dword</span> <span class="p">[</span><span class="n">ebp</span><span class="o">-</span><span class="mh">0x4</span> <span class="p">{</span><span class="n">var_0</span><span class="p">}],</span> <span class="mh">0x3e7</span>
+<span class="n">cmp</span>     <span class="n">dword</span> <span class="p">[</span><span class="n">ebp</span><span class="o">-</span><span class="mh">0x4</span> <span class="p">{</span><span class="n">var_0</span><span class="p">}],</span> <span class="mh">0x3e7</span>
+<span class="n">jne</span>     <span class="mh">0x401025</span>  <span class="p">{</span><span class="mh">0x0</span><span class="p">}</span>
+<span class="n">mov</span>     <span class="n">dword</span> <span class="p">[</span><span class="n">ebp</span><span class="o">-</span><span class="mh">0x4</span> <span class="p">{</span><span class="n">var_0</span><span class="p">}],</span> <span class="mh">0x29a</span>
+<span class="n">jmp</span>     <span class="mh">0x40102c</span>
+<span class="n">mov</span>     <span class="n">dword</span> <span class="p">[</span><span class="n">ebp</span><span class="o">-</span><span class="mh">0x4</span> <span class="p">{</span><span class="n">var_0</span><span class="p">}],</span> <span class="mh">0x309</span>
+<span class="n">mov</span>     <span class="n">eax</span><span class="p">,</span> <span class="mh">0x539</span>
+<span class="n">jmp</span>     <span class="mh">0x401039</span>
+<span class="n">leave</span>    <span class="p">{</span><span class="n">__saved_ebp</span><span class="p">}</span>
+<span class="n">retn</span>     <span class="p">{</span><span class="n">__return_addr</span><span class="p">}</span>
+</code></pre></div><p>Now the virtualized code :</p>
+<p>Note : the MBA is too heavy in this part, so I summerized</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># MBA to get 0x3e7 (999) .....
+</span><span class="cp"></span>
+<span class="cp"># the wanted value is stored in an obfuscated value 
+</span><span class="cp"># value_1 = [0xffffcfa0] = 0xfffffc18 + 0x3e7 = 0xffffffff
+</span><span class="cp"></span><span class="mh">0x45e8b9</span><span class="o">:</span>	<span class="n">VADDU32</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>	<span class="p">(</span><span class="mh">0xfffffc18</span> <span class="o">+</span> <span class="mh">0x3e7</span> <span class="o">=</span> <span class="mh">0xffffffff</span><span class="p">)</span>
+<span class="mh">0x464561</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R13</span>	<span class="p">(</span><span class="mh">0x84</span>	<span class="o">-&gt;</span>	<span class="n">R13</span><span class="p">)</span>
+
+<span class="cp"># .....
+</span><span class="cp"># a lot of MBA to obscure the comparison
+</span><span class="cp"># .....
+</span><span class="cp"></span>
+<span class="cp"># push the next jump offset (var_0 = 666;)
+</span><span class="cp"></span><span class="mh">0x45d42b</span><span class="o">:</span>	<span class="n">VPUSHI32</span>	<span class="mh">0x4522ae</span>	<span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="cp"># MBA to produce the obscured compared value
+</span><span class="cp"># value_2 = (~0x0 | ~(~(~(~0x0 &amp; ~0x0) | ~0x4522ae) &amp; ~(var_0_obscured))) = 0xffffffff
+</span><span class="cp"></span><span class="mh">0x456732</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R13</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x442df0</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R13</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x42ad4c</span><span class="o">:</span>	<span class="n">VNANDU32</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>	<span class="p">(</span><span class="o">~</span><span class="mh">0x0</span> <span class="o">&amp;</span> <span class="o">~</span><span class="mh">0x0</span> <span class="o">=</span> <span class="mh">0xffffffff</span> <span class="o">&amp;</span> <span class="mh">0xffffffff</span> <span class="o">=</span> <span class="mh">0xffffffff</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x4346f1</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R7</span>	<span class="p">(</span><span class="mh">0x84</span>	<span class="o">-&gt;</span>	<span class="n">R7</span><span class="p">)</span>
+<span class="mh">0x4701ca</span><span class="o">:</span>	<span class="n">VNORU32</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>	<span class="p">(</span><span class="o">~</span><span class="mh">0xffffffff</span> <span class="o">|</span> <span class="o">~</span><span class="mh">0x4522ae</span> <span class="o">=</span> <span class="mh">0x0</span> <span class="o">|</span> <span class="mh">0xffbadd51</span> <span class="o">=</span> <span class="mh">0xffbadd51</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x40c7e3</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R7</span>	<span class="p">(</span><span class="mh">0x80</span>	<span class="o">-&gt;</span>	<span class="n">R7</span><span class="p">)</span>
+<span class="mh">0x47fbe5</span><span class="o">:</span>	<span class="n">VPUSHVSP</span>	
+<span class="cp"># var_0_obscured = [0xffffcfa4]
+</span><span class="cp"></span><span class="mh">0x46cda0</span><span class="o">:</span>	<span class="n">VFETCH32</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">]</span>	<span class="p">([</span><span class="mh">0xffffcfa4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffbadd51</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x45a3d0</span><span class="o">:</span>	<span class="n">VNANDU32</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>	<span class="p">(</span><span class="o">~</span><span class="mh">0xffbadd51</span> <span class="o">&amp;</span> <span class="o">~</span><span class="mh">0xffbadd51</span> <span class="o">=</span> <span class="mh">0x4522ae</span> <span class="o">&amp;</span> <span class="mh">0x4522ae</span> <span class="o">=</span> <span class="mh">0x4522ae</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x474a78</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R2</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="n">R2</span><span class="p">)</span>
+<span class="mh">0x416aff</span><span class="o">:</span>	<span class="n">VPUSHI32</span>	<span class="mh">0x45221c</span>	<span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x47c4dc</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R13</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x45e44b</span><span class="o">:</span>	<span class="n">VNORU32</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>	<span class="p">(</span><span class="o">~</span><span class="mh">0x0</span> <span class="o">|</span> <span class="o">~</span><span class="mh">0x45221c</span> <span class="o">=</span> <span class="mh">0xffffffff</span> <span class="o">|</span> <span class="mh">0xffbadde3</span> <span class="o">=</span> <span class="mh">0xffffffff</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x450d42</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R1</span>	<span class="p">(</span><span class="mh">0x84</span>	<span class="o">-&gt;</span>	<span class="n">R1</span><span class="p">)</span>
+<span class="mh">0x430a33</span><span class="o">:</span>	<span class="n">VPUSHVSP</span>		
+
+<span class="cp"># push the obscured wanted value (value_1)
+</span><span class="cp"></span><span class="mh">0x48859c</span><span class="o">:</span>	<span class="n">VFETCH32</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">]</span>	<span class="p">([</span><span class="mh">0xffffcfa0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># NAND the obscured wanted value and the MBA obfuscated compared value
+</span><span class="cp"># ~value_1 &amp; ~value_2 = 0x0 &amp; 0x0 = 0x0 = true
+</span><span class="cp"># if value_2 is not the intended one, this NAND will return a value great then 0
+</span><span class="cp"></span><span class="mh">0x41586e</span><span class="o">:</span>	<span class="n">VNANDU32</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>	<span class="p">(</span><span class="o">~</span><span class="mh">0xffffffff</span> <span class="o">&amp;</span> <span class="o">~</span><span class="mh">0xffffffff</span> <span class="o">=</span> <span class="mh">0x0</span> <span class="o">&amp;</span> <span class="mh">0x0</span> <span class="o">=</span> <span class="mh">0x0</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x4459ea</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R14</span>	<span class="p">(</span><span class="mh">0x44</span>	<span class="o">-&gt;</span>	<span class="n">R14</span><span class="p">)</span>
+
+<span class="cp"># add the &#34;conditional&#34; offset to the jump offset
+</span><span class="cp"># add (~value_1 &amp; ~value_2) to jump offset : 0x0 + 0x4522ae
+</span><span class="cp"></span><span class="mh">0x43166b</span><span class="o">:</span>	<span class="n">VADDU32</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>	<span class="p">(</span><span class="mh">0x0</span> <span class="o">+</span> <span class="mh">0x4522ae</span> <span class="o">=</span> <span class="mh">0x4522ae</span><span class="p">)</span>
+<span class="mh">0x4187d4</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R1</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="n">R1</span><span class="p">)</span>
+
+<span class="cp"># set R2 to next jump offset : 0x4522ae
+</span><span class="cp"></span><span class="mh">0x409350</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R2</span>	<span class="p">(</span><span class="mh">0x4522ae</span>	<span class="o">-&gt;</span>	<span class="n">R2</span><span class="p">)</span>
+</code></pre></div><p>Right after, the swapping jump is done :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># push each registers to swap after jump
+</span><span class="cp"></span><span class="mh">0x41d886</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R15</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x46cde8</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R11</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x473217</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R9</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x4300a5</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R3</span>	<span class="p">(</span><span class="mh">0x50384a8</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x40fb72</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R10</span>	<span class="p">(</span><span class="mh">0xffffcfac</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x41470e</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R11</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x482d01</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R6</span>	<span class="p">(</span><span class="mh">0x44</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x456732</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R0</span>	<span class="p">(</span><span class="mh">0x50384d4</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x442df0</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R4</span>	<span class="p">(</span><span class="mh">0xffffe000</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x47c4dc</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R5</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x4778dd</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R15</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># push jump target
+</span><span class="cp"></span><span class="mh">0x41d886</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R2</span>	<span class="p">(</span><span class="mh">0x4522ae</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+
+<span class="cp"># jump to [VSP], this jump variant only swap VIP (esi -&gt; esi) 
+</span><span class="cp"># NOTE : in this case it&#39;s a useless swap
+</span><span class="cp"></span><span class="mh">0x43ab3a</span><span class="o">:</span>	<span class="n">VJUMP_1</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">]</span>	<span class="p">(</span><span class="mh">0x4522ae</span> <span class="o">+</span> <span class="mh">0x0</span><span class="p">)</span> <span class="p">(</span><span class="n">VIP</span> <span class="o">=</span> <span class="n">esi</span> <span class="o">-&gt;</span> <span class="n">esi</span><span class="p">)</span>
+
+<span class="cp"># pop each registers to swap them
+</span><span class="cp"></span><span class="mh">0x469ef9</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R3</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="n">R3</span><span class="p">)</span>
+<span class="mh">0x4346f1</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R8</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="n">R8</span><span class="p">)</span>
+<span class="mh">0x40c7e3</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R2</span>	<span class="p">(</span><span class="mh">0xffffe000</span>	<span class="o">-&gt;</span>	<span class="n">R2</span><span class="p">)</span>
+<span class="mh">0x474a78</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R14</span>	<span class="p">(</span><span class="mh">0x50384d4</span>	<span class="o">-&gt;</span>	<span class="n">R14</span><span class="p">)</span>
+<span class="mh">0x450d42</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R15</span>	<span class="p">(</span><span class="mh">0x44</span>	<span class="o">-&gt;</span>	<span class="n">R15</span><span class="p">)</span>
+<span class="mh">0x4459ea</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R4</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="n">R4</span><span class="p">)</span>
+<span class="mh">0x4187d4</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R1</span>	<span class="p">(</span><span class="mh">0xffffcfac</span>	<span class="o">-&gt;</span>	<span class="n">R1</span><span class="p">)</span>
+<span class="mh">0x409856</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R6</span>	<span class="p">(</span><span class="mh">0x50384a8</span>	<span class="o">-&gt;</span>	<span class="n">R6</span><span class="p">)</span>
+<span class="mh">0x409350</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R13</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="n">R13</span><span class="p">)</span>
+<span class="mh">0x464561</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R11</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="n">R11</span><span class="p">)</span>
+<span class="mh">0x480d95</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R10</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="n">R10</span><span class="p">)</span>
+</code></pre></div><p>And this is the code executed after the jump :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp"># another junk jump .....
+</span><span class="cp"></span>
+<span class="cp"># this is the next opcode executed
+</span><span class="cp"># mov dword [ebp-0x4 {var_0}], 0x29a
+</span><span class="cp"></span>
+<span class="cp"># push 0x29a (666)
+</span><span class="cp"></span><span class="mh">0x47b585</span><span class="o">:</span>	<span class="n">VPUSHI32</span>	<span class="mh">0x29a</span>	<span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="cp"># calc var_0 stack offset
+</span><span class="cp"></span><span class="mh">0x423839</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R9</span>	<span class="p">(</span><span class="mh">0xffffcfac</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x41ca5f</span><span class="o">:</span>	<span class="n">VPUSHI32</span>	<span class="mh">0xfffffffc</span>	<span class="p">(</span><span class="n">VSP</span> <span class="o">-=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="mh">0x46184e</span><span class="o">:</span>	<span class="n">VADDU32</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>	<span class="p">(</span><span class="mh">0xfffffffc</span> <span class="o">+</span> <span class="mh">0xffffcfac</span> <span class="o">=</span> <span class="mh">0xffffcfa8</span><span class="p">)</span>
+<span class="mh">0x44538c</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R11</span>	<span class="p">(</span><span class="mh">0x91</span>	<span class="o">-&gt;</span>	<span class="n">R11</span><span class="p">)</span>
+
+<span class="cp"># var_0 = [0xffffcfa8] = 0x29a
+</span><span class="cp"></span><span class="mh">0x45efdf</span><span class="o">:</span>	<span class="n">VMOV32</span>	<span class="n">VSP</span><span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">],</span> <span class="p">[</span><span class="n">VSP</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>	<span class="p">(</span><span class="mh">0x29a</span> <span class="o">-&gt;</span> <span class="n">VSP</span><span class="p">[</span><span class="mh">0xffffcfa8</span><span class="p">])</span>
+</code></pre></div><p>Well again, as the jump condition is melted into MBA, it&rsquo;s pretty hard to understand what&rsquo;s going on without lifting.</p>
+<h2 id="viii---tricks-to-make-things-harder">VIII - Tricks to make things harder</h2>
+<h3 id="viii1---outside-vmp-code">VIII.1 - Outside VMP code</h3>
+<h4 id="viii11---intruction-variants">VIII.1.1 - Intruction variants</h4>
+<p>Some VMP instructions have the same goal, but are different in terms of code (not in terms of code mutation). Here the example of <code>VJUMP</code>, those two are the same, but there behavior are differents, one is swapping VIP into VSP, the other is placing VSP in <code>edi</code>. In fact, there are 4 jumps like that in VMP, and they are a variant of each other.</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="err">0</span><span class="nl">x82520d:</span>       <span class="nl">VJUMP_2:</span> <span class="err">(</span><span class="nf">VIP</span> <span class="err">=</span> <span class="no">ebp</span><span class="p">,</span> <span class="no">VSP</span> <span class="err">=</span> <span class="no">edi</span><span class="p">)</span>
+<span class="err">0</span><span class="nl">x82520d:</span>       <span class="nf">mov</span>     <span class="no">edx</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">edi</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x825212:</span>       <span class="nf">add</span>     <span class="no">edi</span><span class="p">,</span> <span class="mi">4</span>
+<span class="err">0</span><span class="nl">x82521f:</span>       <span class="nf">xchg</span>    <span class="no">edx</span><span class="p">,</span> <span class="no">edi</span>                    <span class="c"># swap VIP and VSP using &#34;xchg&#34;
+</span><span class="c"></span><span class="mi">0x899aba</span><span class="p">:</span>       <span class="no">mov</span>     <span class="no">ebp</span><span class="p">,</span> <span class="no">edx</span>
+<span class="err">0</span><span class="nl">x7ee22f:</span>       <span class="nf">mov</span>     <span class="no">ebx</span><span class="p">,</span> <span class="no">edi</span>
+<span class="err">0</span><span class="nl">x7ee234:</span>       <span class="nf">mov</span>     <span class="no">edx</span><span class="p">,</span> <span class="mi">0</span>
+<span class="err">0</span><span class="nl">x7ee23f:</span>       <span class="nf">sub</span>     <span class="no">ebx</span><span class="p">,</span> <span class="no">edx</span>
+
+<span class="err">0</span><span class="nl">x77a6a8:</span>       <span class="nl">VJUMP_1:</span> <span class="err">(</span><span class="nf">VIP</span> <span class="err">=</span> <span class="no">ebp</span><span class="p">,</span> <span class="no">VSP</span> <span class="err">=</span> <span class="no">esi</span><span class="p">)</span>
+<span class="err">0</span><span class="nl">x77a6a8:</span>	<span class="nf">mov</span>	<span class="no">eax</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>
+<span class="err">0</span><span class="nl">x77a6aa:</span>	<span class="nf">add</span>	<span class="no">esi</span><span class="p">,</span> <span class="mi">4</span>
+<span class="err">0</span><span class="nl">x77a6b3:</span>	<span class="nf">mov</span>	<span class="no">ebp</span><span class="p">,</span> <span class="no">eax</span>
+<span class="err">0</span><span class="nl">x77a6b7:</span>	<span class="nf">mov</span>	<span class="no">edi</span><span class="p">,</span> <span class="no">esi</span>                    <span class="c"># change VSP from esi to edi
+</span><span class="c"></span><span class="mi">0x89a168</span><span class="p">:</span>	<span class="no">mov</span>	<span class="no">ebx</span><span class="p">,</span> <span class="no">ebp</span>
+<span class="err">0</span><span class="nl">x89a16a:</span>	<span class="nf">mov</span>	<span class="no">ecx</span><span class="p">,</span> <span class="mi">0</span>
+<span class="err">0</span><span class="nl">x89a16f:</span>	<span class="nf">sub</span>	<span class="no">ebx</span><span class="p">,</span> <span class="no">ecx</span>
+</code></pre></div><h4 id="viii12---operand-offsets-variants">VIII.1.2 - Operand offsets variants</h4>
+<p>Here is a push immediate instruction in two variants, those two grab the imm with different offsets in opcode. Sometimes the VIP is increased negatively, and sometimes positively.</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="err">0</span><span class="nl">x79b54a:</span>	<span class="nl">VUNKNOWN:</span> <span class="err">(</span><span class="nf">VIP</span> <span class="err">=</span> <span class="no">ebp</span><span class="p">,</span> <span class="no">VSP</span> <span class="err">=</span> <span class="no">esi</span><span class="p">)</span>
+<span class="err">0</span><span class="nl">x79b54a:</span>	<span class="nf">mov</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">ebp</span><span class="p">]</span>       <span class="c"># encrypted imm offset at VIP + 0
+</span><span class="c"></span><span class="mi">0x79b54e</span><span class="p">:</span>	<span class="no">lea</span>	<span class="no">ebp</span><span class="p">,</span> <span class="p">[</span><span class="no">ebp</span> <span class="err">+</span> <span class="mi">4</span><span class="p">]</span>                  
+<span class="mi">0x79b559</span><span class="p">:</span>	<span class="no">xor</span>	<span class="no">ecx</span><span class="p">,</span> <span class="no">ebx</span>
+<span class="na">...</span>
+<span class="err">0</span><span class="nl">x871597:</span>	<span class="nf">xor</span>	<span class="no">ebx</span><span class="p">,</span> <span class="no">ecx</span>
+<span class="err">0</span><span class="nl">x87159b:</span>	<span class="nf">sub</span>	<span class="no">esi</span><span class="p">,</span> <span class="mi">4</span>
+<span class="err">0</span><span class="nl">x8715a9:</span>	<span class="nf">mov</span>	<span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">],</span> <span class="no">ecx</span>
+<span class="err">----------------------------------------------------</span>
+<span class="err">0</span><span class="nl">x73e3d5:</span>	<span class="nl">VUNKNOWN:</span> <span class="err">(</span><span class="nf">VIP</span> <span class="err">=</span> <span class="no">esi</span><span class="p">,</span> <span class="no">VSP</span> <span class="err">=</span> <span class="no">edi</span><span class="p">)</span>
+<span class="err">0</span><span class="nl">x73e3d5:</span>	<span class="nf">sub</span>	<span class="no">esi</span><span class="p">,</span> <span class="mi">4</span>                          
+<span class="mi">0x73e3db</span><span class="p">:</span>	<span class="no">mov</span>	<span class="no">eax</span><span class="p">,</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">esi</span><span class="p">]</span>       <span class="c"># encrypted imm offset at VIP - 4
+</span><span class="c"></span><span class="mi">0x73e3e0</span><span class="p">:</span>	<span class="no">xor</span>	<span class="no">eax</span><span class="p">,</span> <span class="no">ebx</span>
+<span class="na">...</span>
+<span class="err">0</span><span class="nl">x73e3f8:</span>	<span class="nf">xor</span>	<span class="no">ebx</span><span class="p">,</span> <span class="no">eax</span>
+<span class="err">0</span><span class="nl">x73e400:</span>	<span class="nf">sub</span>	<span class="no">edi</span><span class="p">,</span> <span class="mi">4</span>
+<span class="err">0</span><span class="nl">x73e406:</span>	<span class="nf">mov</span>	<span class="no">dword</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">edi</span><span class="p">],</span> <span class="no">eax</span>
+</code></pre></div><h4 id="viii13---vip-and-vsp-swapping">VIII.1.3 - VIP and VSP swapping</h4>
+<p>Like shown in <code>VIII.1.1 - Intruction variants</code>, VMP swaps its VIP and VSP registers randomly during the execution flow.</p>
+<div class="highlight"><pre class="chroma"><code class="language-ASM" data-lang="ASM"><span class="nf">VJUMP_3</span>	<span class="p">[</span><span class="no">VSP</span><span class="p">]</span>	<span class="p">(</span><span class="mi">0x48677d</span> <span class="err">+</span> <span class="mi">0x0</span><span class="p">)</span> <span class="p">(</span><span class="no">VIP</span> <span class="err">=</span> <span class="no">edi</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">esi</span><span class="p">)</span> <span class="p">(</span><span class="no">VSP</span> <span class="err">=</span> <span class="no">ebp</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">edi</span><span class="p">)</span>
+<span class="nf">VJUMP_3</span>	<span class="p">[</span><span class="no">VSP</span><span class="p">]</span>	<span class="p">(</span><span class="mi">0x42b7bd</span> <span class="err">+</span> <span class="mi">0x0</span><span class="p">)</span> <span class="p">(</span><span class="no">VIP</span> <span class="err">=</span> <span class="no">ebp</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">ebp</span><span class="p">)</span> <span class="p">(</span><span class="no">VSP</span> <span class="err">=</span> <span class="no">esi</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">edi</span><span class="p">)</span>
+<span class="nf">VJUMP_2</span>	<span class="p">[</span><span class="no">VSP</span><span class="p">]</span>	<span class="p">(</span><span class="mi">0x427772</span> <span class="err">+</span> <span class="mi">0x0</span><span class="p">)</span> <span class="p">(</span><span class="no">VIP</span> <span class="err">=</span> <span class="no">esi</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">ebp</span><span class="p">)</span> <span class="p">(</span><span class="no">VSP</span> <span class="err">=</span> <span class="no">ebp</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">edi</span><span class="p">)</span>
+<span class="nf">VJUMP_2</span>	<span class="p">[</span><span class="no">VSP</span><span class="p">]</span>	<span class="p">(</span><span class="mi">0x44ecca</span> <span class="err">+</span> <span class="mi">0x0</span><span class="p">)</span> <span class="p">(</span><span class="no">VIP</span> <span class="err">=</span> <span class="no">esi</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">edi</span><span class="p">)</span> <span class="p">(</span><span class="no">VSP</span> <span class="err">=</span> <span class="no">edi</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">ebp</span><span class="p">)</span>
+<span class="nf">VJUMP_1</span>	<span class="p">[</span><span class="no">VSP</span><span class="p">]</span>	<span class="p">(</span><span class="mi">0x47e4c3</span> <span class="err">+</span> <span class="mi">0x0</span><span class="p">)</span> <span class="p">(</span><span class="no">VIP</span> <span class="err">=</span> <span class="no">ebp</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">esi</span><span class="p">)</span>
+<span class="nf">VJUMP_1</span>	<span class="p">[</span><span class="no">VSP</span><span class="p">]</span>	<span class="p">(</span><span class="mi">0x47a555</span> <span class="err">+</span> <span class="mi">0x0</span><span class="p">)</span> <span class="p">(</span><span class="no">VIP</span> <span class="err">=</span> <span class="no">esi</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">edi</span><span class="p">)</span>
+<span class="nf">VJUMP_1</span>	<span class="p">[</span><span class="no">VSP</span><span class="p">]</span>	<span class="p">(</span><span class="mi">0x443595</span> <span class="err">+</span> <span class="mi">0x0</span><span class="p">)</span> <span class="p">(</span><span class="no">VIP</span> <span class="err">=</span> <span class="no">esi</span> <span class="p">-</span><span class="err">&gt;</span> <span class="no">esi</span><span class="p">)</span>
+</code></pre></div><h3 id="viii2---inside-vmp-code">VIII.2 - Inside VMP code</h3>
+<h4 id="viii21---vmp-registers-swapping">VIII.2.1 - VMP registers swapping</h4>
+<p>As you saw previously, each jump is &ldquo;swapping&rdquo; every VMP registers, every register are pushed on the stack, and popped right after in differents registers. In order to complexifty the control flow.</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="mh">0x41d886</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R15</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x46cde8</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R11</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x473217</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R9</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x4300a5</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R3</span>	<span class="p">(</span><span class="mh">0x50384a8</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="mh">0x40fb72</span><span class="o">:</span>	<span class="n">VPUSH32</span>	<span class="n">R10</span>	<span class="p">(</span><span class="mh">0xffffcfac</span>	<span class="o">-&gt;</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">])</span>
+<span class="p">.....</span>
+<span class="mh">0x43ab3a</span><span class="o">:</span>	<span class="n">VJUMP_1</span>	<span class="p">[</span><span class="n">VSP</span><span class="p">]</span>	<span class="p">(</span><span class="mh">0x4522ae</span> <span class="o">+</span> <span class="mh">0x0</span><span class="p">)</span> <span class="p">(</span><span class="n">VIP</span> <span class="o">=</span> <span class="n">esi</span> <span class="o">-&gt;</span> <span class="n">esi</span><span class="p">)</span>
+<span class="mh">0x469ef9</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R3</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="n">R3</span><span class="p">)</span>
+<span class="mh">0x4346f1</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R8</span>	<span class="p">(</span><span class="mh">0x0</span>	<span class="o">-&gt;</span>	<span class="n">R8</span><span class="p">)</span>
+<span class="mh">0x40c7e3</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R2</span>	<span class="p">(</span><span class="mh">0xffffe000</span>	<span class="o">-&gt;</span>	<span class="n">R2</span><span class="p">)</span>
+<span class="mh">0x474a78</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R14</span>	<span class="p">(</span><span class="mh">0x50384d4</span>	<span class="o">-&gt;</span>	<span class="n">R14</span><span class="p">)</span>
+<span class="mh">0x450d42</span><span class="o">:</span>	<span class="n">VPOPR32</span>	<span class="n">R15</span>	<span class="p">(</span><span class="mh">0x44</span>	<span class="o">-&gt;</span>	<span class="n">R15</span><span class="p">)</span>
+<span class="p">.....</span>
+</code></pre></div><h4 id="viii22---mba">VIII.2.2 - MBA</h4>
+<p>VMP pass all its value using randomized MBA, using models like (<code>MBA_XOR_*(x,y) = (MBA_SUB_*(MBA_OR_V*(x,y), (MBA_AND_V*(x,y))))</code>). Here are some I found during my reseach :</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">x</span> <span class="o">^</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))))</span>
+<span class="n">x</span> <span class="o">^</span> <span class="n">y</span> <span class="o">=</span> <span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span> <span class="o">+</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">|</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))))</span> 
+<span class="n">x</span> <span class="o">^</span> <span class="n">y</span> <span class="o">=</span> <span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">|</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="o">+</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">)))))</span> 
+<span class="n">x</span> <span class="o">^</span> <span class="n">y</span> <span class="o">=</span> <span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">|</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span> <span class="o">+</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="o">|</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span> <span class="o">-</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)))))</span>
+<span class="n">x</span> <span class="o">^</span> <span class="n">y</span> <span class="o">=</span> <span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">|</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span> <span class="o">+</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))))</span> 
+<span class="n">x</span> <span class="o">^</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))))</span> <span class="o">+</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))))</span> 
+
+<span class="n">x</span> <span class="o">-</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span><span class="p">))</span> 
+<span class="n">x</span> <span class="o">-</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="p">(((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">|</span> <span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))))))</span> 
+<span class="n">x</span> <span class="o">-</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">+</span> <span class="n">y</span><span class="p">))</span>
+
+<span class="n">x</span> <span class="o">&amp;</span> <span class="n">y</span> <span class="o">=</span> <span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">|</span> <span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">y</span><span class="p">))</span> 
+<span class="n">x</span> <span class="o">&amp;</span> <span class="n">y</span> <span class="o">=</span> <span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="o">|</span> <span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">)))))</span> 
+
+<span class="n">x</span> <span class="o">|</span> <span class="n">y</span> <span class="o">=</span> <span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> 
+<span class="n">x</span> <span class="o">|</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">|</span> <span class="n">y</span><span class="p">))</span> 
+
+<span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">=</span> <span class="p">((</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span> <span class="o">+</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">|</span> <span class="o">~</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">y</span><span class="p">))))</span> 
+<span class="p">...</span>
+
+<span class="cp"># NOTE : VMP seems to do addition normaly (without MBA) most of the time
+</span></code></pre></div><h4 id="viii23---random-calls">VIII.2.3 - Random &lsquo;calls&rsquo;</h4>
+<p>Some times, I see &lsquo;calls&rsquo; (VPUSHVSP, VPOPVSP) with no reason, and I can&rsquo;t figure out if this is real junkcode, or a real separeted stack.</p>
+<h3 id="viii3---ultra-mode">VIII.3 - Ultra mode</h3>
+<p>Let&rsquo;s now take the same first example (math one), but in Ultra mode. Our code is now about <code>20817</code> instructions, and <code>428</code> VMP instructions. There are too much code to cover, so I will just say that the main different is that MBA is way heavier, and there are a lot of VJUMP (registers swapping + VSP/VIP swapping). Also, we have to consider that the original code is mutated, so it add a lot of virtualized instruction to the routine.</p>
+<h2 id="ix---devirtualization">IX - Devirtualization</h2>
+<p>So how could we crack this ? Well it&rsquo;s the next part of my article, but we can already talk a bit about the &lsquo;Devirtualization&rsquo; approach.</p>
+<h3 id="ix1---the-less-proper-way--pattern-matching">IX.1 - The &ldquo;less proper way&rdquo; : Pattern matching</h3>
+<p>The simplest method, get the x86 execution flow in some way (statically and using symbolic execution, or dynamically with emulation) to figure out which block is which VMP instruction by pattern matching (like I did, but for every control flow case). And once this is done, you can convert it to another language like x86. But the code will be horrible due to the MBA and register swapping, so the most effective choice is to convert it in a compiler optimization language (LLVM, VTIL like in NoVMP). From here you can do code lifting, to remove junkcode, MBA, and other obfuscations, and the final code could be exported in x86. Note that MBA simplier tool have been released, and you could use them with DTA to remove MBA (see: <a href="https://github.com/mrphrazer/msynth">Code deobfuscation framework to simplify Mixed Boolean-Arithmetic</a>)</p>
+<h3 id="ix2---the-efficiant-way--dta--symbolic-execution">IX.2 - The efficiant way : DTA &amp; Symbolic execution</h3>
+<p>The most complicated way&hellip; by using Dynamic Taint Analysis, the goal will be to understand how the VM deal with its registers to define what the VM does. In short, understand the code from the VM context, to define instructions that produce the same result as the virtualized code. This is not something easy as you may guess, there is an excellent paper of Jonathan Salwan, Sebastien Bardin, and Marie-Laure Potet about this task <a href="http://shell-storm.org/talks/DIMVA2018-deobfuscation-salwan-bardin-potet.pdf">Symbolic deobfuscation : from virtualized code back to the original</a></p>
+<h2 id="x---about-speed">X - About speed</h2>
+<p>From my analysis, virtualizing a simple xor takes about ~40 VMP instructions (the instruction is melted with obfu, it doesn&rsquo;t take 50 instruction to do a simple xor operation). And considering that every handles are mutated (core + next opcode calculation), and the internal VMP opcode could be obfuscated even more in Ultra Mode. A VMP routine could lead to execute ~2000 instructions for a single xor (take this with a grain of salt, it&rsquo;s my own conclusion based on what I saw).</p>
+<p>In my example, 17 instructions were converted in 5943 instructions, and about 126 VMP instructions. And in Ultra mode, those were converted to 20817 instructions, and 428 VMP instructions. I tried to mesure the time difference, but it depends on a lot of factors like CPU type / usage, kernel / resources usage, running processes&hellip; So I will stay on the number of executed instructions.</p>
+<p>According to <code>throwawaycracker</code>, D***** is about the same rate : <code>&quot;an x86 instruction will be translated into about between 2 to 50 VM instructions&quot;</code>. And considering that D***** virtualization is based on VMP, I think that my analysis is close to the reality.</p>
+<p>Btw, D***** v3.x virtualization is literally VMP x64 with differents contexts, instructions, and with other tricks. You can literally devirtualize D***** v3.x  through a modded NoVmp, but taking about it is a little too dangerous for me. Playing around D***** seems risked as reversing Intel DME (Voski lawsuit, Empress, ..)</p>
+<h2 id="xi---what-do-we-do-now-">XI - What do we do now ?</h2>
+<p>So I made a debugger for it, based on qilling. Unfortunately, qiling doesn&rsquo;t support API calls, you have to implement them (understandable). So there are only two possibilities for me, the first is to continue on the easy path (runtime) by coding or modding an x86 emulator for PE that could handle API calls (like &lsquo;unicorn_pe&rsquo; but for x86). The second one is to code a static disassembler (like the first part of NoVmp) using symbolic execution or emulation through something like unicorn. But those two are time consuming, and currently I don&rsquo;t have this time. So I will continue with my debugger that does the job well.</p>
+<p>I don&rsquo;t want to go on the &lsquo;devirtualization path&rsquo; because it&rsquo;s too time comsuming too, but translating the VMP code on the fly (runtime, if there are no loops) could be something interresting to do with some automations (put the devirtualized code in another section and jump to it&hellip;).</p>
+<p>Debugging VMP is one thing, but cracking it (understand it) is another layer of difficulty, because of all things I mentioned above, and the fact that VMP code it self is heavily obfuscated (if you enable Ultra Mode). The code lifting is something very hard to do, and needs a lot of work to produce a consistant output. So devirtualizing VMP is something crazy hard.</p>
+<h2 id="xii---end-word">XII - End word</h2>
+<p>Well, I think that we are done ! I don&rsquo;t want to release my tools for obvious resons, I don&rsquo;t want my tool to be involved in piracy stuff. But people already shared so much things around VMP 2.x in the past, and of course, NoVmp for VMP 3.x x64 is now available and open source, so not a big deal. Maybe if a new version comes out, like a 4.x, maybe I could release my tools. Btw, this is possibly the craziest thing I&rsquo;ve ever reversed.</p>
+<h1 id="r0da">~r0da</h1>
+
+            </div>
+        </article>
+
+        
+  
+
+
+
+ <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/blog/">Home</a></li>
+         
+          <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#0----important-note">0 - ⚠️ IMPORTANT NOTE</a></li>
+    <li><a href="#i---intro">I - Intro</a></li>
+    <li><a href="#ii---demo-vs-paid">II - Demo vs Paid</a></li>
+    <li><a href="#iii---first-look">III - First look</a></li>
+    <li><a href="#iv---lets-reverse">IV - Let&rsquo;s reverse</a></li>
+    <li><a href="#v---vm-structure">V - VM Structure</a>
+      <ul>
+        <li><a href="#v1---architecture">V.1 - Architecture</a></li>
+        <li><a href="#v2---instructions">V.2 - Instructions</a></li>
+        <li><a href="#v3---rolling-key">V.3 - Rolling key</a>
+          <ul>
+            <li><a href="#v31---instruction-flow">V.3.1 - Instruction flow</a></li>
+            <li><a href="#v32---operands">V.3.2 - Operands</a></li>
+          </ul>
+        </li>
+        <li><a href="#v4---control-flow">V.4 - Control flow</a></li>
+        <li><a href="#v5---about-the-junkcode">V.5 - About the junkcode</a></li>
+      </ul>
+    </li>
+    <li><a href="#vi---automation">VI - Automation</a></li>
+    <li><a href="#vii---an-example">VII - An example</a>
+      <ul>
+        <li><a href="#vii1---simple-routine">VII.1 - Simple routine</a></li>
+        <li><a href="#vii2---virtualized-control-flow">VII.2 - Virtualized control flow</a></li>
+      </ul>
+    </li>
+    <li><a href="#viii---tricks-to-make-things-harder">VIII - Tricks to make things harder</a>
+      <ul>
+        <li><a href="#viii1---outside-vmp-code">VIII.1 - Outside VMP code</a>
+          <ul>
+            <li><a href="#viii11---intruction-variants">VIII.1.1 - Intruction variants</a></li>
+            <li><a href="#viii12---operand-offsets-variants">VIII.1.2 - Operand offsets variants</a></li>
+            <li><a href="#viii13---vip-and-vsp-swapping">VIII.1.3 - VIP and VSP swapping</a></li>
+          </ul>
+        </li>
+        <li><a href="#viii2---inside-vmp-code">VIII.2 - Inside VMP code</a>
+          <ul>
+            <li><a href="#viii21---vmp-registers-swapping">VIII.2.1 - VMP registers swapping</a></li>
+            <li><a href="#viii22---mba">VIII.2.2 - MBA</a></li>
+            <li><a href="#viii23---random-calls">VIII.2.3 - Random &lsquo;calls&rsquo;</a></li>
+          </ul>
+        </li>
+        <li><a href="#viii3---ultra-mode">VIII.3 - Ultra mode</a></li>
+      </ul>
+    </li>
+    <li><a href="#ix---devirtualization">IX - Devirtualization</a>
+      <ul>
+        <li><a href="#ix1---the-less-proper-way--pattern-matching">IX.1 - The &ldquo;less proper way&rdquo; : Pattern matching</a></li>
+        <li><a href="#ix2---the-efficiant-way--dta--symbolic-execution">IX.2 - The efficiant way : DTA &amp; Symbolic execution</a></li>
+      </ul>
+    </li>
+    <li><a href="#x---about-speed">X - About speed</a></li>
+    <li><a href="#xi---what-do-we-do-now-">XI - What do we do now ?</a></li>
+    <li><a href="#xii---end-word">XII - End word</a></li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&text=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&is_video=false&description=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&name=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization&description=0%20-%20%e2%9a%a0%ef%b8%8f%20IMPORTANT%20NOTE%20This%20article%20explain%20how%20VMProtect%20works%2c%20not%20how%20to%20crack%20a%20VMP%20protected%20software.%20I%26rsquo%3bm%20not%20talking%20about%20any%20kind%20of%20Licensing%20System%20provided%20by%20VMP%2c%20or%20a%20developped%20one%20using%20VMP.%20I%20DON%26rsquo%3bT%20SUPPORT%20PIRACY%20in%20any%20way.%20This%20protection%20%28cracked%20%2f%20leaked%20version%20of%20it%29%20is%20used%20to%20protect%20malwares%2c%20and%20my%20objective%20with%20this%20article%20is%20to%20improve%20the%20commun%20knowledge%20of%20it%20to%20help%20and%20simplify%20the%20analysis%20of%20this%20type%20of%20malware.">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&t=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+ <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2021  r0da 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+    </div>
+</body>
+
+<link rel="stylesheet" href=/blog/lib/font-awesome/css/all.min.css>
+<script src=/blog/lib/jquery/jquery.min.js></script>
+<script src=/blog/js/main.js></script>
+  
+
+</html>
