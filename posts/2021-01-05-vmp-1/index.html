@@ -13,7 +13,7 @@
 This is my exploration around VMProtect security. VMP is a well known protection with a lot of features, main ones are Code Mutation and Virtualization, and compared to them, this part is the simplest regarding VMP. I will talk about all of those in future posts, but now I will focuse myself on the Packing and the Import Obfuscation.
 Unpacking Packing is about compressing / ciphering executable&rsquo;s sections to prevent static analysis." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/posts/2021-01-05-vmp-1/" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="https://whereisr0da.github.io/blog/posts/2021-01-05-vmp-1/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-01-05T17:14:00+00:00" />
 <meta property="article:modified_time" content="2021-01-05T17:14:00+00:00" />
 
@@ -29,8 +29,8 @@ Unpacking Packing is about compressing / ciphering executable&rsquo;s sections t
     
   
   
-  <link rel="stylesheet" href="css/style-dark.css">
-  <link rel="stylesheet" href="css/syntax.css" >
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/style-dark.css">
+  <link rel="stylesheet" href="https://whereisr0da.github.io/blog/css/syntax.css" >
   
   
   
@@ -41,7 +41,7 @@ Unpacking Packing is about compressing / ciphering executable&rsquo;s sections t
   
 
   
-<link rel="icon" type="image/png" href="images/favicon.ico" />
+<link rel="icon" type="image/png" href="https://whereisr0da.github.io/blog/images/favicon.ico" />
 
   
   
@@ -60,9 +60,9 @@ Unpacking Packing is about compressing / ciphering executable&rsquo;s sections t
     <span id="nav">
       <ul>
          
-        <li><a href="/">Home</a></li>
+        <li><a href="/blog/">Home</a></li>
          
-        <li><a href="/about">About</a></li>
+        <li><a href="/blog/about">About</a></li>
         
       </ul>
     </span>
@@ -71,14 +71,14 @@ Unpacking Packing is about compressing / ciphering executable&rsquo;s sections t
       <ul>
         
         <li>
-          <a class="icon" href=" /posts/2020-10-21-inject-code/">
+          <a class="icon" href=" https://whereisr0da.github.io/blog/posts/2020-10-21-inject-code/">
             <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
           </a>
         </li>
         
         
         <li>
-          <a class="icon" href="/posts/2021-01-26-vmp-2/">
+          <a class="icon" href="https://whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/">
             <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
           </a>
         </li>
@@ -109,57 +109,57 @@ Unpacking Packing is about compressing / ciphering executable&rsquo;s sections t
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=%2fposts%2f2021-01-05-vmp-1%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f">
       <i class="fab fa-facebook " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=%2fposts%2f2021-01-05-vmp-1%2f&text=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&text=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=%2fposts%2f2021-01-05-vmp-1%2f&is_video=false&description=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&is_video=false&description=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking&body=Check out this article: %2fposts%2f2021-01-05-vmp-1%2f">
+    <a class="icon" href="mailto:?subject=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-stumbleupon " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://digg.com/submit?url=%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-digg " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=%2fposts%2f2021-01-05-vmp-1%2f&name=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking&description=Hi%0aThis%20is%20my%20exploration%20around%20VMProtect%20security.%20VMP%20is%20a%20well%20known%20protection%20with%20a%20lot%20of%20features%2c%20main%20ones%20are%20Code%20Mutation%20and%20Virtualization%2c%20and%20compared%20to%20them%2c%20this%20part%20is%20the%20simplest%20regarding%20VMP.%20I%20will%20talk%20about%20all%20of%20those%20in%20future%20posts%2c%20but%20now%20I%20will%20focuse%20myself%20on%20the%20Packing%20and%20the%20Import%20Obfuscation.%0aUnpacking%20Packing%20is%20about%20compressing%20%2f%20ciphering%20executable%26rsquo%3bs%20sections%20to%20prevent%20static%20analysis.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&name=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking&description=Hi%0aThis%20is%20my%20exploration%20around%20VMProtect%20security.%20VMP%20is%20a%20well%20known%20protection%20with%20a%20lot%20of%20features%2c%20main%20ones%20are%20Code%20Mutation%20and%20Virtualization%2c%20and%20compared%20to%20them%2c%20this%20part%20is%20the%20simplest%20regarding%20VMP.%20I%20will%20talk%20about%20all%20of%20those%20in%20future%20posts%2c%20but%20now%20I%20will%20focuse%20myself%20on%20the%20Packing%20and%20the%20Import%20Obfuscation.%0aUnpacking%20Packing%20is%20about%20compressing%20%2f%20ciphering%20executable%26rsquo%3bs%20sections%20to%20prevent%20static%20analysis.">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=%2fposts%2f2021-01-05-vmp-1%2f&t=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&t=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -303,9 +303,9 @@ ds:[reg + 0x724F2141] : address of CreateProcessW
     <div id="nav-footer" style="display: none">
       <ul>
          
-          <li><a href="/">Home</a></li>
+          <li><a href="/blog/">Home</a></li>
          
-          <li><a href="/about">About</a></li>
+          <li><a href="/blog/about">About</a></li>
         
       </ul>
     </div>
@@ -329,57 +329,57 @@ ds:[reg + 0x724F2141] : address of CreateProcessW
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=%2fposts%2f2021-01-05-vmp-1%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f">
       <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=%2fposts%2f2021-01-05-vmp-1%2f&text=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&text=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=%2fposts%2f2021-01-05-vmp-1%2f&is_video=false&description=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&is_video=false&description=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking&body=Check out this article: %2fposts%2f2021-01-05-vmp-1%2f">
+    <a class="icon" href="mailto:?subject=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://digg.com/submit?url=%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&title=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=%2fposts%2f2021-01-05-vmp-1%2f&name=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking&description=Hi%0aThis%20is%20my%20exploration%20around%20VMProtect%20security.%20VMP%20is%20a%20well%20known%20protection%20with%20a%20lot%20of%20features%2c%20main%20ones%20are%20Code%20Mutation%20and%20Virtualization%2c%20and%20compared%20to%20them%2c%20this%20part%20is%20the%20simplest%20regarding%20VMP.%20I%20will%20talk%20about%20all%20of%20those%20in%20future%20posts%2c%20but%20now%20I%20will%20focuse%20myself%20on%20the%20Packing%20and%20the%20Import%20Obfuscation.%0aUnpacking%20Packing%20is%20about%20compressing%20%2f%20ciphering%20executable%26rsquo%3bs%20sections%20to%20prevent%20static%20analysis.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&name=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking&description=Hi%0aThis%20is%20my%20exploration%20around%20VMProtect%20security.%20VMP%20is%20a%20well%20known%20protection%20with%20a%20lot%20of%20features%2c%20main%20ones%20are%20Code%20Mutation%20and%20Virtualization%2c%20and%20compared%20to%20them%2c%20this%20part%20is%20the%20simplest%20regarding%20VMP.%20I%20will%20talk%20about%20all%20of%20those%20in%20future%20posts%2c%20but%20now%20I%20will%20focuse%20myself%20on%20the%20Packing%20and%20the%20Import%20Obfuscation.%0aUnpacking%20Packing%20is%20about%20compressing%20%2f%20ciphering%20executable%26rsquo%3bs%20sections%20to%20prevent%20static%20analysis.">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=%2fposts%2f2021-01-05-vmp-1%2f&t=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-01-05-vmp-1%2f&t=Quick%20look%20around%20VMP%203.x%20-%20Part%201%20%3a%20Unpacking">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>
@@ -409,9 +409,9 @@ ds:[reg + 0x724F2141] : address of CreateProcessW
     <nav>
       <ul>
          
-        <li><a href="/">Home</a></li>
+        <li><a href="/blog/">Home</a></li>
          
-        <li><a href="/about">About</a></li>
+        <li><a href="/blog/about">About</a></li>
         
       </ul>
     </nav>
@@ -422,9 +422,9 @@ ds:[reg + 0x724F2141] : address of CreateProcessW
     </div>
 </body>
 
-<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
-<script src=/lib/jquery/jquery.min.js></script>
-<script src=/js/main.js></script>
+<link rel="stylesheet" href=/blog/lib/font-awesome/css/all.min.css>
+<script src=/blog/lib/jquery/jquery.min.js></script>
+<script src=/blog/js/main.js></script>
   
 
 </html>

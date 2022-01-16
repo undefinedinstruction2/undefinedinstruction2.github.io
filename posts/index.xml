@@ -2,54 +2,54 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on r0da&#39;s Blog</title>
-    <link>/posts/</link>
+    <link>https://whereisr0da.github.io/blog/posts/</link>
     <description>Recent content in Posts on r0da&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>r0da</copyright>
-    <lastBuildDate>Sun, 09 Jan 2022 17:14:00 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 09 Jan 2022 17:14:00 +0000</lastBuildDate><atom:link href="https://whereisr0da.github.io/blog/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>🔧 %20 Toka : Code obfuscation passes for LLVM IR</title>
-      <link>/posts/2020-04-09-toka/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-04-09-toka/</link>
       <pubDate>Sun, 09 Jan 2022 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-04-09-toka/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-04-09-toka/</guid>
       <description>🙁 Oops work in progress This thread is not available.</description>
     </item>
     
     <item>
       <title>🔒 W**** Writes - I : What are we talking about</title>
-      <link>/posts/2022-01-01-ww-intro-f/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2022-01-01-ww-intro-f/</link>
       <pubDate>Sat, 01 Jan 2022 17:40:00 +0000</pubDate>
       
-      <guid>/posts/2022-01-01-ww-intro-f/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2022-01-01-ww-intro-f/</guid>
       <description>Hello word If you see this, well you&amp;rsquo;re fucked</description>
     </item>
     
     <item>
       <title>🔥 Quick look around VMP 3.x - Part 3 : Virtualization</title>
-      <link>/posts/2021-02-16-vmp-3/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2021-02-16-vmp-3/</link>
       <pubDate>Tue, 15 Jun 2021 10:14:00 +0000</pubDate>
       
-      <guid>/posts/2021-02-16-vmp-3/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2021-02-16-vmp-3/</guid>
       <description>0 - ⚠️ IMPORTANT NOTE This article explain how VMProtect works, not how to crack a VMP protected software. I&amp;rsquo;m not talking about any kind of Licensing System provided by VMP, or a developped one using VMP. I DON&amp;rsquo;T SUPPORT PIRACY in any way. This protection (cracked / leaked version of it) is used to protect malwares, and my objective with this article is to improve the commun knowledge of it to help and simplify the analysis of this type of malware.</description>
     </item>
     
     <item>
       <title>🛠 80% : Breaking into an Android - Part 1 : Preface</title>
-      <link>/posts/2021-05-11-android-vuln-lock/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2021-05-11-android-vuln-lock/</link>
       <pubDate>Tue, 11 May 2021 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2021-05-11-android-vuln-lock/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2021-05-11-android-vuln-lock/</guid>
       <description>🙁 Oops work in progress This thread is not available.</description>
     </item>
     
     <item>
       <title>Valve Anti Cheat - Part 1 : Module loading</title>
-      <link>/posts/2021-03-10-quick-vac/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2021-03-10-quick-vac/</link>
       <pubDate>Sun, 11 Apr 2021 11:14:00 +0000</pubDate>
       
-      <guid>/posts/2021-03-10-quick-vac/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2021-03-10-quick-vac/</guid>
       <description>I already taked about VAC and how useless it is. And recently I decided to take a closer look to it, so this is my quick analysis. My goal will be to understand how VAC execute its modules, and in a Part 2, understand those modules.
 NOTE : I&amp;rsquo;m not a game hacker in the first place, so if something is not accurate, feel free to tell it.
 What is it ?</description>
@@ -57,10 +57,10 @@ What is it ?</description>
     
     <item>
       <title>BTSCTF 2021 : BtS emulator Write-Up</title>
-      <link>/posts/2021-03-12-emulator-write-up/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2021-03-12-emulator-write-up/</link>
       <pubDate>Fri, 12 Mar 2021 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2021-03-12-emulator-write-up/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2021-03-12-emulator-write-up/</guid>
       <description>Hi.
 Last day I did a CTF called BTSCTF, and a challenge called BtS emulator. As I&amp;rsquo;m still working on VMP virtualization currently, I&amp;rsquo;m kind good with VM stuff.
 First I noticed that the binary has all its symbols in it, so easier to reverse. Then I saw that the dispatcher routine seems pretty clean.
@@ -70,19 +70,19 @@ const uint8_t opcode_buffer[256] = { 0xf2, 0x72, 0x45, 0x8a, 0x72, 0xf2, 0x72, 0
     
     <item>
       <title>[5/10] - Metaprog Intro</title>
-      <link>/posts/2021-03-05-crackme-metaprog/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2021-03-05-crackme-metaprog/</link>
       <pubDate>Fri, 05 Mar 2021 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2021-03-05-crackme-metaprog/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2021-03-05-crackme-metaprog/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Bypassing 12 years old Xbox 360 Game Security</title>
-      <link>/posts/2021-01-07-forza-check/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2021-01-07-forza-check/</link>
       <pubDate>Wed, 03 Feb 2021 10:14:00 +0000</pubDate>
       
-      <guid>/posts/2021-01-07-forza-check/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2021-01-07-forza-check/</guid>
       <description>Hi
 Today I will show you how I&amp;rsquo;ve bypassed Forza 3 savegame encryption.
 Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&amp;rsquo;ve tried my favorite game on it. But there is a problem, Forza 3 cipher its savegames, and as Xenia is in dev, Forza 3 crash when you try to load a savegame. As I did worked a lot on Forza when I was young, I tried to look around the issue and I successfully bypass the savegame encryption.</description>
@@ -90,10 +90,10 @@ Long story short, an Xbox 360 emulator, Xenia, is currently in dev on PC, and I&
     
     <item>
       <title>🔧 ✔️ Lumina : Legit mutated CSGO cheat</title>
-      <link>/posts/2021-01-27-lumina/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2021-01-27-lumina/</link>
       <pubDate>Wed, 27 Jan 2021 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2021-01-27-lumina/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2021-01-27-lumina/</guid>
       <description>Available here : https://github.com/whereisr0da/Lumina-Cheat
 IMPORTANT UPDATE Since people definitly don&amp;rsquo;t know how to use this, things will change from now.
 Why ? Because the non-mutated version of the cheat is now detected by AV&amp;rsquo;s as HackTool:Win32/GameHack.*, this mean that the NON-MUTATED VERSION was injected using bad injectors in CSGO. But the point of the cheat is to use mutation to maintain a changing signature. If you don&amp;rsquo;t know how to use it with VMProtect, you should not use it at all.</description>
@@ -101,10 +101,10 @@ Why ? Because the non-mutated version of the cheat is now detected by AV&amp;rsq
     
     <item>
       <title>🔥 Quick look around VMP 3.x - Part 2 : Code Mutation</title>
-      <link>/posts/2021-01-26-vmp-2/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/</link>
       <pubDate>Tue, 26 Jan 2021 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2021-01-26-vmp-2/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2021-01-26-vmp-2/</guid>
       <description>Hi
 Here is my short research about VMP mutation engine.
 VMProtect is a well known protection with a lot of features, its core one is its virtualization engine. It&amp;rsquo;s a very good and optimized one, even if elite crackz say that it&amp;rsquo;s not at the level of Themida. Cracking its virtualization engine is time consuming, so I&amp;rsquo;m not specialy focused on it right now. But there is another feature of VMP that is interesting for me, its code mutation engine.</description>
@@ -112,10 +112,10 @@ VMProtect is a well known protection with a lot of features, its core one is its
     
     <item>
       <title>Quick look around VMP 3.x - Part 1 : Unpacking</title>
-      <link>/posts/2021-01-05-vmp-1/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2021-01-05-vmp-1/</link>
       <pubDate>Tue, 05 Jan 2021 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2021-01-05-vmp-1/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2021-01-05-vmp-1/</guid>
       <description>Hi
 This is my exploration around VMProtect security. VMP is a well known protection with a lot of features, main ones are Code Mutation and Virtualization, and compared to them, this part is the simplest regarding VMP. I will talk about all of those in future posts, but now I will focuse myself on the Packing and the Import Obfuscation.
 Unpacking Packing is about compressing / ciphering executable&amp;rsquo;s sections to prevent static analysis.</description>
@@ -123,10 +123,10 @@ Unpacking Packing is about compressing / ciphering executable&amp;rsquo;s sectio
     
     <item>
       <title>How to inject code into PE executables</title>
-      <link>/posts/2020-10-21-inject-code/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-10-21-inject-code/</link>
       <pubDate>Wed, 21 Oct 2020 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-10-21-inject-code/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-10-21-inject-code/</guid>
       <description>Hi, all.
 Last year, I thought it could be a great idea to combine all possible ways to modify code of an executable in a thread. And one year later this is it ! the post is out ! (thanks to caffeine)
 There is a lot of reason why modify / inject code in an assembled executable :
@@ -135,10 +135,10 @@ There is a lot of reason why modify / inject code in an assembled executable :
     
     <item>
       <title>CSAW CTF 2020 : Cuba Write-Up</title>
-      <link>/posts/2020-09-13-kernel-write-up/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-09-13-kernel-write-up/</link>
       <pubDate>Sun, 13 Sep 2020 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-09-13-kernel-write-up/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-09-13-kernel-write-up/</guid>
       <description>Hi
 This is my write up for the challange Cuba of CSAW CTF 2020 :
 So this challenge is a CUBA program wrapped in a Windows Executable. CUBA is a GPU langage created by NVIDIA to work around GPU with high performance langage.
@@ -151,19 +151,19 @@ To extract ptx text from a host binary, use the following command:cuobjdump -pt
     
     <item>
       <title>[7/10] - LeQRCodeSurMonPC</title>
-      <link>/posts/2020-08-20-crackme-qrcode/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-08-20-crackme-qrcode/</link>
       <pubDate>Thu, 20 Aug 2020 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-08-20-crackme-qrcode/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-08-20-crackme-qrcode/</guid>
       <description></description>
     </item>
     
     <item>
       <title>🔥 Improvements of fuzzing techniques in Vuzzer</title>
-      <link>/posts/2020-08-06-vuzzer/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-08-06-vuzzer/</link>
       <pubDate>Thu, 06 Aug 2020 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-08-06-vuzzer/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-08-06-vuzzer/</guid>
       <description>Hi, this is my report of my academic internship at the University of Bristol’s Cyber security group.
 This Cyber security group works on many projects to protect computer systems. One of them is Vuzzer, a program that tries to discover vulnerabilities independently within applications. This project helped the cyber security community, but there is still a lot of features that could be added to make it more powerful.
 It’s in this context that I was charged to improve the existing software, in order to make it more effective.</description>
@@ -171,20 +171,20 @@ It’s in this context that I was charged to improve the existing software, in o
     
     <item>
       <title>🔧 ✔️ Vuzzer64&#43;&#43; : Improved version of Vuzzer64</title>
-      <link>/posts/2020-08-09-vuzzer&#43;&#43;/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-08-09-vuzzer&#43;&#43;/</link>
       <pubDate>Thu, 06 Aug 2020 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-08-09-vuzzer&#43;&#43;/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-08-09-vuzzer&#43;&#43;/</guid>
       <description>Vuzzer64++ I made a post on my blog about my research and all details of my improvements : Improvements of fuzzing techniques in Vuzzer
 Context : Vuzzer is a program that tries to discover vulnerabilities independently within applications. This project helped the cyber security community, but there is still a lot of features that could be added to make it more powerful. It’s in this context that I was charged to improve the existing software during my internship.</description>
     </item>
     
     <item>
       <title>Why last VAC Anticheat update is useless</title>
-      <link>/posts/2020-06-30-vac-useless/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-06-30-vac-useless/</link>
       <pubDate>Tue, 30 Jun 2020 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-06-30-vac-useless/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-06-30-vac-useless/</guid>
       <description>A couple of days ago, Valve released a new update for CSGO, that &amp;ldquo;improve&amp;rdquo; its already pointless anticheat. And I decided to make a thread about it because it&amp;rsquo;s stupidly funny.
 The article blur In this article, they detail :
 I will analyse this by paragraphs.
@@ -193,28 +193,28 @@ So let&amp;rsquo;s start with the second one, they will &amp;ldquo;restricts&amp
     
     <item>
       <title>[3/10] - VM Intro</title>
-      <link>/posts/2020-05-10-crackme-vm1/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-05-10-crackme-vm1/</link>
       <pubDate>Sun, 10 May 2020 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-05-10-crackme-vm1/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-05-10-crackme-vm1/</guid>
       <description></description>
     </item>
     
     <item>
       <title>🔧 %70 PERandomizer : PE polymorther</title>
-      <link>/posts/2020-04-11-perandomizer/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-04-11-perandomizer/</link>
       <pubDate>Sat, 11 Apr 2020 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-04-11-perandomizer/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-04-11-perandomizer/</guid>
       <description>🙁 Oops work in progress This thread is not available.</description>
     </item>
     
     <item>
       <title>Quick analysis about Jar2exe protection 3</title>
-      <link>/posts/2020-02-01-jar2exe/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-02-01-jar2exe/</link>
       <pubDate>Sat, 01 Feb 2020 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-02-01-jar2exe/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-02-01-jar2exe/</guid>
       <description>Hi
 Today I will show how I unpacked Jar2Exe protection 3.
 I made a tool called Exe2Jar that unpack Jar2Exe protection 1 and 2. It was a school project so I didn&amp;rsquo;t look that much to the protection 3, and someone shown me an issue about the output of my program regarding protection 3. So I decided to rework on it, and implement the protection 3 support.
@@ -223,19 +223,19 @@ Exe2Jar : https://github.com/whereisr0da/exe2jar</description>
     
     <item>
       <title>🛠 40% : Obfuscation with Windows PE - Part 1</title>
-      <link>/posts/2020-09-28-obfu.1-lock/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2020-09-28-obfu.1-lock/</link>
       <pubDate>Sat, 28 Sep 2019 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2020-09-28-obfu.1-lock/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2020-09-28-obfu.1-lock/</guid>
       <description>🙁 Oops work in progress This thread is not available.</description>
     </item>
     
     <item>
       <title>🔧 ✔️ Serana : .NET PE parser library</title>
-      <link>/posts/2019-07-08-serana/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2019-07-08-serana/</link>
       <pubDate>Mon, 08 Jul 2019 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2019-07-08-serana/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2019-07-08-serana/</guid>
       <description>Hi
 Today I will present my current project Serana.
 What is it ? Serana is a .NET library that can parse windows executables
@@ -246,10 +246,10 @@ These objects could be exported (raw file buffers) separately after modifying th
     
     <item>
       <title>Encrypt functions in Windows executables</title>
-      <link>/posts/2019-06-29-encrypt-func/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2019-06-29-encrypt-func/</link>
       <pubDate>Sat, 29 Jun 2019 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2019-06-29-encrypt-func/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2019-06-29-encrypt-func/</guid>
       <description>This is a part of my tutorial on how to protect windows executables, so is a little bit disconnected from my others posts, but in wait of my big tutorial I publish this anyway.
 Something that you can apply with the others encryption tricks in PE files is the encryption of function, and decrypting at calling time.
 I found this trick with the Zer0Mem0ry post originaly made to bypass memory signatures checks by encrypt functions at runtime.</description>
@@ -257,10 +257,10 @@ I found this trick with the Zer0Mem0ry post originaly made to bypass memory sign
     
     <item>
       <title>🔧 ✔️ Exe2Jar : Jar2Exe unpacker for Windows executables</title>
-      <link>/posts/2019-06-28-exe2jar/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2019-06-28-exe2jar/</link>
       <pubDate>Fri, 28 Jun 2019 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2019-06-28-exe2jar/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2019-06-28-exe2jar/</guid>
       <description>Today I will share a little tool called Exe2Jar
 This is an Jar2Exe executable unpacker
 Jar2exe is a wrapper cross platform for JAR files that allows the execution of JAR files through a windows, linux or mac executable while the JRE is installed.
@@ -270,19 +270,19 @@ I did it for school project with the goal to make a Java program using Object Pr
     
     <item>
       <title>Deceive cross references analysis (XREF)</title>
-      <link>/posts/2019-06-25-xref/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2019-06-25-xref/</link>
       <pubDate>Tue, 25 Jun 2019 17:14:00 +0000</pubDate>
       
-      <guid>/posts/2019-06-25-xref/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2019-06-25-xref/</guid>
       <description>One of the usefull thing in reverse engenering is xrefs (cross-references), with a complet analyse of all the PE, variables and function addresses can be linked to functions where they are called or used. This simplify drasticly the reverse engenering, but xrefs can be a problem in case of security check. If you have a big executable and you want to look at the license check system, a string like “Check License” or “Enter License” can be find easily and the xrefs associated to him will show you directly what you wanted to find.</description>
     </item>
     
     <item>
       <title>[FR] Le hooking de function</title>
-      <link>/posts/2019-06-24-function-hooking/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2019-06-24-function-hooking/</link>
       <pubDate>Mon, 24 Jun 2019 15:14:00 +0000</pubDate>
       
-      <guid>/posts/2019-06-24-function-hooking/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2019-06-24-function-hooking/</guid>
       <description>Aujourd&amp;rsquo;hui j&amp;rsquo;ai voulu faire un petit thread sur le hooking.
 Le hooking de fonction est le fait de rediriger l’exécution d&amp;rsquo;une fonction d&amp;rsquo;un exécutable vers du code qui n&amp;rsquo;est pas le sien.
 Ceci peut être fait en deux étapes :
@@ -291,10 +291,10 @@ Ceci peut être fait en deux étapes :
     
     <item>
       <title>KoreanCTF 2017 : CSHARP Write-Up</title>
-      <link>/posts/2019-02-27-korean-ctf/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2019-02-27-korean-ctf/</link>
       <pubDate>Wed, 27 Feb 2019 17:41:00 +0000</pubDate>
       
-      <guid>/posts/2019-02-27-korean-ctf/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2019-02-27-korean-ctf/</guid>
       <description>Hi people
 Starting a blogspot by reversing a .Net PE sound weird to me, but I need to start somewhere :p
 This a Write Up about a Korean CTF challenge, the one is named CSHARP It&amp;rsquo;s not really hard (because of .net) but I found it interresting
@@ -305,10 +305,10 @@ What I used :
     
     <item>
       <title>🔧 ✔️ BitcoinNotify : Simple Windows desktop notification app</title>
-      <link>/posts/2017-06-06-bitcoinnotify/</link>
+      <link>https://whereisr0da.github.io/blog/posts/2017-06-06-bitcoinnotify/</link>
       <pubDate>Tue, 06 Jun 2017 17:40:00 +0000</pubDate>
       
-      <guid>/posts/2017-06-06-bitcoinnotify/</guid>
+      <guid>https://whereisr0da.github.io/blog/posts/2017-06-06-bitcoinnotify/</guid>
       <description>A simple windows desktop notification app to keep you aware of Bitcoin evolution
 Features  Create a desktop notification each 15 minutes (default settings) Show the current price of the Bitcoin Show the difference with the last checked Bitcoin price (value, percent) Show investment rentability regarding the current Bitcoin price (value, percent)  Investment You can add an investment record to be informed about the rentability of your investment, by specifing your investments as follow in the investments.</description>
     </item>
