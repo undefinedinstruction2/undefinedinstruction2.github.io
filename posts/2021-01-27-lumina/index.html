@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 🔧 ✔️ Lumina : Legit mutated CSGO cheat | r0da&#39;s Blog</title>
+  <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering, cracking, OSINT and anonimization.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="🔧 ✔️ Lumina : Legit mutated CSGO cheat" />
+<meta property="og:description" content="Available here : https://github.com/whereisr0da/Lumina-Cheat
+IMPORTANT UPDATE Since people definitly don&rsquo;t know how to use this, things will change from now.
+Why ? Because the non-mutated version of the cheat is now detected by AV&rsquo;s as HackTool:Win32/GameHack.*, this mean that the NON-MUTATED VERSION was injected using bad injectors in CSGO. But the point of the cheat is to use mutation to maintain a changing signature. If you don&rsquo;t know how to use it with VMProtect, you should not use it at all." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/2021-01-27-lumina/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-01-27T17:14:00+00:00" />
+<meta property="article:modified_time" content="2021-01-27T17:14:00+00:00" />
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="🔧 ✔️ Lumina : Legit mutated CSGO cheat"/>
+<meta name="twitter:description" content="Available here : https://github.com/whereisr0da/Lumina-Cheat
+IMPORTANT UPDATE Since people definitly don&rsquo;t know how to use this, things will change from now.
+Why ? Because the non-mutated version of the cheat is now detected by AV&rsquo;s as HackTool:Win32/GameHack.*, this mean that the NON-MUTATED VERSION was injected using bad injectors in CSGO. But the point of the cheat is to use mutation to maintain a changing signature. If you don&rsquo;t know how to use it with VMProtect, you should not use it at all."/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="css/style-dark.css">
+  <link rel="stylesheet" href="css/syntax.css" >
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="images/favicon.ico" />
+
+  
+  
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    <div class="content index py4">
+
+        <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="/">Home</a></li>
+         
+        <li><a href="/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" /posts/2021-01-26-vmp-2/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="/posts/2021-01-07-forza-check/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=%2fposts%2f2021-01-27-lumina%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=%2fposts%2f2021-01-27-lumina%2f&text=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=%2fposts%2f2021-01-27-lumina%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=%2fposts%2f2021-01-27-lumina%2f&is_video=false&description=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat&body=Check out this article: %2fposts%2f2021-01-27-lumina%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=%2fposts%2f2021-01-27-lumina%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=%2fposts%2f2021-01-27-lumina%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=%2fposts%2f2021-01-27-lumina%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=%2fposts%2f2021-01-27-lumina%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=%2fposts%2f2021-01-27-lumina%2f&name=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat&description=Available%20here%20%3a%20https%3a%2f%2fgithub.com%2fwhereisr0da%2fLumina-Cheat%0aIMPORTANT%20UPDATE%20Since%20people%20definitly%20don%26rsquo%3bt%20know%20how%20to%20use%20this%2c%20things%20will%20change%20from%20now.%0aWhy%20%3f%20Because%20the%20non-mutated%20version%20of%20the%20cheat%20is%20now%20detected%20by%20AV%26rsquo%3bs%20as%20HackTool%3aWin32%2fGameHack.%2a%2c%20this%20mean%20that%20the%20NON-MUTATED%20VERSION%20was%20injected%20using%20bad%20injectors%20in%20CSGO.%20But%20the%20point%20of%20the%20cheat%20is%20to%20use%20mutation%20to%20maintain%20a%20changing%20signature.%20If%20you%20don%26rsquo%3bt%20know%20how%20to%20use%20it%20with%20VMProtect%2c%20you%20should%20not%20use%20it%20at%20all.">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=%2fposts%2f2021-01-27-lumina%2f&t=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents"></nav>
+    </div>
+  </span>
+</div>
+
+
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header>
+                <h1 class="posttitle" itemprop="name headline">
+                     🔧 ✔️ Lumina : Legit mutated CSGO cheat 
+                </h1>
+                <div class="meta">
+                    
+                    <div class="postdate">
+                        
+                        <time datetime="2021-01-27 17:14:00 &#43;0000 UTC" itemprop="datePublished">2021-01-27</time> 
+                    </div>
+                     
+                </div>
+            </header>
+
+            
+            <div class="content" itemprop="articleBody">
+                <p><img src="/post_images/lumina/logo.png" alt=""></p>
+<p><img src="/post_images/lumina/preview_0.jpg" alt=""></p>
+<p>Available here : <a href="https://github.com/whereisr0da/Lumina-Cheat">https://github.com/whereisr0da/Lumina-Cheat</a></p>
+<h1 id="important-update">IMPORTANT UPDATE</h1>
+<p>Since people definitly don&rsquo;t know how to use this, things will change from now.</p>
+<p>Why ? Because the non-mutated version of the cheat is now detected by AV&rsquo;s as HackTool:Win32/GameHack.*, this mean that the NON-MUTATED VERSION was injected using bad injectors in CSGO. But the point of the cheat is to use mutation to maintain a changing signature. If you don&rsquo;t know how to use it with VMProtect, you should not use it at all. Before trying to cheat in CSGO, you should know about computer science and game hacking in the first place before trying to be a l33t ch3at3r. If you are just a random kid that saw a video talking about cheats on yt, and you&rsquo;ve downloaded VS to compile a cheat that you plan to modify to pretend it&rsquo;s our own one. You will be VACED because you don&rsquo;t even know how to properly use this kind of things.</p>
+<p>Since the first upload, there are some anti-paste / anti-run in my cheat, but now I will make sure no one that want to cheat for bad purposes can do it without knowledge. If you are in RE or game hacking, it&rsquo;s not a big deal to avoid.</p>
+<h1 id="what-is-it-">What is it ?</h1>
+<p>This is the CSGO cheat I&rsquo;m coding since 2018.</p>
+<h1 id="why-">Why ?</h1>
+<p>I&rsquo;ve coded this because there are too many cheaters in this game. I&rsquo;m angry that I can&rsquo;t do anything against cheaters with the vanila CSGO. So I&rsquo;m cheating ONLY against cheaters.</p>
+<h1 id="is-it-detectable-">Is it detectable ?</h1>
+<p>Well.</p>
+<p>The cheat by itself (the file, the code) is not &ldquo;identifiable&rdquo; because of code mutation. I&rsquo;m using VMP mutation for every functions I made, and the compilation doesn&rsquo;t split that much the code regarding the mutation (at least with my current configuration).</p>
+<p>So if you use it mutated on VAC protected servers, Steam anti cheat will not be able to find any known patterns because of code mutation. Even if VAC detect the module and send it to Valve&rsquo;s servers to &ldquo;extract&rdquo; sigatures, next time the cheat is compiled, its code signature will completly change (my functions). So VAC cannot identify the cheat by a code signature of my features. However, I use public code that could be flagged by VAC (JsonCpp, ZGUI, &hellip;), but those codes are commonly used by legit softwares. And if VAC flag them, they will flag most of the overlay software too, so they don&rsquo;t do it.</p>
+<p>So let&rsquo;s summarize, the code signature is not detectable, is the cheat still detectable then ? YES</p>
+<p>The first vector could be the DLL injection. In my case the CSGO process load by itself the crashhandler.dll, so the module is loaded before the installation of LoadLibrary and other hooks. But if the injection process is spotted by CSGO process, you will be VAC.</p>
+<p>The second is to consider the &ldquo;pattern&rdquo; detection of the cheat. For exemple if VAC is now able to detect a feature of the cheat, no matter its implementation. You will be VAC, as well as skeet users when double tap was detected by CSGO. So maybe tomorow, the Faststop feature could be detected server side.</p>
+<p>I could continue my explanation for hours (string, data&hellip;) but I think you get the idea.</p>
+<h1 id="why-do-i-release-this-then-">Why do I release this then ?</h1>
+<p>Like I explained earlier, the point of being not detected regarding the code is highly liked to knowledge of VAC about it. So, more people use it, more chance that it&rsquo;s &ldquo;detected&rdquo;, even if I use code mutation.</p>
+<p>But I&rsquo;ve spend a lot of time working on this game, and I think it&rsquo;s now time to do release it as I&rsquo;m not playing that much anymore.</p>
+<h1 id="how-to-compile-it-">How to compile it ?</h1>
+<p>Compile in Release mode to be sure that the code is mutated. Modify the <code>sign.bat</code> file and set your VMProtect path and grab the last <code>crashhandler.dll</code> signature as <code>crashhandler.original.sig</code>.</p>
+<h1 id="how-to-use-">How to use ?</h1>
+<p>Place the <code>crashhandler.dll</code> file Steam&rsquo;s root folder. CSGO will load it before applying the LoadLibrary hook.</p>
+<h1 id="features">Features</h1>
+<p>Like I said, it&rsquo;s a legit cheat, so features are meant to be hidden regarding overwatch. But it&rsquo;s depending of your own gameplay.</p>
+<ul>
+<li>Chams
+<ul>
+<li>Enemy (+through wall, +only if dead)</li>
+<li>Backtrack</li>
+<li>Hands and Steeves</li>
+</ul>
+</li>
+<li>Glow (+only if dead)</li>
+<li>Skin Changer (two slots, T and CT)
+<ul>
+<li>Weapon (paint, stickers, &hellip;)</li>
+<li>Knife</li>
+<li>Local Model</li>
+<li>Team Model</li>
+</ul>
+</li>
+<li>ESP
+<ul>
+<li>Show only if dead</li>
+<li>Box</li>
+<li>Name</li>
+<li>Weapon name</li>
+<li>Life</li>
+<li>Indicators (flash, scope, has defuser, has bomb, planting, defusing, &hellip;)</li>
+</ul>
+</li>
+<li>Grenade Prediction</li>
+<li>Radar</li>
+<li>Backtrack</li>
+<li>Misc
+<ul>
+<li>My Spread Circle + Crosshair (not the classic filled circle)</li>
+<li>Hitmarker</li>
+<li>Sounds on event (hitmarker, headshot, roundwon, roundlost, roundstart)</li>
+<li>Play event sounds through microphone (like SLAM)</li>
+<li>Spectator List</li>
+<li>Fast Stop</li>
+<li>Silent Walk</li>
+<li>Flash Timer</li>
+<li>Infinit Duck</li>
+<li>Vote revealer</li>
+</ul>
+</li>
+<li>Exploits
+<ul>
+<li>Clear chat exploit to clipboard</li>
+<li>Invisible vote initiator name</li>
+</ul>
+</li>
+<li>Bypasses
+<ul>
+<li>3 Party Files</li>
+<li>Signature Checks</li>
+</ul>
+</li>
+</ul>
+<h1 id="about-the-code">About the code</h1>
+<p>I made the cheat optimized, but there is one thing that is not looking good in all this project, the UI.</p>
+<p>I started to made the UI from raw, but at the end I didn&rsquo;t want to put too much effort into it. So I used the zgui framework to handle it, and I didn&rsquo;t took the time to modify the gui, buttons and stuff. So the menu (the button and UI) are pretty huggly, but I prefer to work on features instead of loosing time on this.</p>
+<p>It&rsquo;s why I don&rsquo;t provide screenshots of the menu.</p>
+<h1 id="logs">Logs</h1>
+<ul>
+<li>28-06-2021 v0.1.13
+<ul>
+<li>Fixed double chams bug through wall</li>
+<li>Added event sound playing through microphone</li>
+<li>Added volume esp feature from NV_v2 made by ekknod</li>
+<li>Added old Natacha features (infinit duck, clear chat exploit, invisible vote initiator name, vote revealer)</li>
+<li>Improved the <code>crashhandler.dll</code> ripper (takes the according dates of crashhandler.original)</li>
+<li>Improved some code parts</li>
+<li>Added assets to the repo (player models, sounds, skyboxes)</li>
+</ul>
+</li>
+<li>10-03-2021 v0.1.12
+<ul>
+<li>Added a new way to grab interfaces since VAC monitors CreateInterface calls now <a href="https://www.unknowncheats.me/forum/counterstrike-global-offensive/444181-vac-monitors-createinterface-calls.html#post3084991">(see)</a></li>
+<li>&ldquo;Policy&rdquo; update</li>
+<li>Improved API resolver (export resolved from PEB, without GetProcAddress)</li>
+<li>Improved execution speed of backtrack</li>
+<li>Updated <code>crashhandler.dll</code> certificat</li>
+</ul>
+</li>
+<li>07-03-2021 v0.1.11
+<ul>
+<li>Added old Natacha features</li>
+<li>Added chams overlay</li>
+<li>Added backtrack and backtrack chams</li>
+<li>Fix knife applied to spectators</li>
+</ul>
+</li>
+<li>19-02-2021 v0.1.10
+<ul>
+<li>Fix knife animations</li>
+<li>Fix hand chams bug</li>
+</ul>
+</li>
+<li>05-02-2021 v0.1.9
+<ul>
+<li>Added hands and sleeves color changer</li>
+</ul>
+</li>
+<li>27-01-2021 v0.1.8
+<ul>
+<li>Added world modulation and</li>
+<li>Removed strcmp (using hash)</li>
+</ul>
+</li>
+<li>07-01-2021 v0.1.7
+<ul>
+<li>Official release</li>
+</ul>
+</li>
+<li>14-09-2019 v0.1.0
+<ul>
+<li>Merging Natacha project to Lumina project</li>
+</ul>
+</li>
+<li>05-06-2018 v0.0.0
+<ul>
+<li>Starting the project</li>
+</ul>
+</li>
+</ul>
+<h1 id="bugs">Bugs</h1>
+<p>There is still a bug when you plant a bomb, sometimes it crashes but it&rsquo;s too rare, so I can&rsquo;t debug it.</p>
+<h1 id="credit">Credit</h1>
+<ul>
+<li>Oneshot</li>
+<li>coders from legendware</li>
+<li>fatality.win 2018 source code</li>
+<li>JsonCpp <a href="http://jsoncpp.sourceforge.net/">http://jsoncpp.sourceforge.net/</a></li>
+<li>zxvnme (zgui)</li>
+<li>coders from pandoracheats.pw</li>
+<li>Ferenc Deak, Sebastien Andrivet <a href="https://github.com/andrivet/ADVobfuscator">https://github.com/andrivet/ADVobfuscator</a></li>
+<li>Justas Masiulis <a href="https://github.com/JustasMasiulis/lazy_importer">https://github.com/JustasMasiulis/lazy_importer</a>, <a href="https://github.com/JustasMasiulis/xorstr">https://github.com/JustasMasiulis/xorstr</a></li>
+</ul>
+
+            </div>
+        </article>
+
+        
+  
+
+
+
+ <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents"></nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=%2fposts%2f2021-01-27-lumina%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=%2fposts%2f2021-01-27-lumina%2f&text=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=%2fposts%2f2021-01-27-lumina%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=%2fposts%2f2021-01-27-lumina%2f&is_video=false&description=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat&body=Check out this article: %2fposts%2f2021-01-27-lumina%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=%2fposts%2f2021-01-27-lumina%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=%2fposts%2f2021-01-27-lumina%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=%2fposts%2f2021-01-27-lumina%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=%2fposts%2f2021-01-27-lumina%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=%2fposts%2f2021-01-27-lumina%2f&name=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat&description=Available%20here%20%3a%20https%3a%2f%2fgithub.com%2fwhereisr0da%2fLumina-Cheat%0aIMPORTANT%20UPDATE%20Since%20people%20definitly%20don%26rsquo%3bt%20know%20how%20to%20use%20this%2c%20things%20will%20change%20from%20now.%0aWhy%20%3f%20Because%20the%20non-mutated%20version%20of%20the%20cheat%20is%20now%20detected%20by%20AV%26rsquo%3bs%20as%20HackTool%3aWin32%2fGameHack.%2a%2c%20this%20mean%20that%20the%20NON-MUTATED%20VERSION%20was%20injected%20using%20bad%20injectors%20in%20CSGO.%20But%20the%20point%20of%20the%20cheat%20is%20to%20use%20mutation%20to%20maintain%20a%20changing%20signature.%20If%20you%20don%26rsquo%3bt%20know%20how%20to%20use%20it%20with%20VMProtect%2c%20you%20should%20not%20use%20it%20at%20all.">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=%2fposts%2f2021-01-27-lumina%2f&t=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Lumina%20%3a%20Legit%20mutated%20CSGO%20cheat">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+ <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  r0da 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">Home</a></li>
+         
+        <li><a href="/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+    </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+  
+
+</html>

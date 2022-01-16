@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 🔧 ✔️ Vuzzer64&#43;&#43; : Improved version of Vuzzer64 | r0da&#39;s Blog</title>
+  <meta name="description" content="Hi, I&#39;m r0da and welcome to my blog. Here you can find my posts about my work around reverse engineering, cracking, OSINT and anonimization.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="🔧 ✔️ Vuzzer64&#43;&#43; : Improved version of Vuzzer64" />
+<meta property="og:description" content="Vuzzer64&#43;&#43; I made a post on my blog about my research and all details of my improvements : Improvements of fuzzing techniques in Vuzzer
+Context : Vuzzer is a program that tries to discover vulnerabilities independently within applications. This project helped the cyber security community, but there is still a lot of features that could be added to make it more powerful. It’s in this context that I was charged to improve the existing software during my internship." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/2020-08-09-vuzzer&#43;&#43;/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-08-06T17:14:00+00:00" />
+<meta property="article:modified_time" content="2020-08-06T17:14:00+00:00" />
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="🔧 ✔️ Vuzzer64&#43;&#43; : Improved version of Vuzzer64"/>
+<meta name="twitter:description" content="Vuzzer64&#43;&#43; I made a post on my blog about my research and all details of my improvements : Improvements of fuzzing techniques in Vuzzer
+Context : Vuzzer is a program that tries to discover vulnerabilities independently within applications. This project helped the cyber security community, but there is still a lot of features that could be added to make it more powerful. It’s in this context that I was charged to improve the existing software during my internship."/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="css/style-dark.css">
+  <link rel="stylesheet" href="css/syntax.css" >
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="images/favicon.ico" />
+
+  
+  
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    <div class="content index py4">
+
+        <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="/">Home</a></li>
+         
+        <li><a href="/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" /posts/2020-06-30-vac-useless/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="/posts/2020-08-06-vuzzer/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&text=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&is_video=false&description=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64&body=Check out this article: %2fposts%2f2020-08-09-vuzzer%2b%2b%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&name=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64&description=Vuzzer64%2b%2b%20I%20made%20a%20post%20on%20my%20blog%20about%20my%20research%20and%20all%20details%20of%20my%20improvements%20%3a%20Improvements%20of%20fuzzing%20techniques%20in%20Vuzzer%0aContext%20%3a%20Vuzzer%20is%20a%20program%20that%20tries%20to%20discover%20vulnerabilities%20independently%20within%20applications.%20This%20project%20helped%20the%20cyber%20security%20community%2c%20but%20there%20is%20still%20a%20lot%20of%20features%20that%20could%20be%20added%20to%20make%20it%20more%20powerful.%20It%e2%80%99s%20in%20this%20context%20that%20I%20was%20charged%20to%20improve%20the%20existing%20software%20during%20my%20internship.">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&t=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#vuzzer64">Vuzzer64++</a>
+      <ul>
+        <li><a href="#context--">Context  :</a></li>
+        <li><a href="#what-is-vuzzer-">What is Vuzzer ?</a></li>
+        <li><a href="#what-is-vuzzer64-">What is Vuzzer64++ ?</a></li>
+        <li><a href="#new-features-">New features :</a></li>
+        <li><a href="#input-mutation-improvements">Input mutation improvements</a></li>
+        <li><a href="#conflicts-handling">Conflicts handling</a></li>
+        <li><a href="#pattern-detection-system">Pattern detection system</a></li>
+        <li><a href="#afl-cmin-input-reduction">AFL-CMIN input reduction</a></li>
+        <li><a href="#requirements">Requirements</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#how-to-use-">How to use ?</a></li>
+        <li><a href="#todo">Todo</a></li>
+        <li><a href="#creators-and-contributors">Creators and contributors</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header>
+                <h1 class="posttitle" itemprop="name headline">
+                     🔧 ✔️ Vuzzer64&#43;&#43; : Improved version of Vuzzer64 
+                </h1>
+                <div class="meta">
+                    
+                    <div class="postdate">
+                        
+                        <time datetime="2020-08-06 17:14:00 &#43;0000 UTC" itemprop="datePublished">2020-08-06</time> 
+                    </div>
+                     
+                </div>
+            </header>
+
+            
+            <div class="content" itemprop="articleBody">
+                <h2 id="vuzzer64">Vuzzer64++</h2>
+<p><img src="https://i.imgur.com/iDA1QeY.gif" alt="https://i.imgur.com/iDA1QeY.gif"></p>
+<p>I made a post on my blog about my research and all details of my improvements : <a href="https://whereisr0da.github.io/blog/posts/2020-08-06-vuzzer/">Improvements of fuzzing techniques in Vuzzer</a></p>
+<h3 id="context--">Context  :</h3>
+<p>Vuzzer is a program that tries to discover vulnerabilities independently within applications. This project helped the cyber security community, but there is still a lot of features that could be added to make it more powerful. It’s in this context that I was charged to improve the existing software during my internship.</p>
+<h3 id="what-is-vuzzer-">What is Vuzzer ?</h3>
+<p>Vuzzer is a new generation fuzzer, that tries to generate more efficient inputs and prioritize application parts to test. It tries to learn about how an input can travel deep path in the application to test the code’s part that can be vulnerable. By mutating the input, Vuzzer is able to avoid error handlings and generate inputs valid enough to cross the common error detection, and test the real input usage in order to find bugs.</p>
+<h3 id="what-is-vuzzer64-">What is Vuzzer64++ ?</h3>
+<p>Vuzzer64++ is basically my improved version of the original <a href="https://github.com/vusec/vuzzer64">Vuzzer64</a> shown in my article.</p>
+<h3 id="new-features-">New features :</h3>
+<p>So this is the list of all things I added to Vuzzer</p>
+<h3 id="input-mutation-improvements">Input mutation improvements</h3>
+<p>Vuzzer was made to be a Proof of concept, so its mutation process uses all kinds of actions to be applied to the input as a demonstration. For example actions that aim to eliminate random bytes in the input, adding random bytes, shrink the input in two parts and merge them in disorder…</p>
+<p>Deleting or adding random segment of the base input is not good in my opinion. First, those actions will break the entire input size, and will probably make old mutation knowledge useless. Secondly is that static taint offset changes like magic bytes will potentially override other important / random data, so input mutation is not accurate. Taint-based changes could just be erased or be applied out of the file scope due to deleting, and if a special byte is somewhere because of a special file structure, this will also be erased.</p>
+<p>So, my idea was to only make random changes overriding over existing data, to keep the file architecture. Vuzzer will no longer add and remove part of the input, if it has to change 4 bytes, it will override 4 bytes of the input until the file has the space for it.</p>
+<p>Also, from now, each mutation will no longer be applied on a random offset in the input. Now each mutation is done on a comparison offset Vuzzer stored earlier. And with this, one of the biggest changes here will be that each time an action is performed, this will care about the size of the comparison. If Vuzzer applies a mutation on a cmp input offset, the mutation will be about the size of the register used during the comparison. So, in theory, mutation will be more effective because, it will respect the same size used by the compared value, the size that the value should have.</p>
+<h3 id="conflicts-handling">Conflicts handling</h3>
+<p>Original Vuzzer doesn’t see what it doing with mutations, it just finds offsets where to apply mutation without considering that an older one could be there. And handle this important aspect of the mutation is something that improve Vuzzer results.</p>
+<p>By using an algorithm called Child input creation, Vuzzer is able to handle conflicts.</p>
+<p><a href="https://github.com/whereisr0da/vuzzer64/blob/master/WIKI_CHILDINPUTGEN.md">See here the full description and wiki</a></p>
+<h3 id="pattern-detection-system">Pattern detection system</h3>
+<p>Taint flow analysis is right to find magic bytes, but in some cases, this analysis can flag comparisons that aren’t good to use. For example, in a loop process, if a program loops through a buffer, and compares the increasing offset value to a static number, like to get the end of a string with a null character. Taint analysis will mark all immediate comparison numbers (in this case null bytes) as magic bytes, but it&rsquo;s wrong. So, to solve this, the improvement could be to identify patterns of following comparisons, and take decision about them.</p>
+<p>I made a representation pattern language that can identify comparison patterns and handle them.</p>
+<p><a href="https://github.com/whereisr0da/vuzzer64/blob/master/WIKI_PATTERN.md">See here the full description and wiki</a></p>
+<h3 id="afl-cmin-input-reduction">AFL-CMIN input reduction</h3>
+<p>AFL is a fuzzer coded in C, which is pretty fast due to its low-level language. It has a plugin called AFL-CMIN that, if you give it a list of inputs, will test the target program with each of them, and will output the best ones in terms of code coverage. The idea was to implement this as an input reducer, Vuzzer produces a lot of file inputs and AFL-CMIN reduces this count to something faster to execute.</p>
+<p><a href="https://github.com/whereisr0da/vuzzer64/blob/master/WIKI_AFLCMIN.md">See here the full description and wiki</a></p>
+<h3 id="requirements">Requirements</h3>
+<p>The requirements for running Vuzzer64 are (copy of Vuzzer64 repo) :</p>
+<ul>
+<li>A C++11 compiler and unix build utilities (e.g. GNU Make).</li>
+<li>Version 3.7 of Intel Pin.</li>
+<li><a href="https://github.com/lemire/EWAHBoolArray/releases/tag/0.4.0">EWAGBoolArray 0.4.0</a> : To install it in your system just copy headers file /path/to/EWAHBoolArray-0.4.0/headers in /usr/include folder.</li>
+<li><a href="http://bmagic.sourceforge.net/">BitMagic</a> : To install it in your system do &ldquo;<em>sudo apt-get install bmagic</em>&rdquo;</li>
+<li>BitVector module for python.</li>
+<li>Ghidra RE tool OR IDA disassembler to run static analysis part of VUzzer -OR- Ashley (a MS student from Grenoble) visited VUSec as intern and developed a &lsquo;angr&rsquo; (<a href="http://angr.io/">http://angr.io/</a>) based static analysis module. The code can be found at <a href="https://github.com/ash09/angr-static-analysis-for-vuzzer64">https://github.com/ash09/angr-static-analysis-for-vuzzer64</a> (yet to be populated!). However, it should be noted that we have not tested this script much and one can expect some glitches specially on large complex applications! If you have questions on this script, please direct them to Ashley.</li>
+</ul>
+<p>We have tested VUzzer by running it on Ubuntu 18.04 LTS, Linux 4.15.0 image.</p>
+<h3 id="installation">Installation</h3>
+<p>Follow the steps to install VUzzer64 (copy of Vuzzer64 repo) :</p>
+<pre><code>cd vuzzer64
+export PIN_HOME=path_to_pin_directory
+export PIN_ROOT=path_to_pin_directory
+export DFT_HOME=$(pwd)/libdft64
+cd fuzzer-code
+make
+cd ../libdft64
+make
+cd ..
+</code></pre>
+<h3 id="how-to-use-">How to use ?</h3>
+<p>To use Vuzzer, I highly recommand you to read the original wiki on <a href="https://github.com/vusec/vuzzer64/blob/master/wikiHOWTO.md">Vuzzer repo</a>.</p>
+<p>Regarding my features, everything is configured in the config.py file, and the feature should be turned on in that file. Some of my improvements needs you to understand the full descriptions linked above.</p>
+<h3 id="todo">Todo</h3>
+<p>Here is a short list of remaining actions :</p>
+<ul>
+<li>Implement IDA Lighthouse code coverage exportation, I tried to implement it, but Lighthouse seem to need a special version of Intel Pin, and the version used by the current Vuzzer is 3.7 (not the latest).</li>
+<li>My pattern system could be improved with more variables / functions, multiple arguments / behavior for a variable or operators for example.</li>
+<li>The child input algorithm could be improved by doing a filter of applied mutations, to only apply relevant modifications.</li>
+<li>Some ideas of others actions could be implemented like “change_bytes_to_string” or “change_bytes_to_utf8”.</li>
+<li>Fix the fitness score selection, and improve memory file inputs.</li>
+<li>Fix the child input mutation, to apply mutations on children made by its parent, and not the entire child set.</li>
+<li>Handle x32 in pattern detection.</li>
+</ul>
+<h3 id="creators-and-contributors">Creators and contributors</h3>
+<p>Credit to all people that work on this project :</p>
+<p>Sanjay Rawat, 
+Vivek Jain,
+Ashish Kumar,
+Lucian Cojocar, 
+Cristiano Giuffrida, 
+Herbert Bos,
+Ren Kimura</p>
+
+            </div>
+        </article>
+
+        
+  
+
+
+
+ <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#vuzzer64">Vuzzer64++</a>
+      <ul>
+        <li><a href="#context--">Context  :</a></li>
+        <li><a href="#what-is-vuzzer-">What is Vuzzer ?</a></li>
+        <li><a href="#what-is-vuzzer64-">What is Vuzzer64++ ?</a></li>
+        <li><a href="#new-features-">New features :</a></li>
+        <li><a href="#input-mutation-improvements">Input mutation improvements</a></li>
+        <li><a href="#conflicts-handling">Conflicts handling</a></li>
+        <li><a href="#pattern-detection-system">Pattern detection system</a></li>
+        <li><a href="#afl-cmin-input-reduction">AFL-CMIN input reduction</a></li>
+        <li><a href="#requirements">Requirements</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#how-to-use-">How to use ?</a></li>
+        <li><a href="#todo">Todo</a></li>
+        <li><a href="#creators-and-contributors">Creators and contributors</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&text=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&is_video=false&description=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64&body=Check out this article: %2fposts%2f2020-08-09-vuzzer%2b%2b%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&title=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&name=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64&description=Vuzzer64%2b%2b%20I%20made%20a%20post%20on%20my%20blog%20about%20my%20research%20and%20all%20details%20of%20my%20improvements%20%3a%20Improvements%20of%20fuzzing%20techniques%20in%20Vuzzer%0aContext%20%3a%20Vuzzer%20is%20a%20program%20that%20tries%20to%20discover%20vulnerabilities%20independently%20within%20applications.%20This%20project%20helped%20the%20cyber%20security%20community%2c%20but%20there%20is%20still%20a%20lot%20of%20features%20that%20could%20be%20added%20to%20make%20it%20more%20powerful.%20It%e2%80%99s%20in%20this%20context%20that%20I%20was%20charged%20to%20improve%20the%20existing%20software%20during%20my%20internship.">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=%2fposts%2f2020-08-09-vuzzer%2b%2b%2f&t=%f0%9f%94%a7%20%e2%9c%94%ef%b8%8f%20Vuzzer64%2b%2b%20%3a%20Improved%20version%20of%20Vuzzer64">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+ <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  r0da 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">Home</a></li>
+         
+        <li><a href="/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+    </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+  
+
+</html>
