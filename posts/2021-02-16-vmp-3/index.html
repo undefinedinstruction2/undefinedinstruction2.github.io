@@ -1031,7 +1031,11 @@ VMP      : ~(~(0x26ce) + 5) = 0x26c9
 <h2 id="x---about-speed">X - About speed</h2>
 <p>From my analysis, virtualizing a simple xor takes about ~40 VMP instructions (the instruction is melted with obfu, it doesn&rsquo;t take 50 instruction to do a simple xor operation). And considering that every handles are mutated (core + next opcode calculation), and the internal VMP opcode could be obfuscated even more in Ultra Mode. A VMP routine could lead to execute ~2000 instructions for a single xor (take this with a grain of salt, it&rsquo;s my own conclusion based on what I saw).</p>
 <p>In my example, 17 instructions were converted in 5943 instructions, and about 126 VMP instructions. And in Ultra mode, those were converted to 20817 instructions, and 428 VMP instructions. I tried to mesure the time difference, but it depends on a lot of factors like CPU type / usage, kernel / resources usage, running processes&hellip; So I will stay on the number of executed instructions.</p>
+<<<<<<< HEAD
 <p>According to <code>throwawaycracker</code>, D***** was about the same rate in 2015 : <code>&quot;an x86 instruction will be translated into about between 2 to 50 VM instructions&quot;</code>. And considering that D***** virtualization was based on VMP at the time (like very close to it), I think that my analysis is close to the reality.</p>
+=======
+<p>According to <code>throwawaycracker</code>, D***** is about the same rate : <code>&quot;an x86 instruction will be translated into about between 2 to 50 VM instructions&quot;</code>. And considering that D***** virtualization is based on VMP, I think that my analysis is close to the reality.</p>
+>>>>>>> ae6dfb67d0c0dc0e98e416a4c3a66226cca4d67a
 <h2 id="xi---what-do-we-do-now-">XI - What do we do now ?</h2>
 <p>So I made a debugger for it, based on qilling. Unfortunately, qiling doesn&rsquo;t support API calls, you have to implement them (understandable). So there are only two possibilities for me, the first is to continue on the easy path (runtime) by coding or modding an x86 emulator for PE that could handle API calls (like &lsquo;unicorn_pe&rsquo; but for x86). The second one is to code a static tool (like the first part of NoVmp) using emulation through something like unicorn. But those two are time consuming, and currently I don&rsquo;t have this time. So I will continue with my debugger that does the job kinda well, and export the VMP opcode into an LLVM routine with some optimization passes. And export the LLVM IR into x86 to a new section in the executable.</p>
 <h2 id="xii---end-word">XII - End word</h2>
@@ -1118,6 +1122,7 @@ VMP      : ~(~(0x26ce) + 5) = 0x26c9
     <li><a href="#xi---what-do-we-do-now-">XI - What do we do now ?</a></li>
     <li><a href="#xii---end-word">XII - End word</a></li>
   </ul>
+<<<<<<< HEAD
 </nav>
     </div>
 
@@ -1229,3 +1234,116 @@ VMP      : ~(~(0x26ce) + 5) = 0x26c9
   
 
 </html>
+=======
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&text=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&is_video=false&description=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization&body=Check out this article: https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&title=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&name=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization&description=0%20-%20%e2%9a%a0%ef%b8%8f%20IMPORTANT%20NOTE%20This%20article%20explain%20how%20VMProtect%20works%2c%20not%20how%20to%20crack%20a%20VMP%20protected%20software.%20I%26rsquo%3bm%20not%20talking%20about%20any%20kind%20of%20Licensing%20System%20provided%20by%20VMP%2c%20or%20a%20developped%20one%20using%20VMP.%20I%20DON%26rsquo%3bT%20SUPPORT%20PIRACY%20in%20any%20way.%20This%20protection%20%28cracked%20%2f%20leaked%20version%20of%20it%29%20is%20used%20to%20protect%20malwares%2c%20and%20my%20objective%20with%20this%20article%20is%20to%20improve%20the%20commun%20knowledge%20of%20it%20to%20help%20and%20simplify%20the%20analysis%20of%20this%20type%20of%20malware.">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhereisr0da.github.io%2fblog%2fposts%2f2021-02-16-vmp-3%2f&t=%f0%9f%94%a5%20Quick%20look%20around%20VMP%203.x%20-%20Part%203%20%3a%20Virtualization">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+ <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2021  r0da 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/blog/">Home</a></li>
+         
+        <li><a href="/blog/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+    </div>
+</body>
+
+<link rel="stylesheet" href=/blog/lib/font-awesome/css/all.min.css>
+<script src=/blog/lib/jquery/jquery.min.js></script>
+<script src=/blog/js/main.js></script>
+  
+
+</html>
+>>>>>>> ae6dfb67d0c0dc0e98e416a4c3a66226cca4d67a
